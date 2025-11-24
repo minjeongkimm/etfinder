@@ -1,6 +1,8 @@
 package com.etfinder.mvc.model.dto;
 
-public class Etf {
+import java.time.LocalDateTime;
+
+public class EtfProduct {
 	private Long etfId;
 	private String etfCode;
 	private String etfName;
@@ -18,13 +20,16 @@ public class Etf {
 	private Double return1yr;
 	private Double return3yr;
 	private String description;
+	private LocalDateTime createdAt;
 	
-	public Etf() {
+	public EtfProduct() {
 	}
 
-	public Etf(Long etfId, String etfCode, String etfName, String market, String theme, Double fee,
-			Integer riskRating, Long aum, Integer currentPrice, Double return1mo, Double return3mo, Double return6mo,
-			Double return1yr, Double return3yr, String description) {
+	
+
+	public EtfProduct(Long etfId, String etfCode, String etfName, String market, String theme, Double fee, Integer riskRating,
+			Long aum, Integer currentPrice, Double return1mo, Double return3mo, Double return6mo, Double return1yr,
+			Double return3yr, String description, LocalDateTime createdAt) {
 		this.etfId = etfId;
 		this.etfCode = etfCode;
 		this.etfName = etfName;
@@ -40,7 +45,10 @@ public class Etf {
 		this.return1yr = return1yr;
 		this.return3yr = return3yr;
 		this.description = description;
+		this.createdAt = createdAt;
 	}
+
+
 
 	public Long getEtfId() {
 		return etfId;
@@ -161,6 +169,19 @@ public class Etf {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+
 
 	@Override
 	public String toString() {
@@ -168,8 +189,12 @@ public class Etf {
 				+ ", theme=" + theme + ", fee=" + fee + ", riskRating=" + riskRating + ", aum=" + aum
 				+ ", currentPrice=" + currentPrice + ", return1mo=" + return1mo + ", return3mo=" + return3mo
 				+ ", return6mo=" + return6mo + ", return1yr=" + return1yr + ", return3yr=" + return3yr
-				+ ", description=" + description + "]";
+				+ ", description=" + description + ", createdAt=" + createdAt + "]";
 	}
+
+
+
+	
 	
 	
 }
