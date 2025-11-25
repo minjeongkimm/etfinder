@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication
 public class EtFinderApplication implements CommandLineRunner { 
 
@@ -23,4 +25,6 @@ public class EtFinderApplication implements CommandLineRunner {
 //        etfLoadService.load(); 
 //        System.out.println("✅ 데이터 적재 완료!");
     }
+    
+    
 }
