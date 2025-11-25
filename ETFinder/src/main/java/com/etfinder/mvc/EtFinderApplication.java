@@ -1,13 +1,26 @@
 package com.etfinder.mvc;
 
+import com.etfinder.mvc.service.EtfLoadService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EtFinderApplication {
+public class EtFinderApplication implements CommandLineRunner { 
 
-	public static void main(String[] args) {
-		SpringApplication.run(EtFinderApplication.class, args);
-	}
+    @Autowired
+    private EtfLoadService etfLoadService; 
 
+    public static void main(String[] args) {
+        SpringApplication.run(EtFinderApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // 서버 켜질 때 이 부분이 자동으로 실행됨!
+//        System.out.println("🚀 데이터 적재 시작...");
+//        etfLoadService.load(); 
+//        System.out.println("✅ 데이터 적재 완료!");
+    }
 }
