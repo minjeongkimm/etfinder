@@ -19,9 +19,6 @@ public class EtfLoadService {
 
     private final EtfMapper etfMapper;
     
-    public EtfLoadService(EtfMapper etfMapper) {
-		this.etfMapper = etfMapper;
-	}
     /**
      * ETF 데이터를 엑셀 파일에서 읽어와 DB에 적재하는 메서드
      */
