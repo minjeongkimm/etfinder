@@ -15,7 +15,7 @@ import com.etfinder.mvc.model.dto.SearchCondition;
 import com.etfinder.mvc.service.EtfSearchService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/etfs")
 public class EtfSearchController {
 
 	private final EtfSearchService etfSearchService;
@@ -25,7 +25,7 @@ public class EtfSearchController {
 	}
 	
 	// 1. 전체 조회
-	@GetMapping("/etfs")
+	@GetMapping
 	public ResponseEntity<?> list(){
 		List<EtfProduct> list = etfSearchService.selectAllEtf();
 		
@@ -36,7 +36,7 @@ public class EtfSearchController {
 	}
 	
 	// 2. 상세 조회
-	@GetMapping("/etfs/{etfId}")
+	@GetMapping("/{etfId}")
 	public ResponseEntity<?> detail(@PathVariable("etfId") Long etfId){
 		EtfProduct etfProduct = etfSearchService.selectOneEtf(etfId);
 		
@@ -47,7 +47,7 @@ public class EtfSearchController {
 	
 	
 	// 3. ETF 검색 및 정렬 
-	@GetMapping("/etfs/search")
+	@GetMapping("/search")
 	public ResponseEntity<?> search(@ModelAttribute SearchCondition con){
 		List<EtfProduct> list = etfSearchService.searchByCondition(con);
 
