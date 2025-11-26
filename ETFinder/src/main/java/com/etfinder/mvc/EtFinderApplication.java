@@ -1,5 +1,6 @@
 package com.etfinder.mvc;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -7,9 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.etfinder.mvc.service.EtfLoadService;
+import com.etfinder.mvc.etf.load.EtfLoadService;
 
-@ComponentScan(basePackages = "com.etfinder")
+@ComponentScan(basePackages = "com.etfinder.mvc")
+@MapperScan("com.etfinder.mvc.**.mapper") 
 @EnableScheduling
 @SpringBootApplication
 public class EtFinderApplication implements CommandLineRunner { 
