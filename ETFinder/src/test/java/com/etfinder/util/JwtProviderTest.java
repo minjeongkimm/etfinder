@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.etfinder.mvc.EtFinderApplication;
-import com.etfinder.mvc.model.dto.User;
+import com.etfinder.mvc.auth.security.JwtProvider;
+import com.etfinder.mvc.user.dto.User;
 
 @SpringBootTest(classes = EtFinderApplication.class) // 스프링 컨테이너를 띄워서 @Value 값 등을 가져오게 함
 public class JwtProviderTest {
