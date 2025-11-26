@@ -1,12 +1,15 @@
 package com.etfinder.mvc;
 
-import com.etfinder.mvc.service.EtfLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.etfinder.mvc.service.EtfLoadService;
+
+@ComponentScan(basePackages = "com.etfinder")
 @EnableScheduling
 @SpringBootApplication
 public class EtFinderApplication implements CommandLineRunner { 
