@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class User {
 	private long userId;
 	private String email;
-	private String name;
+	private String nickname;
 	private int age;
 	private String provider;
 	private String providerId;
@@ -15,11 +15,11 @@ public class User {
 	public User() {
 	}
 
-	public User(long userId, String email, String name, int age, String provider, String providerId,
+	public User(long userId, String email, String nickname, int age, String provider, String providerId,
 			String propensity, LocalDateTime createdAt) {
 		this.userId = userId;
 		this.email = email;
-		this.name = name;
+		this.nickname = nickname;
 		this.age = age;
 		this.provider = provider;
 		this.providerId = providerId;
@@ -43,12 +43,12 @@ public class User {
 		this.email = email;
 	}
 
-	public String getName() {
-		return name;
+	public String getNickname() {
+		return nickname;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public int getAge() {
@@ -93,7 +93,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", email=" + email + ", name=" + name + ", age=" + age + ", provider="
+		return "User [userId=" + userId + ", email=" + email + ", nickname=" + nickname + ", age=" + age + ", provider="
 				+ provider + ", providerId=" + providerId + ", propensity=" + propensity + ", createdAt=" + createdAt
 				+ "]";
 	}
