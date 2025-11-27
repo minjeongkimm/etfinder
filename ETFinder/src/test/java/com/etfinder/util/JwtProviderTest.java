@@ -34,7 +34,7 @@ public class JwtProviderTest {
         assertThat(token).isNotNull();
 
         // 4. 토큰에서 다시 아이디 꺼내보기 (getUserIdFromToken)
-        String userId = jwtProvider.getUserIdFromToken(token);
+        String userId = jwtProvider.getProviderId(token);
         
         System.out.println("토큰에서 꺼낸 ID: " + userId);
 
