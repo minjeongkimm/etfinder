@@ -24,7 +24,7 @@ public class UserController {
 	
 	@GetMapping("/me")
 	public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal String providerId){
-		UserResponse myInfo = userService.getUserInfo(providerId);
+		UserResponse myInfo = userService.findByProviderId(providerId);
 		if(myInfo != null) {
 			return new ResponseEntity<UserResponse>(myInfo, HttpStatus.OK);
 		}else {
