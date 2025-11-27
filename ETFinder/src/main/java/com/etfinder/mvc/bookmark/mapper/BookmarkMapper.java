@@ -2,10 +2,12 @@ package com.etfinder.mvc.bookmark.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.etfinder.mvc.bookmark.dto.Bookmark;
 
+@Mapper
 public interface BookmarkMapper {
 
     // 1. 북마크 추가
