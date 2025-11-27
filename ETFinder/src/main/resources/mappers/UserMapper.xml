@@ -13,7 +13,7 @@
 	</select>
 	
 	<!-- 3. 사용자 정보 조회 (개발자 용, 전체 정보 보여줌) -->
-	<select id="getUserInfoByProviderId" resultType="User">
+	<select id="getUserByProviderId" resultType="User">
 	    SELECT * FROM users WHERE provider_id = #{providerId}
 	</select>
 	

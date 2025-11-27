@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService{
 	
 	// 사용자 정보 조회 (개발자 용)
 	@Override
-	public User getUserInfoByProviderId(String providerId) {
-		return userMapper.getUserInfoByProviderId(providerId);
+	public User getUserByProviderId(String providerId) {
+		return userMapper.getUserByProviderId(providerId);
 	}
 	
 	

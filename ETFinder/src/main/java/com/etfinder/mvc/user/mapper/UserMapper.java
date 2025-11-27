@@ -16,7 +16,7 @@ public interface UserMapper {
 	User findByProviderId(String providerId);
 
 	// 사용자 정보 조회 (개발자 용)
-	User getUserInfoByProviderId(String providerId);
+	User getUserByProviderId(String providerId);
 
 	// 사용자 정보 수정
 	int updateUser(@Param("providerId") String providerId, @Param("request") UserUpdateRequest request);
