@@ -10,17 +10,20 @@ public class Comment {
 	private String content;
 	private String sentiment;
 	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 	
 	public Comment() {
 	}
 
-	public Comment(Long commentId, Long userId, Long etfId, String content, String sentiment, LocalDateTime createdAt) {
+	public Comment(Long commentId, Long userId, Long etfId, String content, String sentiment, LocalDateTime createdAt,
+			LocalDateTime updatedAt) {
 		this.commentId = commentId;
 		this.userId = userId;
 		this.etfId = etfId;
 		this.content = content;
 		this.sentiment = sentiment;
 		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 
 	public Long getCommentId() {
@@ -71,12 +74,19 @@ public class Comment {
 		this.createdAt = createdAt;
 	}
 
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	@Override
 	public String toString() {
 		return "Comment [commentId=" + commentId + ", userId=" + userId + ", etfId=" + etfId + ", content=" + content
-				+ ", sentiment=" + sentiment + ", createdAt=" + createdAt + "]";
+				+ ", sentiment=" + sentiment + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
 	}
 
-	
 	
 }
