@@ -1,5 +1,3 @@
-DROP DATABASE etfinder;
-
 CREATE DATABASE etfinder DEFAULT CHARACTER SET utf8mb4;
 
 USE etfinder;
@@ -9,7 +7,7 @@ USE etfinder;
 -- ==========================================
 CREATE TABLE users (
     user_id      BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '유저 고유 ID',
-    email        VARCHAR(100) NOT NULL UNIQUE COMMENT '이메일',
+    email        VARCHAR(100) UNIQUE COMMENT '이메일',
     nickname     VARCHAR(50) NOT NULL COMMENT '닉네임',
     age          INT COMMENT '나이 (추천 가중치용)',
     provider     VARCHAR(20) COMMENT '가입 경로 (KAKAO, GOOGLE)',
@@ -66,13 +64,14 @@ CREATE TABLE bookmark (
 -- ==========================================
 CREATE TABLE comments (
     comment_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id      BIGINT NOT NULL,
+    user_id      BIGINT,
     etf_id       BIGINT NOT NULL,
     content      VARCHAR(200) NOT NULL COMMENT '내용 200자 제한',
     sentiment    VARCHAR(10) COMMENT 'AI 감성분석 결과 (POSITIVE/NEGATIVE)',
     created_at   DATETIME DEFAULT NOW(),
+    updated_at DATETIME DEFAULT NOW() ON UPDATE NOW(),
     
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE
 );
 
