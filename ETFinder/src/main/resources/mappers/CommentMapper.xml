@@ -12,17 +12,11 @@
 
 	<!-- 2. 한줄평 조회 -->
 	<select id="getCommentsByEtfId" resultType="Comment">
-		SELECT
-			comment_id,
-			user_id,
-			etf_id,
-			content,
-			sentiment,
-			created_at,
-			updated_at
-		FROM comments
-		WHERE etf_id = #{etfId}
-		ORDER BY created_at DESC
+		SELECT c.*, u.nickname
+		FROM comments c
+		JOIN users u ON c.user_id = u.user_id
+		WHERE c.etf_id = #{etfId}
+		ORDER BY c.created_at DESC
 	</select>
 
 	<!-- 3. 한줄평 수정 -->
