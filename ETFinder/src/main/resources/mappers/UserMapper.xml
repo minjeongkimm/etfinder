@@ -18,7 +18,7 @@
 	</select>
 	
 	<!-- 4. 사용자 정보 수정 -->
-	<update id="updateUser" parameterType="User">
+	<update id="updateUser">
 		UPDATE users
 		<set>
 	        <if test="request.nickname != null and request.nickname != ''">
