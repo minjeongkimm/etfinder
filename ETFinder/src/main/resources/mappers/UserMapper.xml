@@ -10,5 +10,29 @@
 	<select id="findByProviderId" resultType="User">
 	    SELECT * FROM users WHERE provider_id = #{providerId}
 	</select>
+	
+	<update id="updateUser" parameterType="User">
+		UPDATE users
+		<set>
+	        <if test="request.nickname != null and request.nickname != ''">
+	            nickname = #{request.nickname},
+	        </if>
+	        <if test="request.email != null and request.email != ''">
+	            email = #{request.email},
+	        </if>
+	        <if test="request.age != null">
+	            age = #{request.age},
+	        </if>
+	        <if test="request.propensity != null">
+	        	propensity = #{request.propensity},
+	        </if>
+	    </set>
+	    WHERE provider_id = #{providerId}
+	</update>
+	
+	<delete id="deleteUser">
+		DELETE FROM users
+		WHERE provider_id = #{providerId}
+	</delete>
 
 </mapper>
