@@ -4,7 +4,7 @@ public class UserUpdateRequest {
 
 	private String nickname;
 	private String email;
-	private int age;
+	private Integer age;
 	private String propensity;
 	
 	public UserUpdateRequest() {
