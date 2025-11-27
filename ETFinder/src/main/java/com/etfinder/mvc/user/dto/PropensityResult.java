@@ -1,5 +1,7 @@
 package com.etfinder.mvc.user.dto;
 
+import com.etfinder.mvc.user.constant.InvestmentType;
+
 // 백엔드에서 점수계산 후 결과를 프론트로 넘겨주는 용도
 public class PropensityResult {
 
@@ -9,10 +11,10 @@ public class PropensityResult {
 	public PropensityResult() {
 	}
 
-	public PropensityResult(String type, String label) {
+	public PropensityResult(InvestmentType investmentType) {
 		super();
-		this.type = type;
-		this.label = label;
+		this.type = investmentType.name();
+		this.label = investmentType.getLabel();
 	}
 
 	public String getType() {
