@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService{
 
 	// 사용자 정보 조회
 	@Override
-	public UserResponse getUserInfo(String providerId) {
+	public UserResponse findByProviderId(String providerId) {
 		User user = userMapper.findByProviderId(providerId);
 		if(user == null) {
 			return null;
@@ -30,6 +30,14 @@ public class UserServiceImpl implements UserService{
 				);
 	}
 
+	
+	// 사용자 정보 조회 (개발자 용)
+	@Override
+	public User getUserInfoByProviderId(String providerId) {
+		return userMapper.getUserInfoByProviderId(providerId);
+	}
+	
+	
 	// 사용자 정보 업데이트
 	@Override
 	public int updateUser(String providerId, UserUpdateRequest request) {
@@ -43,5 +51,8 @@ public class UserServiceImpl implements UserService{
 		int result = userMapper.deleteUser(providerId);
 		return result;
 	}
+
+
+
 
 }
