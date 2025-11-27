@@ -1,6 +1,7 @@
 package com.etfinder.mvc.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.etfinder.mvc.user.constant.InvestmentType;
 import com.etfinder.mvc.user.dto.PropensityRequest;
@@ -8,6 +9,7 @@ import com.etfinder.mvc.user.dto.PropensityResult;
 import com.etfinder.mvc.user.dto.UserUpdateRequest;
 import com.etfinder.mvc.user.mapper.UserMapper;
 
+@Service
 public class PropensityServiceImpl implements PropensityService{
 	
 	@Autowired
@@ -32,6 +34,7 @@ public class PropensityServiceImpl implements PropensityService{
 		updateRequest.setPropensity(type.name());
 		userMapper.updateUser(providerId, updateRequest);
 		
+		// 결과값 반환
 		return new PropensityResult(type);
 	}
 
