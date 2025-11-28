@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.etfinder.mvc.comment.dto.Comment;
+import com.etfinder.mvc.comment.dto.CommentResponse;
 
 @Mapper
 public interface CommentMapper {
@@ -14,7 +15,7 @@ public interface CommentMapper {
 	int addComment(Comment comment);
 
 	// 2. 한줄평 조회 (etfId로 조회)
-	List<Comment> getCommentsByEtfId(@Param("etfId") Long etfId);
+	List<CommentResponse> getCommentsByEtfId(@Param("etfId") Long etfId);
 
 	// 3. 한줄평 수정 (작성자만 가능)
 	int updateComment(@Param("commentId") Long commentId,
