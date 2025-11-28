@@ -19,7 +19,7 @@ public interface LikeMapper {
 	List<EtfProduct> getLikedEtfs(Long userId);
 
 	/*
-	 * 3. 좋아요 해제 (로그인 유저만 가능) - 이미 좋아요 누른 것에 대해서만 좋아요 해제 가능 - 성공 시 1, 실패 시 0
+	 * 3. 좋아요 해제 (이미 누른 유저만 가능) - 이미 좋아요 누른 것에 대해서만 좋아요 해제 가능 - 성공 시 1, 실패 시 0
 	 */
 	int deleteLike(@Param("userId") Long userId, @Param("etfId") Long etfId);
 
