@@ -2,6 +2,8 @@ package com.etfinder.mvc.like.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.etfinder.mvc.etf.dto.EtfProduct;
 
 public interface LikeService {
@@ -33,5 +35,11 @@ public interface LikeService {
 	 */
 	int getLikeCount(Long etfId);
 	
+	
+	/*
+	 * 5. 사용자가 이미 좋아요 눌렀는지 체크
+	 */
+	
+	boolean existsLike(Long userId, Long etfId);
 	
 }
