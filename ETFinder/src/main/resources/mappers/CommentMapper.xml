@@ -14,7 +14,7 @@
 	<select id="getCommentsByEtfId"
 		resultType="com.etfinder.mvc.comment.dto.CommentResponse">
 		SELECT
-			c.comment_id
+			c.comment_id,
 			u.nickname, -- 닉네임
 			c.content, -- 내용
 			c.sentiment, -- 감정
