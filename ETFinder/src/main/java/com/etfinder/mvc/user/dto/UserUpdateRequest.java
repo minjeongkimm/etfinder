@@ -4,7 +4,7 @@ public class UserUpdateRequest {
 
 	private String nickname;
 	private String email;
-	private int age;
+	private Integer age;
 	private String propensity;
 	
 	public UserUpdateRequest() {
@@ -34,11 +34,11 @@ public class UserUpdateRequest {
 		this.email = email;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
