@@ -34,33 +34,66 @@
 	<!-- 3. ETF 전체 조회 -->
 	<select id="selectAllEtf" resultType="EtfProduct">
 		SELECT
-		etf_id, etf_code,
-		etf_name, market, theme,
-		risk_rating, aum, fee,
-		current_price,
-		return_1mo, return_3mo, return_6mo,
-		return_1yr, return_3yr,
-		created_at
-		FROM etf_product
-		ORDER BY aum DESC
+		e.etf_id,
+		e.etf_code,
+		e.etf_name,
+		e.market,
+		e.theme,
+		e.risk_rating,
+		e.aum,
+		e.fee,
+		e.current_price,
+		e.return_1mo,
+		e.return_3mo,
+		e.return_6mo,
+		e.return_1yr,
+		e.return_3yr,
+		e.created_at,
+
+		-- ✅ 추가: 좋아요 개수
+		(
+		SELECT COUNT(*)
+		FROM likes l
+		WHERE l.etf_id = e.etf_id
+		) AS like_count
+
+		FROM etf_product e
+		ORDER BY e.aum DESC
 	</select>
+
 
 
 	<!-- 4. ETF 상세 조회 -->
 	<select id="selectOneEtf" parameterType="long"
 		resultType="EtfProduct">
 		SELECT
-		etf_id, etf_code, etf_name, market, theme,
-		risk_rating, aum, fee,
-		current_price,
-		return_1mo, return_3mo,
-		return_6mo,
-		return_1yr, return_3yr,
-		created_at
-		FROM etf_product
-		WHERE
-		etf_id = #{etfId}
+		e.etf_id,
+		e.etf_code,
+		e.etf_name,
+		e.market,
+		e.theme,
+		e.risk_rating,
+		e.aum,
+		e.fee,
+		e.current_price,
+		e.return_1mo,
+		e.return_3mo,
+		e.return_6mo,
+		e.return_1yr,
+		e.return_3yr,
+		e.created_at,
+
+		-- ✅ 추가: 해당 ETF의 좋아요 개수
+		(
+		SELECT COUNT(*)
+		FROM likes l
+		WHERE l.etf_id = e.etf_id
+		) AS like_count
+
+		FROM etf_product e
+		WHERE e.etf_id = #{etfId}
 	</select>
+
 
 	<!-- 5. 검색 + 필터 + 안전한 정렬 -->
 	<select id="searchByCondition" parameterType="SearchCondition"
