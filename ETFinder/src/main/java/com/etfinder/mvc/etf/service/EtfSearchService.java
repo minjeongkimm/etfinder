@@ -11,7 +11,7 @@ public interface EtfSearchService {
 	List<EtfProduct> selectAllEtf();
 	
 	// 2. 상세 조회 (상세 페이지)
-	EtfProduct selectOneEtf(Long etfId);
+	EtfProduct selectOneEtf(Long etfId, Long userId);
 	
 	// 3. 검색 
 	List<EtfProduct> searchByCondition(SearchCondition con);
