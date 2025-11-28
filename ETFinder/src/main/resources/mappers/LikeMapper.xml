@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.LikesMapper">
+
+
+
+	<!-- 4. 좋아요 카운트 출력 -->
+	<select id="getLikeCount" parameterType="long" resultType="int">
+		SELECT COUNT(*)
+		FROM likes
+		WHERE etf_id = #{etfId}
+	</select>
+
+	<!-- 5. 로그인 유저가 해당 etf를 좋아요 눌렀는지 확인 -->
+    <select id="existsLike" parameterType="map" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM likes
+            WHERE user_id = #{userId}
+              AND etf_id = #{etfId}
+        )
+    </select>
+
+</mapper>
