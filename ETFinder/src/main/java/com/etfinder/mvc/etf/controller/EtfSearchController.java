@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.service.EtfSearchService;
+import com.etfinder.mvc.user.dto.User;
 
 @RestController
 @RequestMapping("/api/etfs")
@@ -37,13 +39,18 @@ public class EtfSearchController {
 	
 	// 2. 상세 조회
 	@GetMapping("/{etfId}")
-	public ResponseEntity<?> detail(@PathVariable("etfId") Long etfId){
-		EtfProduct etfProduct = etfSearchService.selectOneEtf(etfId);
-		
-		if(etfProduct != null)
-			return new ResponseEntity<EtfProduct>(etfProduct, HttpStatus.OK);
-		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<?> detail(
+	        @PathVariable("etfId") Long etfId,
+	        @AuthenticationPrincipal User user
+	){
+	    Long userId = (user != null) ? user.getUserId() : null;
+
+	    EtfProduct etf = etfSearchService.selectOneEtf(etfId, userId);
+	    if (etf != null)
+	        return new ResponseEntity<>(etf, HttpStatus.OK);
+	    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+
 	
 	
 	// 3. ETF 검색 및 정렬 
