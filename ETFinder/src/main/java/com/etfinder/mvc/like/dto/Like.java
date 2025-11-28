@@ -2,48 +2,48 @@ package com.etfinder.mvc.like.dto;
 
 public class Like {
 	
-	private Long like_id;
-	private Long user_id;
-	private Long etf_id;
+	private Long likeId;	//좋아요 ID
+	private Long userId;	//유저 ID
+	private Long etfId;		//etf ID
 	
 	public Like() {
 	}
 
-	public Like(Long like_id, Long user_id, Long etf_id) {
-		this.like_id = like_id;
-		this.user_id = user_id;
-		this.etf_id = etf_id;
+	public Like(Long likeId, Long userId, Long etfId) {
+		this.likeId = likeId;
+		this.userId = userId;
+		this.etfId = etfId;
 	}
 
-	public Long getLike_id() {
-		return like_id;
+	public Long getLikeId() {
+		return likeId;
 	}
 
-	public void setLike_id(Long like_id) {
-		this.like_id = like_id;
+	public void setLikeId(Long likeId) {
+		this.likeId = likeId;
 	}
 
-	public Long getUser_id() {
-		return user_id;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setUser_id(Long user_id) {
-		this.user_id = user_id;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
-	public Long getEtf_id() {
-		return etf_id;
+	public Long getEtfId() {
+		return etfId;
 	}
 
-	public void setEtf_id(Long etf_id) {
-		this.etf_id = etf_id;
+	public void setEtfId(Long etfId) {
+		this.etfId = etfId;
 	}
 
 	@Override
 	public String toString() {
-		return "Like [like_id=" + like_id + ", user_id=" + user_id + ", etf_id=" + etf_id + "]";
+		return "Like [likeId=" + likeId + ", userId=" + userId + ", etfId=" + etfId + "]";
 	}
-	
+
 	
 	
 }
