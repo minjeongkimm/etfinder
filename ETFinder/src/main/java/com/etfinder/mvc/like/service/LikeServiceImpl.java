@@ -33,4 +33,10 @@ public class LikeServiceImpl implements LikeService {
 		return 0;
 	}
 
+	@Override
+	public boolean existsLike(Long userId, Long etfId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
