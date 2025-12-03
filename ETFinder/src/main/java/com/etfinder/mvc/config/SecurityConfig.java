@@ -42,6 +42,9 @@ public class SecurityConfig {
                         "/api/etfs/**",        // ETF 조회도 로그인 없이 보여주기
                         "/swagger-ui/**", "/v3/api-docs/**"		// 스웨거 화면 접속용
                 ).permitAll()
+                .requestMatchers("/api/likes/**").authenticated()
+                .requestMatchers("/api/bookmarks/**").authenticated()
+                .requestMatchers("/api/comments/**").authenticated()
                 .anyRequest().authenticated() // 그 외 모든 요청(내 정보 수정 등)은 토큰 필요!
             )
 

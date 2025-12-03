@@ -41,7 +41,10 @@ CREATE TABLE etf_product (
     return_3yr    DOUBLE,
     
     description   TEXT COMMENT 'AI 요약 설명',
-    created_at    DATETIME DEFAULT NOW()
+    created_at    DATETIME DEFAULT NOW(),
+    
+    -- 좋아요 수 
+    like_count INT NOT NULL DEFAULT 0
 );
 
 -- ==========================================

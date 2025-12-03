@@ -7,8 +7,8 @@ public class EtfProduct {
 	private String etfCode;
 	private String etfName;
 
-	private String market; 
-	private String theme; 
+	private String market;
+	private String theme;
 
 	private Double fee;
 	private Integer riskRating;
@@ -22,14 +22,17 @@ public class EtfProduct {
 	private String description;
 	private LocalDateTime createdAt;
 	
+	// 좋아요 기능 관련
+	private Integer likeCount;	// 좋아요 수
+	private Boolean likedByMe = false;	// 사용자 본인이 눌렀는지 여부
+
+
 	public EtfProduct() {
 	}
 
-	
-
-	public EtfProduct(Long etfId, String etfCode, String etfName, String market, String theme, Double fee, Integer riskRating,
-			Long aum, Integer currentPrice, Double return1mo, Double return3mo, Double return6mo, Double return1yr,
-			Double return3yr, String description, LocalDateTime createdAt) {
+	public EtfProduct(Long etfId, String etfCode, String etfName, String market, String theme, Double fee,
+			Integer riskRating, Long aum, Integer currentPrice, Double return1mo, Double return3mo, Double return6mo,
+			Double return1yr, Double return3yr, String description, LocalDateTime createdAt, Integer likeCount) {
 		this.etfId = etfId;
 		this.etfCode = etfCode;
 		this.etfName = etfName;
@@ -46,6 +49,7 @@ public class EtfProduct {
 		this.return3yr = return3yr;
 		this.description = description;
 		this.createdAt = createdAt;
+		this.likeCount = likeCount;
 	}
 
 
@@ -169,32 +173,43 @@ public class EtfProduct {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-
-
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
+	public Integer getLikeCount() {
+		return likeCount;
+	}
 
+	public void setLikeCount(Integer likeCount) {
+		this.likeCount = likeCount;
+	}
+	
+	
+
+	public Boolean getLikedByMe() {
+		return likedByMe;
+	}
+
+	public void setLikedByMe(Boolean likedByMe) {
+		this.likedByMe = likedByMe;
+	}
 
 	@Override
 	public String toString() {
-		return "Etf [etfId=" + etfId + ", etfCode=" + etfCode + ", etfName=" + etfName + ", market=" + market
+		return "EtfProduct [etfId=" + etfId + ", etfCode=" + etfCode + ", etfName=" + etfName + ", market=" + market
 				+ ", theme=" + theme + ", fee=" + fee + ", riskRating=" + riskRating + ", aum=" + aum
 				+ ", currentPrice=" + currentPrice + ", return1mo=" + return1mo + ", return3mo=" + return3mo
 				+ ", return6mo=" + return6mo + ", return1yr=" + return1yr + ", return3yr=" + return3yr
-				+ ", description=" + description + ", createdAt=" + createdAt + "]";
+				+ ", description=" + description + ", createdAt=" + createdAt + ", likeCount=" + likeCount
+				+ ", likedByMe=" + likedByMe + "]";
 	}
 
 
 
-	
-	
-	
 }

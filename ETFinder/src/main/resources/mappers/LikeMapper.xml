@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etfinder.mvc.like.mapper.LikeMapper">
+
+	<!-- 1. 좋아요 누르기 -->
+	<insert id="addLike" parameterType="map">
+		INSERT INTO likes (user_id,
+		etf_id)
+		VALUES (#{userId},
+		#{etfId})
+	</insert>
+
+	<!-- 2. 로그인 유저가 좋아요한 ETF 리스트 조회 -->
+	<select id="getLikedEtfs" parameterType="Long"
+		resultType="EtfProduct">
+		SELECT
+		e.etf_id,
+		e.etf_code,
+		e.etf_name,
+		e.market,
+		e.theme,
+		e.fee,
+		e.risk_rating,
+		e.aum,
+		e.current_price,
+		e.return_1mo,
+		e.return_3mo,
+		e.return_6mo,
+		e.return_1yr,
+		e.return_3yr,
+		e.description,
+		e.created_at,
+		e.like_count
+		FROM likes l
+		JOIN etf_product e ON l.etf_id = e.etf_id
+		WHERE l.user_id = #{userId}
+		ORDER BY e.aum DESC
+	</select>
+
+
+	<!-- 3. 좋아요 해제 -->
+	<delete id="deleteLike" parameterType="map">
+		DELETE FROM likes
+		WHERE
+		user_id = #{userId}
+		AND etf_id
+		= #{etfId}
+	</delete>
+
+	<!-- 4. 사용자가 이미 좋아요 눌렀는지 체크 -->
+	<select id="existsLike" parameterType="map" resultType="boolean">
+		SELECT
+		EXISTS (
+		SELECT 1 FROM likes
+		WHERE user_id = #{userId}
+		AND etf_id =
+		#{etfId}
+		)
+	</select>
+
+	<!-- 5. 좋아요 수 증가 -->
+	<update id="increaseLikeCount" parameterType="Long">
+		UPDATE etf_product
+		SET like_count = like_count + 1
+		WHERE etf_id = #{etfId}
+	</update>
+
+	<!-- 6. 좋아요 수 감소 -->
+	<update id="decreaseLikeCount" parameterType="Long">
+		UPDATE etf_product
+		SET like_count = like_count - 1
+		WHERE etf_id = #{etfId}
+	</update>
+</mapper>
