@@ -102,18 +102,17 @@ public class EtfClassifier {
             return "소비재/컨텐츠";
         }
 
-        // 5. [안전/현금] 채권 / 금리
+        // 5. [자산배분] TDF / EMP
+        if (n.contains("TDF") || n.contains("자산배분") || n.contains("TRF") || n.contains("EMP")) {
+            return "자산배분/TDF";
+        }
+        
+        // ✨ 5-1. [안전/현금] 채권 / 금리 
         if (n.contains("채권") || n.contains("BOND") || n.contains("국채") 
                 || n.contains("국고채") || n.contains("TREASURY") || n.contains("TIP") 
                 || n.contains("CD") || n.contains("KOFR") || n.contains("SOFR") 
-                || n.contains("머니마켓") || n.contains("달러") || n.contains("단기")
-                || n.contains("액티브")) { // 액티브 채권이 많아서 추가
+                || n.contains("머니마켓") || n.contains("달러") || n.contains("단기")) { 
             return "채권/금리";
-        }
-        
-        // ✨ 5-1. [자산배분] TDF / EMP
-        if (n.contains("TDF") || n.contains("자산배분") || n.contains("TRF")) {
-            return "자산배분/TDF";
         }
 
         // 6. [배당] 리츠 / 인프라 / 부동산

@@ -3,7 +3,9 @@ package com.etfinder.mvc.etf.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,11 +62,38 @@ public class EtfRecommendServiceImpl implements EtfRecommendService{
 			}
 		});
 		
-		// 10개 이상일 경우 점수 높은 것 10개만 출력
-		if(scoredList.size() > 10)
-			return scoredList.subList(0, 10);
-		
-		return scoredList;
+		// 테마의 다양성 확보 로직 -> 쿼터제
+		List<EtfRecommendResponse> finalResult = new ArrayList<>();
+        Map<String, Integer> themeCount = new HashMap<>(); // 테마별 개수 세는 가방
+
+        // 1. 쿼터제 적용해서 담기
+        for (EtfRecommendResponse dto : scoredList) {
+            // 이미 10개 꽉 찼으면 그만
+            if (finalResult.size() >= 10) break;
+
+            String theme = dto.getTheme(); // DTO에서 테마 꺼냄
+            int count = themeCount.getOrDefault(theme, 0);
+
+            // 한 테마당 최대 4개까지만 허용 (다양성을 위해)
+            if (count < 4) {
+                finalResult.add(dto);
+                themeCount.put(theme, count + 1);
+            }
+        }
+
+        // 2. 혹시라도 10개가 안 찼다면 남은 것 중에서 점수 높은 순서대로 빈자리 채우기
+        if (finalResult.size() < 10) {
+            for (EtfRecommendResponse dto : scoredList) {
+                if (finalResult.size() >= 10) break;
+                
+                // 이미 들어간 건 빼고 추가
+                if (!finalResult.contains(dto)) {
+                    finalResult.add(dto);
+                }
+            }
+        }
+
+        return finalResult;
 	}
 	
 	// 필터링 로직
