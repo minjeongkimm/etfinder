@@ -23,14 +23,16 @@ public interface LikeMapper {
 	 */
 	int deleteLike(@Param("userId") Long userId, @Param("etfId") Long etfId);
 
+
 	/*
-	 * 4. Etf 별 좋아요 수 조회
-	 */
-	int getLikeCount(Long etfId);
-	
-	
-	/*
-	 * 5. 사용자가 이미 좋아요를 눌렀는지 체크
+	 * 4. 사용자가 이미 좋아요를 눌렀는지 체크
 	 */
 	boolean existsLike(@Param("userId") Long userId, @Param("etfId") Long etfId);
+
+	// 5. 좋아요 수 증가
+	int increaseLikeCount(@Param("etfId") Long etfId);
+
+	// 6. 좋아요 수 감소
+	int decreaseLikeCount(@Param("etfId") Long etfId);
+	
 }
