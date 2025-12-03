@@ -11,7 +11,7 @@ public interface LikeService {
 	
 	/*
 	 * 1. 좋아요 누르기 (로그인 유저만 가능)
-	 * - like 안에 userId, etfId 넘김? 
+	 * - like 안에 userId, etfId 넘김
 	 * - 성공 시 1, 실패 시 0
 	 */
 	int addLike(Long userId, Long etfId);
@@ -29,15 +29,8 @@ public interface LikeService {
 	 */
 	int deleteLike(Long userId, Long etfId);
 	
-	
 	/*
-	 * 4. Etf 별 좋아요 수 조회
-	 */
-	int getLikeCount(Long etfId);
-	
-	
-	/*
-	 * 5. 사용자가 이미 좋아요 눌렀는지 체크
+	 * 4. 사용자가 이미 좋아요 눌렀는지 체크
 	 */
 	
 	boolean existsLike(Long userId, Long etfId);
