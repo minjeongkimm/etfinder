@@ -27,4 +27,7 @@ public interface EtfMapper {
 
 	// 5. Etf 검색, 정렬
 	List<EtfProduct> searchByCondition(SearchCondition con);
+	
+	// 6. Etf 추천 기준 항목 조회
+	List<EtfProduct> selectEtfsForRecommendation();
 }

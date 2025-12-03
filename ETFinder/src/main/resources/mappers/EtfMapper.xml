@@ -176,5 +176,13 @@
 			</otherwise>
 		</choose>
 	</select>
+	
+	<!-- 6. ETF 추천 기준 항목 조회 -->
+	<select id="selectEtfsForRecommendation" resultType="EtfProduct">
+		SELECT
+		etf_id, etf_code, etf_name, market, theme, fee, risk_rating, aum, return_1yr
+		FROM etf_product
+		WHERE return_1yr IS NOT NULL
+	</select>
 
 </mapper>
