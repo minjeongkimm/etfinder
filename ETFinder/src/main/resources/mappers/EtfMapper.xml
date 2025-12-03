@@ -49,22 +49,17 @@
 		e.return_1yr,
 		e.return_3yr,
 		e.created_at,
-
-		-- ✅ 추가: 좋아요 개수
-		(
-		SELECT COUNT(*)
-		FROM likes l
-		WHERE l.etf_id = e.etf_id
-		) AS like_count
+		e.like_count
 
 		FROM etf_product e
-		ORDER BY e.aum DESC
+		ORDER BY
+		e.aum DESC
 	</select>
 
 
 
 	<!-- 4. ETF 상세 조회 -->
-	<select id="selectOneEtf" parameterType="long"
+	<select id="selectOneEtf" parameterType="Long"
 		resultType="EtfProduct">
 		SELECT
 		e.etf_id,
@@ -82,15 +77,10 @@
 		e.return_1yr,
 		e.return_3yr,
 		e.created_at,
+		e.like_count
 
-		-- ✅ 추가: 해당 ETF의 좋아요 개수
-		(
-		SELECT COUNT(*)
-		FROM likes l
-		WHERE l.etf_id = e.etf_id
-		) AS like_count
-
-		FROM etf_product e
+		FROM
+		etf_product e
 		WHERE e.etf_id = #{etfId}
 	</select>
 
@@ -176,11 +166,12 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<!-- 6. ETF 추천 기준 항목 조회 -->
 	<select id="selectEtfsForRecommendation" resultType="EtfProduct">
 		SELECT
-		etf_id, etf_code, etf_name, market, theme, fee, risk_rating, aum, return_1yr
+		etf_id, etf_code, etf_name, market, theme, fee, risk_rating, aum,
+		return_1yr
 		FROM etf_product
 		WHERE return_1yr IS NOT NULL
 	</select>
