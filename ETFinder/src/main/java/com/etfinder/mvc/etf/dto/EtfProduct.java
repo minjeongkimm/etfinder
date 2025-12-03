@@ -24,7 +24,7 @@ public class EtfProduct {
 	
 	// 좋아요 기능 관련
 	private Integer likeCount;	// 좋아요 수
-	private Boolean likedByMe;	// 사용자 본인이 눌렀는지 여부
+	private Boolean likedByMe = false;	// 사용자 본인이 눌렀는지 여부
 
 
 	public EtfProduct() {
@@ -32,8 +32,7 @@ public class EtfProduct {
 
 	public EtfProduct(Long etfId, String etfCode, String etfName, String market, String theme, Double fee,
 			Integer riskRating, Long aum, Integer currentPrice, Double return1mo, Double return3mo, Double return6mo,
-			Double return1yr, Double return3yr, String description, LocalDateTime createdAt, Integer likeCount,
-			Boolean likedByMe) {
+			Double return1yr, Double return3yr, String description, LocalDateTime createdAt, Integer likeCount) {
 		this.etfId = etfId;
 		this.etfCode = etfCode;
 		this.etfName = etfName;
@@ -51,7 +50,6 @@ public class EtfProduct {
 		this.description = description;
 		this.createdAt = createdAt;
 		this.likeCount = likeCount;
-		this.likedByMe = likedByMe;
 	}
 
 
