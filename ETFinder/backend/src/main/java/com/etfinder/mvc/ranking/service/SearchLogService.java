@@ -14,12 +14,9 @@ public interface SearchLogService {
 	List<SearchLog> selectSearchLogByUser(Long userId);
 	
 	// 3. 특정 로그 삭제 (logId 기준)
-	int deleteSearchLogById(Long searchLogId);
+	int deleteSearchLogById(Long userId, Long searchLogId);
 	
-	// 4. 특정 키워드 전부 삭제
-	int deleteSearchLogByKeyword(Long userId, String keyword);
-	
-    // 5. 전체 삭제 (유저별 전체)
+    // 4. 로그 전체 삭제 (유저별 전체)
     int deleteAllSearchLog(Long userId);
 	
 	
