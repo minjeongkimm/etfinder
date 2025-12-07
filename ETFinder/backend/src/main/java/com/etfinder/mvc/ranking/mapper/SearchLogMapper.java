@@ -17,13 +17,9 @@ public interface SearchLogMapper {
 	List<SearchLog> selectSearchLogByUser(@Param("userId") Long userId);
 	
 	// 3. 사용자별 특정 로그 삭제 (logId 기준)
-	int deleteSearchLogById(@Param("logId") Long searchLogId);
+	int deleteSearchLogById(@Param("userId") Long userId, @Param("searchLogId") Long searchLogId);
 	
-	// 4. 사용자별 특정 키워드 로그 삭제
-	int deleteSearchLogByKeyword(@Param("userId") Long userId,
-			@Param("keyword") String keyword);
-	
-    // 5. 사용자별 검색 로그 전체 삭제 
+    // 4. 사용자별 검색 로그 전체 삭제 
     int deleteAllSearchLog(@Param("userId") Long userId);
 
 }
