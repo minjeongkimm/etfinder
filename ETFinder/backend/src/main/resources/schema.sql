@@ -96,10 +96,9 @@ CREATE TABLE likes (
 -- 6. 검색 로그 (Search Log)
 -- ==========================================
 CREATE TABLE search_log (
-    log_id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    search_log_id           BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id          BIGINT COMMENT '비회원이면 NULL 가능',
     keyword          VARCHAR(100) COMMENT '검색어',
-    filter_string    VARCHAR(200) COMMENT '적용된 필터 조건',
     created_at       DATETIME DEFAULT NOW()
 );
 
