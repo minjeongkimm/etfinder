@@ -33,17 +33,11 @@ public class SearchLogServiceImpl implements SearchLogService {
 
 	// 3. 사용자별 특정 로그 삭제 (logId 기준) 
 	@Override
-	public int deleteSearchLogById(Long searchLogId) {
-		return searchLogMapper.deleteSearchLogById(searchLogId);
+	public int deleteSearchLogById(Long userId, Long searchLogId) {
+		return searchLogMapper.deleteSearchLogById(userId, searchLogId);
 	}
 
-	// 4. 사용자별 특정 키워드 로그 삭제
-	@Override
-	public int deleteSearchLogByKeyword(Long userId, String keyword) {
-		return searchLogMapper.deleteSearchLogByKeyword(userId, keyword);
-	}
-
-	// 5. 사용자별 검색 로그 전체 삭제 
+	// 4. 사용자별 검색 로그 전체 삭제 
 	@Override
 	public int deleteAllSearchLog(Long userId) {
 		return searchLogMapper.deleteAllSearchLog(userId);
