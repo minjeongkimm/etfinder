@@ -22,7 +22,7 @@
     <!-- 3. 사용자별 특정 로그 삭제 -->
     <delete id="deleteSearchLogById">
         DELETE FROM search_log
-        WHERE user_id = #{userId} AND log_id = #{searchLogId}
+        WHERE user_id = #{userId} AND search_log_id = #{searchLogId}
     </delete>
 
     <!-- 4. 사용자별 검색 로그 전체 삭제 -->
