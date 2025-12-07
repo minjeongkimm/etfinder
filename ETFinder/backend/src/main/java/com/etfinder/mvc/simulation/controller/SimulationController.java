@@ -3,7 +3,7 @@ package com.etfinder.mvc.simulation.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +27,7 @@ public class SimulationController {
 		this.userService = userService;
 	}
 
-	@GetMapping
+	@PostMapping
 	public ResponseEntity<?> simulate(@AuthenticationPrincipal String providerId, @RequestBody SimulationRequest request){
 		
 		// 1) 로그인 여부 확인
