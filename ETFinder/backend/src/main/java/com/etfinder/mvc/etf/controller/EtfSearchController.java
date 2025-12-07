@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.service.EtfSearchService;
+import com.etfinder.mvc.ranking.dto.SearchLog;
+import com.etfinder.mvc.ranking.service.SearchLogService;
 import com.etfinder.mvc.user.dto.User;
 
 @RestController
@@ -21,9 +23,11 @@ import com.etfinder.mvc.user.dto.User;
 public class EtfSearchController {
 
 	private final EtfSearchService etfSearchService;
+	private final SearchLogService searchLogService;
 	
-	public EtfSearchController(EtfSearchService etfSearchService) {
+	public EtfSearchController(EtfSearchService etfSearchService, SearchLogService searchLogService) {
 		this.etfSearchService = etfSearchService;
+		this.searchLogService = searchLogService;
 	}
 	
 	// 1. 전체 조회
@@ -55,14 +59,27 @@ public class EtfSearchController {
 	
 	// 3. ETF 검색 및 정렬 
 	@GetMapping("/search")
-	public ResponseEntity<?> search(@ModelAttribute SearchCondition con){
-		List<EtfProduct> list = etfSearchService.searchByCondition(con);
+	public ResponseEntity<?> search(
+	        @ModelAttribute SearchCondition con,
+	        @AuthenticationPrincipal User user
+	) {
+	    // 1. 실제 검색
+	    List<EtfProduct> list = etfSearchService.searchByCondition(con);
 
-		if(list == null || list.size() == 0)
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-		return new ResponseEntity<List<EtfProduct>>(list, HttpStatus.OK);
-		
+	    // 2. 검색 로그 저장 (로그인 사용자에 한해)
+	    if (user != null && con.getKeyword() != null && !con.getKeyword().isBlank()) {
+	        SearchLog log = new SearchLog();
+	        log.setUserId(user.getUserId());
+	        log.setKeyword(con.getKeyword());
+	        // 필요하면 추가 필드들: 필터 옵션, 정렬 기준 등
+	        searchLogService.insertSearchLog(log);
+	    }
+
+	    if (list == null || list.isEmpty())
+	        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	    return new ResponseEntity<List<EtfProduct>>(list, HttpStatus.OK);
 	}
+
  	
 	
 }
