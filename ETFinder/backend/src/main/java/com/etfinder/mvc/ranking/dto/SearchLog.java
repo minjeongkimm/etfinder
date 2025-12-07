@@ -7,17 +7,15 @@ public class SearchLog {
 	private Long searchLogId;
 	private Long userId;
 	private String keyword;
-	private String filterString;
 	private LocalDateTime createdAt;
 
 	public SearchLog() {
 	}
 
-	public SearchLog(Long searchLogId, Long userId, String keyword, String filterString, LocalDateTime createdAt) {
+	public SearchLog(Long searchLogId, Long userId, String keyword, LocalDateTime createdAt) {
 		this.searchLogId = searchLogId;
 		this.userId = userId;
 		this.keyword = keyword;
-		this.filterString = filterString;
 		this.createdAt = createdAt;
 	}
 
@@ -45,14 +43,6 @@ public class SearchLog {
 		this.keyword = keyword;
 	}
 
-	public String getFilterString() {
-		return filterString;
-	}
-
-	public void setFilterString(String filterString) {
-		this.filterString = filterString;
-	}
-
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
@@ -63,8 +53,8 @@ public class SearchLog {
 
 	@Override
 	public String toString() {
-		return "SearchLog [searchLogId=" + searchLogId + ", userId=" + userId + ", keyword=" + keyword
-				+ ", filterString=" + filterString + ", createdAt=" + createdAt + "]";
+		return "SearchLog [searchLogId=" + searchLogId + ", userId=" + userId + ", keyword=" + keyword + ", createdAt="
+				+ createdAt + "]";
 	}
 
 }
