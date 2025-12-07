@@ -1,13 +1,11 @@
 package com.etfinder.mvc.ranking.mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.etfinder.mvc.ranking.dto.SearchLog;
-import com.etfinder.mvc.ranking.dto.SearchRanking;
 
 @Mapper
 public interface SearchLogMapper {
