@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>AboutView</h3>
+    <h3>EtfSearch</h3>
   </div>
 </template>
 

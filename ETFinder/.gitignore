@@ -7,3 +7,9 @@
 .vscode/
 .settings/
 .metadata/
+.classpath
+.project
+.factorypath
+
+# 빌드 결과물 무시
+target/
