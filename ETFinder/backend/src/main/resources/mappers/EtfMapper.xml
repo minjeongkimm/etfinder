@@ -175,5 +175,28 @@
 		FROM etf_product
 		WHERE return_1yr IS NOT NULL
 	</select>
-
+	
+	<!-- 7. ETF 정보 수정 -->
+	<update id="updateEtf">
+		UPDATE etf_product
+	    <set>
+	        <if test="etf.etfName != null"> etf_name = #{etf.etfName}, </if>
+	        <if test="etf.market != null"> market = #{etf.market}, </if>
+	        <if test="etf.theme != null"> theme = #{etf.theme}, </if>
+	        <if test="etf.fee != null"> fee = #{etf.fee}, </if>
+	        <if test="etf.riskRating != null"> risk_rating = #{etf.riskRating}, </if>
+	        <if test="etf.aum != null"> aum = #{etf.aum}, </if>
+	        <if test="etf.currentPrice != null"> current_price = #{etf.currentPrice}, </if>
+	        <if test="etf.description != null"> description = #{etf.description}, </if>
+	        <if test="etf.return1mo != null"> return_1mo = #{etf.return1mo}, </if>
+	        <if test="etf.return1yr != null"> return_1yr = #{etf.return1yr}, </if>
+	    </set>
+	    WHERE etf_code = #{etfCode}
+	</update>
+	
+	<!-- 8. ETF 삭제 -->
+	<delete id="deleteEtf">
+		DELETE FROM etf_product
+		WHERE etf_code = #{etfCode}
+	</delete>
 </mapper>

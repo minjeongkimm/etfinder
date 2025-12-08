@@ -30,4 +30,10 @@ public interface EtfMapper {
 	
 	// 6. Etf 추천 기준 항목 조회
 	List<EtfProduct> selectEtfsForRecommendation();
+	
+	// 7. Etf 정보 수정
+	int updateEtf(@Param("etfCode") String etfCode, @Param("etf") EtfProduct etf);
+	
+	// 8. Etf 삭제
+	int deleteEtf(String etfCode);
 }
