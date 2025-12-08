@@ -61,8 +61,10 @@ public class EtfSearchController {
 
 		EtfProduct etf = etfSearchService.selectOneEtf(etfId, userId);
 		
-		if (etf != null)
+		if (etf != null) {
+			etfSearchService.increaseViewCount(etfId);
 			return new ResponseEntity<>(etf, HttpStatus.OK);
+		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		
 	}
