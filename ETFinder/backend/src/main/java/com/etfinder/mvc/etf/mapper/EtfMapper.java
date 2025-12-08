@@ -13,7 +13,7 @@ public interface EtfMapper {
 
 	// 1. Etf 정보 등록
 	// XML의 <insert id="insertEtf"> 와 연결됨
-	void insertEtf(EtfProduct etf);
+	int insertEtf(EtfProduct etf);
 
 	// 2. Etf 일일 종가 갱신
 	// etf_code로 찾아 current_price만 갱신
