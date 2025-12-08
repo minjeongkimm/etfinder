@@ -1,13 +1,13 @@
 <template>
   <div>
     <h1>로그인 페이지</h1>
-    <button class="kakao-btn" @click="kakaoLogin">
-      카카오계정으로 로그인
-    </button>
+    <img :src="kakaoLoginBtn" alt="카카오 로그인" @click="kakaoLogin" class="kakao-img-btn"/>
   </div>
 </template>
 
 <script setup>
+import kakaoLoginBtn from '@/assets/images/kakao_login_medium_wide.png';
+
 // import.meta.env 객체를 통해 .env 파일의 값을 가져옴
 const REST_API_KEY = import.meta.env.VITE_KAKAO_API_KEY;
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
@@ -18,3 +18,10 @@ const kakaoLogin = () => {
   window.location.href = kakaoAuthUrl;
 }
 </script>
+
+<style scoped>
+.kakao-img-btn{
+  cursor: pointer;
+}
+
+</style>

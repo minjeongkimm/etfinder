@@ -1,8 +1,7 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import http from '@/util/http-common'
 import router from '@/router'
-import axios from '@/util/http-common'
 
 export const useAuthStore = defineStore('auth', () => {
   // 상태(State)
@@ -39,18 +38,19 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     user.value = null
     localStorage.removeItem('accessToken')
-    router.push('/login')
+    // 로그아웃 후 홈으로 보내기
+    router.push('/')
   }
 
   const getMyInfo = function(){
-    axios.get('/users/me')
+    http.get('/users/me')
     .then((res)=>{
         user.value = res.data
     })
   }
 
   // Getters (토큰이 있는지 확인)
-  const isAuthenticated = () => !!token.value
+  const isAuthenticated = computed(() => !!token.value)
 
   return { token, user, kakaoLogin, logout, isAuthenticated, getMyInfo}
 })
