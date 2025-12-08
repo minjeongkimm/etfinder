@@ -1,5 +1,7 @@
 package com.etfinder.mvc.config;
 
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.etfinder.mvc.auth.security.JwtAuthenticationFilter;
 import com.etfinder.mvc.auth.security.JwtProvider;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -25,6 +30,20 @@ public class SecurityConfig {
         http
             // 1. CSRF 해제
             .csrf(csrf -> csrf.disable())
+            
+            // [추가] CORS 설정 연결하기
+            .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                @Override
+                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Collections.singletonList("http://localhost:5173")); // 프론트엔드 주소 허용
+                    config.setAllowedMethods(Collections.singletonList("*")); // GET, POST, PUT 등 모든 메서드 허용
+                    config.setAllowCredentials(true); // 쿠키, 인증 헤더 허용
+                    config.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더 허용
+                    config.setMaxAge(3600L); // 1시간 동안 캐싱
+                    return config;
+                }
+            }))
             
             // 2. Form 로그인 해제 (카카오 로그인 사용하기 때문에)
             .formLogin(form -> form.disable())
