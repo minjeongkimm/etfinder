@@ -3,29 +3,39 @@ package com.etfinder.mvc.etf.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.mapper.EtfMapper;
 import com.etfinder.mvc.like.mapper.LikeMapper;
+import com.etfinder.mvc.ranking.mapper.ViewRankingMapper;
 
 @Service
+@Transactional
 public class EtfSearchServiceImpl implements EtfSearchService {
 
 	private final EtfMapper etfMapper;
     private final LikeMapper likeMapper; // 새로 주입
+    private final ViewRankingMapper viewRankingMapper;
 
-    public EtfSearchServiceImpl(EtfMapper etfMapper, LikeMapper likeMapper) {
-        this.etfMapper = etfMapper;
-        this.likeMapper = likeMapper;
-    }
 	
+    public EtfSearchServiceImpl(EtfMapper etfMapper, LikeMapper likeMapper, ViewRankingMapper viewRankingMapper) {
+		this.etfMapper = etfMapper;
+		this.likeMapper = likeMapper;
+		this.viewRankingMapper = viewRankingMapper;
+	}
+
+
+	// 1. ETF 전체 조회 
 	@Override
 	public List<EtfProduct> selectAllEtf() {
 		
 		return etfMapper.selectAllEtf();
 	}
 
+	
+	// 2. ETF 상세 조회 
     @Override
     public EtfProduct selectOneEtf(Long etfId, Long userId) {
         EtfProduct etf = etfMapper.selectOneEtf(etfId);
@@ -43,9 +53,22 @@ public class EtfSearchServiceImpl implements EtfSearchService {
         return etf;
     }
 
+    // 3. ETF 검색 및 정렬 
 	@Override
 	public List<EtfProduct> searchByCondition(SearchCondition con) {
 		return etfMapper.searchByCondition(con);
 	}
 
+	// 4. ETF 상세 페이지 진입 시 조회수 증가 
+	@Override
+	@Transactional
+	public int increaseViewCount(Long etfId) {
+		
+		int updated = viewRankingMapper.increaseViewCount(etfId);
+		
+		if(updated == 0)
+			viewRankingMapper.insertInitial(etfId);
+		
+		return updated;
+	}
 }
