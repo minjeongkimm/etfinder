@@ -24,7 +24,7 @@ public class JwtProviderTest {
         fakeUser.setNickname("테스트개미");
 
         // 2. 토큰 생성해보기 (createToken)
-        String token = jwtProvider.createToken(fakeUser);
+        String token = jwtProvider.createToken(fakeUser, "ROLE_USER");
         
         System.out.println("============================================");
         System.out.println("생성된 토큰: " + token);
