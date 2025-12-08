@@ -180,6 +180,7 @@
 	<update id="updateEtf">
 		UPDATE etf_product
 	    <set>
+	    	<if test="etf.etfCode != null"> etf_code = #{etf.etfCode}, </if>
 	        <if test="etf.etfName != null"> etf_name = #{etf.etfName}, </if>
 	        <if test="etf.market != null"> market = #{etf.market}, </if>
 	        <if test="etf.theme != null"> theme = #{etf.theme}, </if>
