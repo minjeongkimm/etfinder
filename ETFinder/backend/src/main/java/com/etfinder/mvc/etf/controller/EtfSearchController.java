@@ -80,31 +80,27 @@ public class EtfSearchController {
 		List<EtfProduct> list = etfSearchService.searchByCondition(con);
 
 		// 2. 로그인 확인
-		// 2-1 로그인 여부 확인
-		if (providerId == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+		// 2-1 로그인 여부 확인 
+		Long userId = null;	//default null 로 설정 
+		
+		if(providerId != null) {
+			User user = userService.getUserByProviderId(providerId);
+			if(user != null)
+				userId = user.getUserId();
 		}
+	
 
-		// 2-2 providerId -> userId 조회
-		User user = userService.getUserByProviderId(providerId);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유저 정보를 찾을 수 없습니다.");
-		}
-
-
-		// 3. 검색 로그 저장 (로그인 사용자에 한해)
-		if (user != null && con.getKeyword() != null && !con.getKeyword().isBlank()) {
+		// 3. 검색 로그 저장 
+		if (con.getKeyword() != null && !con.getKeyword().isBlank()) {
 
 			SearchLog log = new SearchLog();
-			log.setUserId(user.getUserId());
+			log.setUserId(userId);
 			log.setKeyword(con.getKeyword());
 			// 필요하면 추가 필드들: 필터 옵션, 정렬 기준 등
 			searchLogService.insertSearchLog(log);
 		}
 
-		if (list == null || list.isEmpty())
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-		return new ResponseEntity<List<EtfProduct>>(list, HttpStatus.OK);
+		return ResponseEntity.ok(list);
 	}
 
 }
