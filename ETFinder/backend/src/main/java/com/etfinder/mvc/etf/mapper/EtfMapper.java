@@ -13,7 +13,7 @@ public interface EtfMapper {
 
 	// 1. Etf 정보 등록
 	// XML의 <insert id="insertEtf"> 와 연결됨
-	void insertEtf(EtfProduct etf);
+	int insertEtf(EtfProduct etf);
 
 	// 2. Etf 일일 종가 갱신
 	// etf_code로 찾아 current_price만 갱신
@@ -30,4 +30,10 @@ public interface EtfMapper {
 	
 	// 6. Etf 추천 기준 항목 조회
 	List<EtfProduct> selectEtfsForRecommendation();
+	
+	// 7. Etf 정보 수정
+	int updateEtf(@Param("etfCode") String etfCode, @Param("etf") EtfProduct etf);
+	
+	// 8. Etf 삭제
+	int deleteEtf(String etfCode);
 }

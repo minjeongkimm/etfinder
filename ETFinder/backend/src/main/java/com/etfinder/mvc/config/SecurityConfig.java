@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -54,18 +55,24 @@ public class SecurityConfig {
 
             // 4. URL별 권한 관리
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/", 
-                        "/index.html", 
-                        "/api/auth/**",      // 로그인 관련은 누구나 접속 가능
-                        "/api/etfs/**",        // ETF 조회도 로그인 없이 보여주기,
-                        "/api/ranking/**",		// 랭킹도 로그인 없이 조회 가능 
-                        "/swagger-ui/**", "/v3/api-docs/**"		// 스웨거 화면 접속용
-                ).permitAll()
-                .requestMatchers("/api/likes/**").authenticated()
-                .requestMatchers("/api/bookmarks/**").authenticated()
-                .requestMatchers("/api/comments/**").authenticated()
-                .anyRequest().authenticated() // 그 외 모든 요청(내 정보 수정 등)은 토큰 필요!
+            		// etf 등록, 수정, 삭제는 관리자만 가능
+	            	.requestMatchers(HttpMethod.POST, "/api/etfs/**").hasRole("ADMIN")
+	                .requestMatchers(HttpMethod.PATCH, "/api/etfs/**").hasRole("ADMIN")
+	                .requestMatchers(HttpMethod.DELETE, "/api/etfs/**").hasRole("ADMIN")
+	                // etf 조회는 누구나 가능 
+	                .requestMatchers(HttpMethod.GET, "/api/etfs/**").permitAll()
+	                // 누구나 접속 가능
+	                .requestMatchers(
+	                        "/", 
+	                        "/index.html", 
+	                        "/api/auth/**",      // 로그인 관련은 누구나 접속 가능
+	                        "/api/ranking/**",		// 랭킹도 로그인 없이 조회 가능 
+	                        "/swagger-ui/**", "/v3/api-docs/**"		// 스웨거 화면 접속용
+	                ).permitAll()
+	                .requestMatchers("/api/likes/**").authenticated()
+	                .requestMatchers("/api/bookmarks/**").authenticated()
+	                .requestMatchers("/api/comments/**").authenticated()
+	                .anyRequest().authenticated() // 그 외 모든 요청(내 정보 수정 등)은 토큰 필요!
             )
 
             // 5. 만든 JWT 필터를 "UsernamePassword...Filter" 앞에 끼워넣기

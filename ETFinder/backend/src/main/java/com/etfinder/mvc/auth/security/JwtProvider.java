@@ -29,11 +29,12 @@ public class JwtProvider {
     }
 
     // 토큰 생성 메서드
-    public String createToken(User user) {
+    public String createToken(User user, String role) {
         return Jwts.builder()
                 .setSubject(user.getProviderId())
                 .claim("id", user.getUserId())
                 .claim("nickname", user.getNickname())
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) 
@@ -43,6 +44,11 @@ public class JwtProvider {
     // 토큰에서 사용자 식별자 추출
     public String getProviderId(String token) {
         return parseClaims(token).getSubject();
+    }
+    
+    // 토큰에서 role 추출
+    public String getRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
     
     // 토큰 유효성 검증 & 클레임 파싱용 내부 메서드

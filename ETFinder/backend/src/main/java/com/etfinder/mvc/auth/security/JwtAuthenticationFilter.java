@@ -2,8 +2,10 @@ package com.etfinder.mvc.auth.security;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -35,13 +37,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 // 4. 토큰에서 ID(providerId) 꺼내기
                 String providerId = jwtProvider.getProviderId(token);
+                
+                // 5. 토큰에서 role 꺼내기
+                String role = jwtProvider.getRole(token);
+                
+                // 권한이 없으면 기본값 USER로 설정
+                if (role == null) role = "ROLE_USER";
+                
+                // 5. 추출한 role을 스프링 시큐리티가 이해하는 형태(List<GrantedAuthority>)로 변환
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
-                // 5. "이 사람 인증됐어요!" 도장 쾅! (Authentication 객체 생성)
-                // 비밀번호는 없으니까 null, 권한은 일단 비워둠(Collections.emptyList())
+                // 6. 인증절차 (Authentication 객체 생성)
+                // 비밀번호는 없으니까 null, 권한은 authorities로 설정
                 UsernamePasswordAuthenticationToken authentication = 
-                        new UsernamePasswordAuthenticationToken(providerId, null, Collections.emptyList());
+                        new UsernamePasswordAuthenticationToken(providerId, null, authorities);
 
-                // 6. 스프링 시큐리티 저장소에 저장 (컨트롤러에서 식별 가능하도록)
+                // 7. 스프링 시큐리티 저장소에 저장 (컨트롤러에서 식별 가능하도록)
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
