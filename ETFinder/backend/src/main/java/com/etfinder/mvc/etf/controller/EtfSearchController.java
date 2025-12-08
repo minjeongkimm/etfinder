@@ -47,50 +47,44 @@ public class EtfSearchController {
 
 	// 2. 상세 조회
 	@GetMapping("/{etfId}")
-	public ResponseEntity<?> detail(@PathVariable("etfId") Long etfId,
-							@AuthenticationPrincipal String providerId) {
-		
-		
-		// 1. 로그인 확인
-		// ① 로그인 여부 확인
-		if (providerId == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	public ResponseEntity<?> detail(@PathVariable("etfId") Long etfId, @AuthenticationPrincipal String providerId) {
+
+		Long userId = null; // default null
+
+		// 로그인한 경우만 userId 세팅
+		if (providerId != null) {
+			User user = userService.getUserByProviderId(providerId);
+			if (user != null) {
+				userId = user.getUserId();
+			}
 		}
-		
-		// ② providerId -> userId 조회
-		User user = userService.getUserByProviderId(providerId);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유저 정보를 찾을 수 없습니다.");
-		}
-		
-		Long userId = (user != null) ? user.getUserId() : null;
 
 		EtfProduct etf = etfSearchService.selectOneEtf(etfId, userId);
+		
 		if (etf != null)
 			return new ResponseEntity<>(etf, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
 	}
 
 	// 3. ETF 검색 및 정렬
 	@GetMapping("/search")
-	public ResponseEntity<?> search(@ModelAttribute SearchCondition con,
-							@AuthenticationPrincipal String providerId) {
-		
+	public ResponseEntity<?> search(@ModelAttribute SearchCondition con, @AuthenticationPrincipal String providerId) {
+
 		// 1. 실제 검색
 		List<EtfProduct> list = etfSearchService.searchByCondition(con);
 
 		// 2. 로그인 확인
-		// 2-1 로그인 여부 확인 
-		Long userId = null;	//default null 로 설정 
-		
-		if(providerId != null) {
+		// 2-1 로그인 여부 확인
+		Long userId = null; // default null 로 설정
+
+		if (providerId != null) {
 			User user = userService.getUserByProviderId(providerId);
-			if(user != null)
+			if (user != null)
 				userId = user.getUserId();
 		}
-	
 
-		// 3. 검색 로그 저장 
+		// 3. 검색 로그 저장
 		if (con.getKeyword() != null && !con.getKeyword().isBlank()) {
 
 			SearchLog log = new SearchLog();
