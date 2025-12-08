@@ -58,6 +58,10 @@
 		WHERE etf_id = #{etfId}
 	</update>
 	
-	
+	<!-- 5. etf_statistics 테이블에 초기 row 삽입 -->
+	<insert id="insertInitial" parameterType="Long">
+		INSERT INTO etf_statistics(etf_id, view_count, updated_at)
+		VALUES (#{etfId}, 1, NOW())
+	</insert>
 	
 </mapper>

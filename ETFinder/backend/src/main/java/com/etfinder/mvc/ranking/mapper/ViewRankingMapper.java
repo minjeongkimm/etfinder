@@ -21,4 +21,7 @@ public interface ViewRankingMapper {
 	// 4. 조회수 증가 
 	int increaseViewCount(Long etfId);
 	
+	// 5. etf_statistics 테이블에 초기 row 삽입
+	int insertInitial(Long etfId);
+	
 }

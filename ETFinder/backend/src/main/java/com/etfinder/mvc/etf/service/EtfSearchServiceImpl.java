@@ -3,6 +3,7 @@ package com.etfinder.mvc.etf.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
@@ -11,6 +12,7 @@ import com.etfinder.mvc.like.mapper.LikeMapper;
 import com.etfinder.mvc.ranking.mapper.ViewRankingMapper;
 
 @Service
+@Transactional
 public class EtfSearchServiceImpl implements EtfSearchService {
 
 	private final EtfMapper etfMapper;
@@ -59,7 +61,14 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 
 	// 4. ETF 상세 페이지 진입 시 조회수 증가 
 	@Override
+	@Transactional
 	public int increaseViewCount(Long etfId) {
-		return viewRankingMapper.increaseViewCount(etfId);
+		
+		int updated = viewRankingMapper.increaseViewCount(etfId);
+		
+		if(updated == 0)
+			viewRankingMapper.insertInitial(etfId);
+		
+		return updated;
 	}
 }
