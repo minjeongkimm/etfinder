@@ -16,4 +16,7 @@ public interface EtfSearchService {
 	// 3. 검색 
 	List<EtfProduct> searchByCondition(SearchCondition con);
 
+	// 4. 상세 페이지 진입 시 조회수 증가 
+	int increaseViewCount(Long etfId);
+	
 }

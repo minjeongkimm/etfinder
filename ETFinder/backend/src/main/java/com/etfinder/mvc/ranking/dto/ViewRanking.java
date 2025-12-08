@@ -2,24 +2,23 @@ package com.etfinder.mvc.ranking.dto;
 
 import java.time.LocalDateTime;
 
-
-// 조회수, 댓글 기반 랭킹 dto
-public class EtfRanking {
+// 조회수 랭킹 dto
+public class ViewRanking {
 
 	private Long statId;
 	private Long etfId;
+	private String etfName;
 	private Long viewCount;
-	private Long commentCount;
 	private LocalDateTime updatedAt;
 
-	public EtfRanking() {
+	public ViewRanking() {
 	}
 
-	public EtfRanking(Long statId, Long etfId, Long viewCount, Long commentCount, LocalDateTime updatedAt) {
+	public ViewRanking(Long statId, Long etfId, String etfName, Long viewCount, LocalDateTime updatedAt) {
 		this.statId = statId;
 		this.etfId = etfId;
+		this.etfName = etfName;
 		this.viewCount = viewCount;
-		this.commentCount = commentCount;
 		this.updatedAt = updatedAt;
 	}
 
@@ -39,20 +38,20 @@ public class EtfRanking {
 		this.etfId = etfId;
 	}
 
+	public String getEtfName() {
+		return etfName;
+	}
+
+	public void setEtfName(String etfName) {
+		this.etfName = etfName;
+	}
+
 	public Long getViewCount() {
 		return viewCount;
 	}
 
 	public void setViewCount(Long viewCount) {
 		this.viewCount = viewCount;
-	}
-
-	public Long getCommentCount() {
-		return commentCount;
-	}
-
-	public void setCommentCount(Long commentCount) {
-		this.commentCount = commentCount;
 	}
 
 	public LocalDateTime getUpdatedAt() {
@@ -65,8 +64,8 @@ public class EtfRanking {
 
 	@Override
 	public String toString() {
-		return "Ranking [statId=" + statId + ", etfId=" + etfId + ", viewCount=" + viewCount + ", commentCount="
-				+ commentCount + ", updatedAt=" + updatedAt + "]";
+		return "ViewRanking [statId=" + statId + ", etfId=" + etfId + ", etfName=" + etfName + ", viewCount="
+				+ viewCount + ", updatedAt=" + updatedAt + "]";
 	}
 
 }

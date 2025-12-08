@@ -58,7 +58,8 @@ public class SecurityConfig {
                         "/", 
                         "/index.html", 
                         "/api/auth/**",      // 로그인 관련은 누구나 접속 가능
-                        "/api/etfs/**",        // ETF 조회도 로그인 없이 보여주기
+                        "/api/etfs/**",        // ETF 조회도 로그인 없이 보여주기,
+                        "/api/ranking/**",		// 랭킹도 로그인 없이 조회 가능 
                         "/swagger-ui/**", "/v3/api-docs/**"		// 스웨거 화면 접속용
                 ).permitAll()
                 .requestMatchers("/api/likes/**").authenticated()

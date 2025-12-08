@@ -156,8 +156,7 @@ CREATE TABLE etf_statistics (
     stat_id        BIGINT AUTO_INCREMENT PRIMARY KEY,
     etf_id         BIGINT NOT NULL,
     view_count     BIGINT DEFAULT 0 COMMENT '조회수',
-    like_count     BIGINT DEFAULT 0 COMMENT '좋아요 수 (캐싱)',
-    comment_count  BIGINT DEFAULT 0 COMMENT '댓글 수 (캐싱)',
+--    comment_count  BIGINT DEFAULT 0 COMMENT '댓글 수 (캐싱)',
     updated_at     DATETIME DEFAULT NOW() ON UPDATE NOW(),
     
     FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE,
