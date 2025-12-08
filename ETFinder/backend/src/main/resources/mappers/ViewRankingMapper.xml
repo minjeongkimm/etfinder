@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.etfinder.mvc.ranking.mapper.ViewRankingMapper">
+
+	<!-- 1. 실시간 조회수 랭킹 -->
+	
+
+	<!-- 2. 일간 조회수 랭킹  -->
+
+
+	<!-- 3. 월간 조회수 랭킹  -->
+</mapper>
