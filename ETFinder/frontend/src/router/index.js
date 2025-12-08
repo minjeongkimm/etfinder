@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import KakaoCallback from '@/views/KakaoCallback.vue'
@@ -6,6 +7,7 @@ import EtfSearchView from '@/views/EtfSearchView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import PortfolioView from '@/views/PortfolioView.vue'
 import RecommendResultView from '@/views/RecommendResultView.vue'
+import BookmarkView from '@/views/BookmarkView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,18 +36,41 @@ const router = createRouter({
       path: '/users/me',
       name: 'myPage',
       component: MyPageView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/bookmarks',
+      name: 'bookmark',
+      component: BookmarkView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/portfolios',
       name: 'portfolio',
       component: PortfolioView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/etfs/recommend',
       name: 'recommend',
       component: RecommendResultView,
+      meta: { requiresAuth: true }
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  
+  // 1. 가려는 곳이 'requiresAuth' 딱지가 붙어있는지 확인
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // 2. 로그인 안 했으면 팝업 띄우고 로그인 페이지로 보내기
+    alert('로그인이 필요한 서비스입니다.')
+    next({ name: 'login' })
+  } else {
+    // 3. 문제없으면 통과
+    next()
+  }
 })
 
 export default router
