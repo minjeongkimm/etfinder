@@ -1,13 +1,13 @@
 <template>
   <div>
     <h2>ETFinder</h2>
-    <TheHeader/>
+    <TheSideBar/>
     <router-view></router-view>
   </div>
 </template>
 
 <script setup>
-import TheHeader from './components/common/TheHeader.vue';
+import TheSideBar from './components/common/TheSideBar.vue';
 
 
 </script>
