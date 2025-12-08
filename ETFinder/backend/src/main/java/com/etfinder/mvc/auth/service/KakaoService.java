@@ -36,6 +36,8 @@ public class KakaoService {
 	@Value("${kakao.redirect_uri}")
 	private String kakaoRedirectUri;
 	
+	private final String ADMIN_PROVIDER_ID = "4604028154";
+	
 	public String kakaoLogin(String code) {
 		// 1. 인가 코드로 액세스 토큰 요청
 		String accessToken = getAccessToken(code);
@@ -44,8 +46,16 @@ public class KakaoService {
 		// 3. db 조회 후 없으면 회원가입, 있으면 로그인 처리 
 		User user = registerOrLogin(kakaoUserInfo);
 		
+		// 기본은 일반 유저
+		String role = "ROLE_USER"; 
+        
+        // 내 ID랑 똑같으면 관리자 설정
+        if (ADMIN_PROVIDER_ID.equals(user.getProviderId())) {
+            role = "ROLE_ADMIN";
+        }
+		
 		// 4. 우리 서비스 전용 JWT 토큰 발급 후 반환 
-		return jwtProvider.createToken(user);
+		return jwtProvider.createToken(user, role);
 	}
 	
 	// 액세스 토큰 받기
