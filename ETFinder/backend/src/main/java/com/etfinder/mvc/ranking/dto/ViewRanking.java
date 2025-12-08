@@ -7,15 +7,17 @@ public class ViewRanking {
 
 	private Long statId;
 	private Long etfId;
+	private String etfName;
 	private Long viewCount;
 	private LocalDateTime updatedAt;
 
 	public ViewRanking() {
 	}
 
-	public ViewRanking(Long statId, Long etfId, Long viewCount, LocalDateTime updatedAt) {
+	public ViewRanking(Long statId, Long etfId, String etfName, Long viewCount, LocalDateTime updatedAt) {
 		this.statId = statId;
 		this.etfId = etfId;
+		this.etfName = etfName;
 		this.viewCount = viewCount;
 		this.updatedAt = updatedAt;
 	}
@@ -36,6 +38,14 @@ public class ViewRanking {
 		this.etfId = etfId;
 	}
 
+	public String getEtfName() {
+		return etfName;
+	}
+
+	public void setEtfName(String etfName) {
+		this.etfName = etfName;
+	}
+
 	public Long getViewCount() {
 		return viewCount;
 	}
@@ -54,8 +64,8 @@ public class ViewRanking {
 
 	@Override
 	public String toString() {
-		return "ViewRanking [statId=" + statId + ", etfId=" + etfId + ", viewCount=" + viewCount + ", updatedAt="
-				+ updatedAt + "]";
+		return "ViewRanking [statId=" + statId + ", etfId=" + etfId + ", etfName=" + etfName + ", viewCount="
+				+ viewCount + ", updatedAt=" + updatedAt + "]";
 	}
 
 }
