@@ -18,6 +18,7 @@ public interface ViewRankingMapper {
 	// 3. 월간 조회수 랭킹 조회 
 	List<ViewRanking> getMonthlyViewRanking();
 	
-	
+	// 4. 조회수 증가 
+	int increaseViewCount(Long etfId);
 	
 }
