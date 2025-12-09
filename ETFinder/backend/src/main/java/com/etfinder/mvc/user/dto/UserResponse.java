@@ -6,16 +6,18 @@ public class UserResponse {
 	private String nickname;
 	private int age;
 	private String propensity;
+	private String providerId;
 	
 	public UserResponse() {
 	}
 
-	public UserResponse(String email, String nickname, int age, String propensity) {
+	public UserResponse(String email, String nickname, int age, String propensity, String providerId) {
 		super();
 		this.email = email;
 		this.nickname = nickname;
 		this.age = age;
 		this.propensity = propensity;
+		this.providerId = providerId;
 	}
 
 	public String getEmail() {
@@ -49,11 +51,19 @@ public class UserResponse {
 	public void setPropensity(String propensity) {
 		this.propensity = propensity;
 	}
+	
+	public String getProviderId() {
+		return providerId;
+	}
+
+	public void setProviderId(String providerId) {
+		this.providerId = providerId;
+	}
 
 	@Override
 	public String toString() {
 		return "UserResponse [email=" + email + ", nickname=" + nickname + ", age=" + age + ", propensity=" + propensity
-				+ "]";
+				+ ", providerId=" + providerId + "]";
 	}
-	
+
 }

@@ -1,13 +1,14 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import http from '@/util/http-common'
 import router from '@/router'
-import axios from '@/util/http-common'
 
 export const useAuthStore = defineStore('auth', () => {
   // 상태(State)
   const token = ref(localStorage.getItem('accessToken') || null)
   const user = ref(null) // 사용자 정보 (닉네임 등)
+
+  const ADMIN_PROVIDER_ID = "4604028154";
 
   // 동작(Actions)
   const kakaoLogin = async (code) => {
@@ -39,18 +40,27 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     user.value = null
     localStorage.removeItem('accessToken')
-    router.push('/login')
+    // 로그아웃 후 홈으로 보내기
+    router.push('/')
   }
 
   const getMyInfo = function(){
-    axios.get('/users/me')
+    http.get('/users/me')
     .then((res)=>{
         user.value = res.data
     })
   }
 
-  // Getters (토큰이 있는지 확인)
-  const isAuthenticated = () => !!token.value
+  const isAdmin = computed(() => {
+    // 1. 유저 정보가 없으면 false
+    if (!user.value) return false;
 
-  return { token, user, kakaoLogin, logout, isAuthenticated, getMyInfo}
+    // 2. 내 providerId가 관리자 ID랑 똑같은지 확인 (문자열 비교)
+    return String(user.value.providerId) === ADMIN_PROVIDER_ID;
+  });
+
+  // Getters (토큰이 있는지 확인)
+  const isAuthenticated = computed(() => !!token.value)
+
+  return { token, user, kakaoLogin, logout, isAuthenticated, getMyInfo, isAdmin}
 })
