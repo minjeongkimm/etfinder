@@ -434,11 +434,19 @@ const fetchEtfDetail = async () => {
 
 // 좋아요 토글
 const handleToggleLike = async () => {
-  if (!authStore.isAuthenticated) {
+  // 로그인 체크
+  const token = localStorage.getItem('accessToken')
+  if (!authStore.isAuthenticated || !token) {
+    console.warn('❌ 로그인 필요:', { 
+      isAuthenticated: authStore.isAuthenticated, 
+      hasToken: !!token 
+    })
     alert('로그인이 필요합니다.')
     router.push('/login')
     return
   }
+
+  console.log('✅ 좋아요 요청 시작:', { etfId: etf.value.etfId, hasToken: true })
 
   likeLoading.value = true
   try {
@@ -450,12 +458,24 @@ const handleToggleLike = async () => {
       etf.value.likeCount = etf.value.likedByMe 
         ? (etf.value.likeCount || 0) + 1 
         : Math.max((etf.value.likeCount || 0) - 1, 0)
+      
+      console.log('✅ 좋아요 성공:', { 
+        likedByMe: etf.value.likedByMe, 
+        likeCount: etf.value.likeCount 
+      })
     } else {
+      console.error('❌ 좋아요 실패:', result.message)
       alert(result.message)
     }
   } catch (err) {
-    console.error('좋아요 처리 실패:', err)
-    alert('좋아요 처리에 실패했습니다.')
+    console.error('❌ 좋아요 에러:', err)
+    if (err.response?.status === 403) {
+      alert('권한이 없습니다. 다시 로그인해주세요.')
+      localStorage.removeItem('accessToken')
+      router.push('/login')
+    } else {
+      alert('좋아요 처리에 실패했습니다.')
+    }
   } finally {
     likeLoading.value = false
   }
@@ -463,11 +483,19 @@ const handleToggleLike = async () => {
 
 // 북마크 토글
 const handleToggleBookmark = async () => {
-  if (!authStore.isAuthenticated) {
+  // 로그인 체크
+  const token = localStorage.getItem('accessToken')
+  if (!authStore.isAuthenticated || !token) {
+    console.warn('❌ 로그인 필요:', { 
+      isAuthenticated: authStore.isAuthenticated, 
+      hasToken: !!token 
+    })
     alert('로그인이 필요합니다.')
     router.push('/login')
     return
   }
+
+  console.log('✅ 북마크 요청 시작:', { etfId: etf.value.etfId, hasToken: true })
 
   bookmarkLoading.value = true
   try {
@@ -478,12 +506,21 @@ const handleToggleBookmark = async () => {
       result = await bookmarkStore.addBookmark(etf.value.etfId)
     }
     
-    if (!result.success) {
+    if (result.success) {
+      console.log('✅ 북마크 성공')
+    } else {
+      console.error('❌ 북마크 실패:', result.message)
       alert(result.message)
     }
   } catch (err) {
-    console.error('북마크 처리 실패:', err)
-    alert('포트폴리오 처리에 실패했습니다.')
+    console.error('❌ 북마크 에러:', err)
+    if (err.response?.status === 403) {
+      alert('권한이 없습니다. 다시 로그인해주세요.')
+      localStorage.removeItem('accessToken')
+      router.push('/login')
+    } else {
+      alert('포트폴리오 처리에 실패했습니다.')
+    }
   } finally {
     bookmarkLoading.value = false
   }
