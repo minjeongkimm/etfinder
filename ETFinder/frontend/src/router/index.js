@@ -1,10 +1,10 @@
 import { useAuthStore } from '@/stores/auth'
-import BookmarkView from '@/views/BookmarkView.vue'
 import EtfCreateView from '@/views/etf/EtfCreateView.vue'
 import EtfDetailView from '@/views/etf/EtfDetailView.vue'
 import EtfEditView from '@/views/etf/EtfEditView.vue'
 import EtfSearchView from '@/views/EtfSearchView.vue'
 import KakaoCallback from '@/views/KakaoCallback.vue'
+import LikeView from '@/views/LikeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import PortfolioView from '@/views/PortfolioView.vue'
@@ -59,15 +59,15 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/bookmarks',
-      name: 'bookmark',
-      component: BookmarkView,
-      meta: { requiresAuth: true }
-    },
-    {
       path: '/portfolios',
       name: 'portfolio',
       component: PortfolioView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/likes',
+      name: 'like',
+      component: LikeView,
       meta: { requiresAuth: true }
     },
     {
