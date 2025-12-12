@@ -27,7 +27,8 @@ public class UserServiceImpl implements UserService{
 				user.getNickname(),
 				user.getAge(),
 				user.getPropensity(),
-				user.getProviderId()
+				user.getProviderId(),
+				user.getCreatedAt()
 				);
 	}
 
