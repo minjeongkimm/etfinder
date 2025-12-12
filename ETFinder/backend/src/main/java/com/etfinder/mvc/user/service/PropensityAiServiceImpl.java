@@ -1,9 +1,11 @@
 package com.etfinder.mvc.user.service;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.stereotype.Service;
 
 import com.etfinder.mvc.user.dto.PropensityAiResponse;
 
+@Service
 public class PropensityAiServiceImpl implements PropensityAiService{
 	
 	private final ChatClient chatClient;
