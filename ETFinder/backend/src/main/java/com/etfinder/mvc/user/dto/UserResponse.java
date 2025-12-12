@@ -1,5 +1,7 @@
 package com.etfinder.mvc.user.dto;
 
+import java.time.LocalDateTime;
+
 public class UserResponse {
 
 	private String email;
@@ -7,17 +9,19 @@ public class UserResponse {
 	private int age;
 	private String propensity;
 	private String providerId;
-	
+	private LocalDateTime createdAt;
+
 	public UserResponse() {
 	}
 
-	public UserResponse(String email, String nickname, int age, String propensity, String providerId) {
-		super();
+	public UserResponse(String email, String nickname, int age, String propensity, String providerId,
+			LocalDateTime createdAt) {
 		this.email = email;
 		this.nickname = nickname;
 		this.age = age;
 		this.propensity = propensity;
 		this.providerId = providerId;
+		this.createdAt = createdAt;
 	}
 
 	public String getEmail() {
@@ -51,7 +55,7 @@ public class UserResponse {
 	public void setPropensity(String propensity) {
 		this.propensity = propensity;
 	}
-	
+
 	public String getProviderId() {
 		return providerId;
 	}
@@ -60,10 +64,18 @@ public class UserResponse {
 		this.providerId = providerId;
 	}
 
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	@Override
 	public String toString() {
 		return "UserResponse [email=" + email + ", nickname=" + nickname + ", age=" + age + ", propensity=" + propensity
-				+ ", providerId=" + providerId + "]";
+				+ ", providerId=" + providerId + ", createdAt=" + createdAt + "]";
 	}
 
 }

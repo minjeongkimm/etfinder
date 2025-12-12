@@ -1,7 +1,7 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
-import http from '@/util/http-common'
 import router from '@/router'
+import http from '@/util/http-common'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
   // 상태(State)
@@ -44,11 +44,15 @@ export const useAuthStore = defineStore('auth', () => {
     router.push('/')
   }
 
-  const getMyInfo = function(){
-    http.get('/users/me')
-    .then((res)=>{
-        user.value = res.data
-    })
+  const getMyInfo = async () => {
+    try {
+      const response = await http.get('/users/me')
+      user.value = response.data
+      return response.data
+    } catch (error) {
+      console.error('사용자 정보 조회 실패:', error)
+      throw error
+    }
   }
 
   const isAdmin = computed(() => {

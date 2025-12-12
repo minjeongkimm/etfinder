@@ -1,6 +1,7 @@
 <template>
   <div class="flex min-h-screen">
-    <TheSideBar />
+    <!-- 로그인 페이지가 아닐 때만 사이드바 표시 -->
+    <TheSideBar v-if="!isLoginPage" />
     <div class="flex-1">
       <router-view></router-view>
     </div>
@@ -8,11 +9,18 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import TheSideBar from './components/common/TheSideBar.vue'
 import { useAuthStore } from './stores/auth'
 
+const route = useRoute()
 const authStore = useAuthStore()
+
+// 로그인 페이지인지 확인
+const isLoginPage = computed(() => {
+  return route.name === 'login' || route.name === 'kakao-callback'
+})
 
 onMounted(async () => {
   if (authStore.token && !authStore.user) {

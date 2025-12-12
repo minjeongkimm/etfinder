@@ -167,16 +167,16 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useBookmarkStore } from '@/stores/bookmark'
-import { Doughnut } from 'vue-chartjs'
 import {
-  Chart as ChartJS,
   ArcElement,
-  Tooltip,
-  Legend
+  Chart as ChartJS,
+  Legend,
+  Tooltip
 } from 'chart.js'
+import { computed, onMounted } from 'vue'
+import { Doughnut } from 'vue-chartjs'
+import { useRouter } from 'vue-router'
 
 // Chart.js 등록
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -188,6 +188,25 @@ const bookmarkStore = useBookmarkStore()
 onMounted(() => {
   bookmarkStore.fetchBookmarks()
 })
+
+// 프로페셔널 fintech 색상 팔레트 (인덱스 기반)
+const CHART_COLORS = [
+  '#2563EB', // Primary Blue
+  '#10B981', // Emerald Green
+  '#F59E0B', // Amber
+  '#8B5CF6', // Violet
+  '#0EA5E9', // Sky Blue
+  '#EC4899', // Pink
+  '#14B8A6', // Teal
+  '#F97316', // Orange
+  '#6366F1', // Indigo
+  '#22C55E', // Green
+  '#A855F7', // Purple
+  '#EAB308', // Yellow
+  '#06B6D4', // Cyan
+  '#F43F5E', // Rose
+  '#84CC16', // Lime
+]
 
 // 테마별 비중 계산
 const themeBreakdown = computed(() => {
@@ -201,22 +220,13 @@ const themeBreakdown = computed(() => {
     themeCount[theme] = (themeCount[theme] || 0) + 1
   })
 
-  // 색상 매핑 (HSL 기반)
-  const colorMap = {
-    '기술주': 'hsl(142, 76%, 36%)',      // chart-1 (green)
-    '제권': 'hsl(221.2, 83.2%, 53.3%)',   // primary (blue)
-    '원자재': 'hsl(43, 74%, 66%)',        // chart-4 (orange)
-    '현금': 'hsl(0, 0%, 50%)',            // chart-2 (gray)
-    '기타': 'hsl(197, 37%, 24%)'          // chart-3 (teal)
-  }
-
-  // 비율 계산
+  // 비율 계산 및 인덱스 기반 색상 할당
   const total = etfs.length
-  return Object.entries(themeCount).map(([theme, count]) => ({
+  return Object.entries(themeCount).map(([theme, count], index) => ({
     theme,
     count,
     percentage: Math.round((count / total) * 100),
-    color: colorMap[theme] || 'oklch(0.5 0.1 200)'
+    color: CHART_COLORS[index % CHART_COLORS.length] // 인덱스로 순환 할당
   }))
 })
 
