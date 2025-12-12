@@ -4,6 +4,9 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import KakaoCallback from '@/views/KakaoCallback.vue'
 import EtfSearchView from '@/views/EtfSearchView.vue'
+import EtfDetailView from '@/views/etf/EtfDetailView.vue'
+import EtfCreateView from '@/views/etf/EtfCreateView.vue'
+import EtfEditView from '@/views/etf/EtfEditView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import PortfolioView from '@/views/PortfolioView.vue'
 import RecommendResultView from '@/views/RecommendResultView.vue'
@@ -31,6 +34,23 @@ const router = createRouter({
       path: '/etfs',
       name: 'etfSearch',
       component: EtfSearchView,
+    },
+    {
+      path: '/etfs/new',
+      name: 'etfCreate',
+      component: EtfCreateView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/etfs/:etfId',
+      name: 'etfDetail',
+      component: EtfDetailView,
+    },
+    {
+      path: '/etfs/:etfCode/edit',
+      name: 'etfEdit',
+      component: EtfEditView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/users/me',
