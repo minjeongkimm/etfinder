@@ -1,39 +1,126 @@
 <template>
-    <div>
-        <nav>
-            <router-link to="/">Home</router-link> |
-            <template v-if="!authStore.isAuthenticated">
-                <router-link :to="{name: 'login'}">로그인</router-link> |
-            </template>
-
-            <template v-else>
-                <a href="#" @click.prevent="handleLogout">로그아웃</a> |
-                <router-link :to="{name: 'myPage'}">마이페이지</router-link> |
-            </template>
-            <router-link :to="{name: 'etfSearch'}">etf 검색</router-link> |
-            <router-link :to="{name: 'bookmark'}">찜목록</router-link> |
-            <router-link :to="{name: 'portfolio'}">포트폴리오</router-link> |
-            <router-link :to="{name: 'recommend'}">맞춤형 etf 추천</router-link> |
-        </nav>
+  <aside class="w-64 bg-card border-r border-border flex flex-col">
+    <!-- 로고 -->
+    <div class="p-6 border-b border-border">
+      <router-link to="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        </div>
+        <span class="text-xl font-bold text-foreground">ETFinder</span>
+      </router-link>
     </div>
+
+    <!-- 네비게이션 -->
+    <nav class="flex-1 p-4 space-y-1">
+      <!-- 홈 -->
+      <router-link
+        to="/"
+        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+        :class="$route.path === '/' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>홈</span>
+      </router-link>
+
+      <!-- ETF 탐색 -->
+      <router-link
+        :to="{ name: 'etfSearch' }"
+        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+        :class="$route.path.startsWith('/etfs') ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>ETF 탐색</span>
+      </router-link>
+
+      <!-- 투자 선별 분석 -->
+      <router-link
+        :to="{ name: 'recommend' }"
+        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+        :class="$route.path === '/etfs/recommend' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+        <span>투자 선별 분석</span>
+      </router-link>
+
+      <!-- 나의 포트폴리오 -->
+      <router-link
+        :to="{ name: 'portfolio' }"
+        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+        :class="$route.path === '/portfolios' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span>나의 포트폴리오</span>
+      </router-link>
+
+      <!-- 찜한 ETF -->
+      <router-link
+        :to="{ name: 'bookmark' }"
+        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+        :class="$route.path === '/bookmarks' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span>찜한 ETF</span>
+      </router-link>
+
+      <div class="my-4 border-t border-border"></div>
+
+      <!-- 모의투자 -->
+      <router-link
+        to="/simulation"
+        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground text-muted-foreground"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M10 7v10"/><path d="M17 7v10"/></svg>
+        <span>모의투자</span>
+      </router-link>
+    </nav>
+
+    <!-- 하단: 로그인/사용자 정보 -->
+    <div class="p-4 border-t border-border">
+      <template v-if="!authStore.isAuthenticated">
+        <router-link
+          :to="{ name: 'login' }"
+          class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 justify-center"
+        >
+          <span>로그인</span>
+        </router-link>
+      </template>
+
+      <template v-else>
+        <div class="space-y-2">
+          <router-link
+            :to="{ name: 'myPage' }"
+            class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground text-muted-foreground"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>마이페이지</span>
+          </router-link>
+          <button
+            @click="handleLogout"
+            class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground text-muted-foreground"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            <span>로그아웃</span>
+          </button>
+        </div>
+      </template>
+    </div>
+  </aside>
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore = useAuthStore()
+const router = useRouter()
 
 const handleLogout = () => {
-    // 스토어의 로그아웃 함수 실행
-    authStore.logout();
-    alert("로그아웃 되었습니다.");
-    // 홈으로 보내기
-    router.push('/');
-};
+  authStore.logout()
+  alert('로그아웃 되었습니다.')
+  router.push('/')
+}
 </script>
 
 <style scoped>
-
+/* Tailwind로 처리 */
 </style>

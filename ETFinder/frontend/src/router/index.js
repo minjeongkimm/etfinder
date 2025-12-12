@@ -1,13 +1,16 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import HomeView from '../views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import KakaoCallback from '@/views/KakaoCallback.vue'
+import BookmarkView from '@/views/BookmarkView.vue'
+import EtfCreateView from '@/views/etf/EtfCreateView.vue'
+import EtfDetailView from '@/views/etf/EtfDetailView.vue'
+import EtfEditView from '@/views/etf/EtfEditView.vue'
 import EtfSearchView from '@/views/EtfSearchView.vue'
+import KakaoCallback from '@/views/KakaoCallback.vue'
+import LoginView from '@/views/LoginView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import PortfolioView from '@/views/PortfolioView.vue'
 import RecommendResultView from '@/views/RecommendResultView.vue'
-import BookmarkView from '@/views/BookmarkView.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +34,23 @@ const router = createRouter({
       path: '/etfs',
       name: 'etfSearch',
       component: EtfSearchView,
+    },
+    {
+      path: '/etfs/new',
+      name: 'etfCreate',
+      component: EtfCreateView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/etfs/:etfId',
+      name: 'etfDetail',
+      component: EtfDetailView,
+    },
+    {
+      path: '/etfs/:etfCode/edit',
+      name: 'etfEdit',
+      component: EtfEditView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/users/me',
