@@ -58,25 +58,50 @@ public class PropensityServiceImpl implements PropensityService{
         StringBuilder sb = new StringBuilder();
 
         // 사용자가 제공한 문항 점수에 따라 텍스트로 매핑
-        // Q1 (인덱스 0)
+     // Q1. 투자 경험
         int q1 = answers.get(0);
-        sb.append("1.투자경험: ").append(q1 == 10 ? "없음" : q1 == 20 ? "간접투자" : q1 == 30 ? "직접투자" : "파생상품경험").append("\n");
-        
-        // Q2 (인덱스 1)
+        sb.append("- 투자 경험: ");
+        if (q1 == 10) sb.append("없음(예적금만 함)");
+        else if (q1 == 20) sb.append("초보(펀드/ETF 경험)");
+        else if (q1 == 30) sb.append("중수(주식 직접 투자, 용어 앎)");
+        else sb.append("고수(파생상품/코인 경험 있음)");
+        sb.append("\n");
+
+        // Q2. 투자 기간
         int q2 = answers.get(1);
-        sb.append("2.투자기간: ").append(q2 == 10 ? "1년미만" : q2 == 20 ? "1~3년" : q2 == 30 ? "3~5년" : "5년이상").append("\n");
+        sb.append("- 자금 성격(기간): ");
+        if (q2 == 10) sb.append("1년 이내(단기, 급한 돈)");
+        else if (q2 == 20) sb.append("1~3년(중단기)");
+        else if (q2 == 30) sb.append("3~5년(여유 자금)");
+        else sb.append("5년 이상(장기/노후 자금)");
+        sb.append("\n");
 
-        // Q3 (인덱스 2)
+        // Q3. 위험 감수성 (-20% 하락 시)
         int q3 = answers.get(2);
-        sb.append("3.위험반응(-20%): ").append(q3 == 10 ? "매도(손절)" : q3 == 20 ? "관망" : q3 == 30 ? "존버" : "추가매수").append("\n");
+        sb.append("- 하락장(-20%) 반응: ");
+        if (q3 == 10) sb.append("멘붕(잠 안 옴/손절)");
+        else if (q3 == 20) sb.append("불안(관망하다 더 떨어지면 매도)");
+        else if (q3 == 30) sb.append("존버(언젠가 오르겠지)");
+        else sb.append("야수의 심장(추가 매수 기회!)");
+        sb.append("\n");
 
-        // Q4 (인덱스 3)
+        // Q4. 기대 수익률
         int q4 = answers.get(3);
-        sb.append("4.목표수익: ").append(q4 == 10 ? "원금보전" : q4 == 20 ? "물가상승률" : q4 == 30 ? "시장수익률" : "고수익").append("\n");
+        sb.append("- 목표 수익률: ");
+        if (q4 == 10) sb.append("원금 보전 중심(3~5%)");
+        else if (q4 == 20) sb.append("물가 상승률 방어(6~9%)");
+        else if (q4 == 30) sb.append("시장 평균 수익(10~15%)");
+        else sb.append("고수익 대박(20% 이상)");
+        sb.append("\n");
 
-        // Q5 (인덱스 4)
+        // Q5. 수입/자산 현황
         int q5 = answers.get(4);
-        sb.append("5.자산현황: ").append(q5 == 10 ? "여유없음" : q5 == 20 ? "소액" : q5 == 30 ? "보통" : "여유있음").append("\n");
+        sb.append("- 재무 상황: ");
+        if (q5 == 10) sb.append("소득 불안정/여유 없음");
+        else if (q5 == 20) sb.append("고정 소득 있으나 여유 적음");
+        else if (q5 == 30) sb.append("월급/여유 자금 운용 중");
+        else sb.append("소득 안정/자산 충분함");
+        sb.append("\n");
 
         return sb.toString();
     }
