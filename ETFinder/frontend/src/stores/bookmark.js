@@ -16,6 +16,14 @@ export const useBookmarkStore = defineStore('bookmark', () => {
     error.value = null
     try {
       const response = await bookmarkApi.getMyBookmarks()
+      
+      // 204 NO_CONTENT는 정상 응답 (빈 목록)
+      if (response.status === 204 || !response.data) {
+        bookmarks.value = []
+        bookmarkedEtfs.value = []
+        return
+      }
+      
       bookmarks.value = response.data || []
       
       // 각 북마크의 ETF 상세 정보 조회
@@ -29,6 +37,10 @@ export const useBookmarkStore = defineStore('bookmark', () => {
         bookmarkedEtfs.value = []
       }
     } catch (err) {
+      // 401 Unauthorized는 자동으로 로그인 페이지로 리다이렉트됨 (interceptor)
+      if (err.response?.status === 401) {
+        return
+      }
       error.value = err.response?.data || '북마크 목록을 불러오는데 실패했습니다.'
       bookmarks.value = []
       bookmarkedEtfs.value = []

@@ -48,16 +48,62 @@
 
               <!-- 액션 버튼 -->
               <div class="flex items-center gap-2">
-                <button class="px-4 py-2 rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 flex items-center gap-2">
+                <!-- 좋아요 수 표시 -->
+                <div class="flex items-center gap-1 px-3 py-2 rounded-lg border border-border bg-muted/30">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-destructive">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  <span class="text-sm font-medium text-foreground">{{ etf.likeCount || 0 }}</span>
+                </div>
+
+                <!-- 공유 버튼 -->
+                <button 
+                  @click="handleShare"
+                  class="px-4 py-2 rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 flex items-center gap-2"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
                   <span class="text-sm font-medium">공유</span>
                 </button>
-                <button class="px-4 py-2 rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                  <span class="text-sm font-medium">평하기</span>
+
+                <!-- 찜하기 버튼 -->
+                <button 
+                  @click="handleToggleLike"
+                  :disabled="likeLoading"
+                  :class="[
+                    'px-4 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2',
+                    etf.likedByMe 
+                      ? 'border-destructive bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                      : 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
+                  ]"
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="18" 
+                    height="18" 
+                    viewBox="0 0 24 24" 
+                    :fill="etf.likedByMe ? 'currentColor' : 'none'" 
+                    stroke="currentColor" 
+                    stroke-width="2" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round"
+                  >
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  <span class="text-sm font-medium">{{ etf.likedByMe ? '찜 해제' : '찜하기' }}</span>
                 </button>
-                <button class="px-6 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 font-medium">
-                  포트폴리오 담기
+
+                <!-- 포트폴리오 담기 버튼 -->
+                <button 
+                  @click="handleToggleBookmark"
+                  :disabled="bookmarkLoading"
+                  :class="[
+                    'px-6 py-2 rounded-lg transition-all duration-200 font-medium',
+                    isBookmarked
+                      ? 'bg-muted border border-primary text-primary hover:bg-primary/10'
+                      : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  ]"
+                >
+                  {{ isBookmarked ? '포트폴리오에 있음' : '포트폴리오 담기' }}
                 </button>
               </div>
             </div>
@@ -321,17 +367,23 @@
 <script setup>
 import { deleteEtf, getEtfDetail } from '@/api/etf'
 import { useAuthStore } from '@/stores/auth'
-import { onMounted, ref } from 'vue'
+import { useBookmarkStore } from '@/stores/bookmark'
+import { useLikeStore } from '@/stores/like'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const bookmarkStore = useBookmarkStore()
+const likeStore = useLikeStore()
 
 const etf = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const activeTab = ref('chart')
+const likeLoading = ref(false)
+const bookmarkLoading = ref(false)
 
 const tabs = [
   { id: 'chart', label: '차트/수익률' },
@@ -339,6 +391,11 @@ const tabs = [
   { id: 'holdings', label: '구성 종목' },
   { id: 'comments', label: '한줄평' }
 ]
+
+// 북마크 여부 확인
+const isBookmarked = computed(() => {
+  return bookmarkStore.isBookmarked(etf.value?.etfId)
+})
 
 const formatPrice = (price) => {
   if (!price) return '0'
@@ -356,11 +413,98 @@ const fetchEtfDetail = async () => {
     loading.value = true
     const response = await getEtfDetail(route.params.etfId)
     etf.value = response.data
+    
+    // 북마크 및 좋아요 목록 로드 (로그인 상태인 경우)
+    if (authStore.isAuthenticated) {
+      await Promise.all([
+        bookmarkStore.fetchBookmarks(),
+        likeStore.fetchLikes()
+      ])
+      
+      // likedByMe 상태 업데이트
+      etf.value.likedByMe = likeStore.isLiked(etf.value.etfId)
+    }
   } catch (err) {
     console.error('ETF 상세 조회 실패:', err)
     error.value = 'ETF 정보를 불러오는데 실패했습니다.'
   } finally {
     loading.value = false
+  }
+}
+
+// 좋아요 토글
+const handleToggleLike = async () => {
+  if (!authStore.isAuthenticated) {
+    alert('로그인이 필요합니다.')
+    router.push('/login')
+    return
+  }
+
+  likeLoading.value = true
+  try {
+    const result = await likeStore.toggleLike(etf.value.etfId)
+    
+    if (result.success) {
+      // UI 즉시 업데이트
+      etf.value.likedByMe = !etf.value.likedByMe
+      etf.value.likeCount = etf.value.likedByMe 
+        ? (etf.value.likeCount || 0) + 1 
+        : Math.max((etf.value.likeCount || 0) - 1, 0)
+    } else {
+      alert(result.message)
+    }
+  } catch (err) {
+    console.error('좋아요 처리 실패:', err)
+    alert('좋아요 처리에 실패했습니다.')
+  } finally {
+    likeLoading.value = false
+  }
+}
+
+// 북마크 토글
+const handleToggleBookmark = async () => {
+  if (!authStore.isAuthenticated) {
+    alert('로그인이 필요합니다.')
+    router.push('/login')
+    return
+  }
+
+  bookmarkLoading.value = true
+  try {
+    let result
+    if (isBookmarked.value) {
+      result = await bookmarkStore.removeBookmark(etf.value.etfId)
+    } else {
+      result = await bookmarkStore.addBookmark(etf.value.etfId)
+    }
+    
+    if (!result.success) {
+      alert(result.message)
+    }
+  } catch (err) {
+    console.error('북마크 처리 실패:', err)
+    alert('포트폴리오 처리에 실패했습니다.')
+  } finally {
+    bookmarkLoading.value = false
+  }
+}
+
+// 공유하기
+const handleShare = () => {
+  const url = window.location.href
+  if (navigator.share) {
+    navigator.share({
+      title: etf.value.etfName,
+      text: `${etf.value.etfName} - ETFinder에서 확인하세요`,
+      url: url
+    }).catch(() => {
+      // 공유 취소시 무시
+    })
+  } else {
+    // Web Share API 미지원시 클립보드에 복사
+    navigator.clipboard.writeText(url).then(() => {
+      alert('링크가 클립보드에 복사되었습니다.')
+    })
   }
 }
 

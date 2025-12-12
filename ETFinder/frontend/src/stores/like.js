@@ -14,8 +14,19 @@ export const useLikeStore = defineStore('like', () => {
     error.value = null
     try {
       const response = await likeApi.getMyLikes()
+      
+      // 204 NO_CONTENT는 정상 응답 (빈 목록)
+      if (response.status === 204 || !response.data) {
+        likedEtfs.value = []
+        return
+      }
+      
       likedEtfs.value = response.data || []
     } catch (err) {
+      // 401 Unauthorized는 자동으로 로그인 페이지로 리다이렉트됨 (interceptor)
+      if (err.response?.status === 401) {
+        return
+      }
       error.value = err.response?.data || '좋아요 목록을 불러오는데 실패했습니다.'
       likedEtfs.value = []
     } finally {
