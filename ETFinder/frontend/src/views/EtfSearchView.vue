@@ -57,7 +57,7 @@
               <!-- 전체 자산 드롭다운 -->
               <select
                 v-model="searchParams.market"
-                class="rounded-lg border border-input bg-background px-4 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200"
+                class="rounded-lg border border-input bg-background px-4 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200 min-w-[120px]"
               >
                 <option value="">전체 자산</option>
                 <option value="KOR">한국</option>
@@ -65,15 +65,15 @@
                 <option value="GLOBAL">글로벌</option>
               </select>
 
-              <!-- 전체 지역 드롭다운 -->
+              <!-- 테마 드롭다운 -->
               <select
                 v-model="searchParams.theme"
-                class="rounded-lg border border-input bg-background px-4 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200"
+                class="rounded-lg border border-input bg-background px-4 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200 min-w-[160px]"
               >
-                <option value="">전체 지역</option>
-                <option value="기술주">기술주</option>
-                <option value="반도체">반도체</option>
-                <option value="배당">배당</option>
+                <option value="">전체 테마</option>
+                <option v-for="themeOption in THEME_OPTIONS" :key="themeOption" :value="themeOption">
+                  {{ themeOption }}
+                </option>
               </select>
 
               <!-- 상세 필터 버튼 -->
@@ -83,6 +83,20 @@
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
                 상세 필터
+              </button>
+
+              <!-- 검색 버튼 -->
+              <button
+                @click="handleSearch"
+                :disabled="loading"
+                class="px-6 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <svg v-if="loading" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span>{{ loading ? '검색 중...' : '검색' }}</span>
               </button>
             </div>
 
@@ -312,9 +326,31 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const authStore = useAuthStore()
 
+// 테마 옵션 상수
+const THEME_OPTIONS = [
+  '2차전지/전기차',
+  'AI/로봇',
+  'IT/테크',
+  '금융',
+  '기타',
+  '리츠/부동산',
+  '바이오/헬스',
+  '반도체',
+  '배당',
+  '소비재/컨텐츠',
+  '시장대표',
+  '에너지/환경',
+  '우주/방산',
+  '원자재',
+  '자산배분/TDF',
+  '채권/금리',
+  '파생/레버리지'
+]
+
 const etfList = ref([])
 const viewMode = ref('grid')
 const showAdvancedFilters = ref(false)
+const loading = ref(false)
 
 const searchParams = ref({
   keyword: '',
@@ -342,6 +378,8 @@ const formatAum = (aum) => {
 
 const handleSearch = async () => {
   try {
+    loading.value = true
+    
     const params = {}
     Object.keys(searchParams.value).forEach(key => {
       const value = searchParams.value[key]
@@ -362,6 +400,8 @@ const handleSearch = async () => {
   } catch (error) {
     console.error('검색 오류:', error)
     alert('검색 중 오류가 발생했습니다.')
+  } finally {
+    loading.value = false
   }
 }
 
