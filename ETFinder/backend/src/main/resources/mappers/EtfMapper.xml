@@ -77,7 +77,8 @@
 		e.return_1yr,
 		e.return_3yr,
 		e.created_at,
-		e.like_count
+		e.like_count,
+		e.description
 
 		FROM
 		etf_product e
