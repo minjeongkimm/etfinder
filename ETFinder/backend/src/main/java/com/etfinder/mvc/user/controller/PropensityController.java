@@ -1,6 +1,5 @@
 package com.etfinder.mvc.user.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,12 +19,14 @@ import com.etfinder.mvc.user.service.UserService;
 @RequestMapping("/api/propensity")
 public class PropensityController {
 
-	@Autowired
-	private PropensityService propensityService;
+	private final PropensityService propensityService;
+	private final UserService userService;
 	
-	@Autowired
-	private UserService userService;
-	
+	public PropensityController(PropensityService propensityService, UserService userService) {
+		this.propensityService = propensityService;
+		this.userService = userService;
+	}
+
 	// 성향 테스트 후 점수 계산해서 결과 db에 저장, 프론트로 바로 보내기
 	@PostMapping("/test")
 	public ResponseEntity<?> submitPropensity(@AuthenticationPrincipal String providerId, @RequestBody PropensityRequest request){
