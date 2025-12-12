@@ -7,14 +7,16 @@ public class PropensityResult {
 
 	private String type;	// 프론트 로직용 영문명(AGGRESIVE)
 	private String label;	// 화면 출력용 한글명(공격형)
+	private PropensityAiResponse aiResult; 	// ai분석 결과
 	
 	public PropensityResult() {
 	}
 
-	public PropensityResult(InvestmentType investmentType) {
+	public PropensityResult(InvestmentType investmentType, PropensityAiResponse aiResult) {
 		super();
 		this.type = investmentType.name();
 		this.label = investmentType.getLabel();
+		this.aiResult = aiResult;
 	}
 
 	public String getType() {
@@ -32,9 +34,17 @@ public class PropensityResult {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
+	public PropensityAiResponse getAiResult() {
+		return aiResult;
+	}
+
+	public void setAiResult(PropensityAiResponse aiResult) {
+		this.aiResult = aiResult;
+	}
 
 	@Override
 	public String toString() {
-		return "PropensityResult [type=" + type + ", label=" + label + "]";
+		return "PropensityResult [type=" + type + ", label=" + label + ", aiResult=" + aiResult + "]";
 	}
 }
