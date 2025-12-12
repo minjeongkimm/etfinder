@@ -200,4 +200,11 @@
 		DELETE FROM etf_product
 		WHERE etf_code = #{etfCode}
 	</delete>
+	
+	<!-- 9. ETF Ai 요약 업데이트 -->
+	<update id="updateEtfDescription">
+		UPDATE etf_product 
+   		SET description = #{description} 
+	    WHERE etf_code = #{etfCode}
+	</update>
 </mapper>

@@ -36,4 +36,7 @@ public interface EtfMapper {
 	
 	// 8. Etf 삭제
 	int deleteEtf(String etfCode);
+	
+	// 9. Etf ai 요약 업데이트
+	int updateEtfDescription(@Param("etfCode") String etfCode, @Param("description") String description);
 }
