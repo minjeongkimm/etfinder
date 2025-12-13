@@ -47,7 +47,7 @@
                       ETF 코드 (수정 불가)
                     </label>
                     <input
-                      :value="etfCode"
+                      :value="originalEtf?.etfCode"
                       type="text"
                       disabled
                       class="w-full rounded-lg border border-input bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
@@ -238,7 +238,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-const etfCode = route.params.etfCode
+const etfId = route.params.etfId
 const loading = ref(true)
 const error = ref(null)
 const submitting = ref(false)
@@ -263,7 +263,7 @@ const form = ref({
 const fetchEtfDetail = async () => {
   try {
     loading.value = true
-    const response = await getEtfDetail(etfCode)
+    const response = await getEtfDetail(etfId)
     originalEtf.value = response.data
   } catch (err) {
     console.error('ETF 조회 실패:', err)
@@ -294,8 +294,11 @@ const handleSubmit = async () => {
       return
     }
 
-    const response = await updateEtf(etfCode, data)
+    // 백엔드 API는 etfCode를 사용하여 수정
+    const response = await updateEtf(originalEtf.value.etfCode, data)
     alert(response.data || 'ETF가 수정되었습니다.')
+    
+    // 수정 후 해당 ETF의 상세 페이지로 이동 (etfId 사용)
     router.push(`/etfs/${originalEtf.value.etfId}`)
   } catch (err) {
     console.error('ETF 수정 실패:', err)

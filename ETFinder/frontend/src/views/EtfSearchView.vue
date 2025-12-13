@@ -156,6 +156,18 @@
                     <option value="aum">시가총액</option>
                   </select>
                 </div>
+
+                <!-- 정렬 방향 -->
+                <div>
+                  <label class="block text-sm font-medium text-foreground mb-2">정렬 방향</label>
+                  <select
+                    v-model="searchParams.orderDir"
+                    class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="ASC">오름차순</option>
+                    <option value="DESC">내림차순</option>
+                  </select>
+                </div>
               </div>
 
               <div class="flex justify-end gap-2">
@@ -227,7 +239,7 @@
                   <button class="p-1 hover:bg-accent rounded transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                   </button>
-                  <button v-if="authStore.isAdmin" @click.stop="goToEdit(etf.etfCode)" class="p-1 hover:bg-accent rounded transition-all duration-200">
+                  <button v-if="authStore.isAdmin" @click.stop="goToEdit(etf.etfId)" class="p-1 hover:bg-accent rounded transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                   </button>
                 </div>
@@ -320,7 +332,7 @@
                 <button class="p-2 hover:bg-background rounded-lg transition-all duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                 </button>
-                <button v-if="authStore.isAdmin" @click="goToEdit(etf.etfCode)" class="px-3 py-2 text-sm font-medium rounded-lg border border-input bg-background hover:bg-accent transition-all duration-200">
+                <button v-if="authStore.isAdmin" @click="goToEdit(etf.etfId)" class="px-3 py-2 text-sm font-medium rounded-lg border border-input bg-background hover:bg-accent transition-all duration-200">
                   수정
                 </button>
                 <button v-if="authStore.isAdmin" @click="handleDelete(etf.etfCode)" class="px-3 py-2 text-sm font-medium rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all duration-200">
@@ -553,8 +565,8 @@ const goToCreatePage = () => {
   router.push('/etfs/new')
 }
 
-const goToEdit = (etfCode) => {
-  router.push(`/etfs/${etfCode}/edit`)
+const goToEdit = (etfId) => {
+  router.push(`/etfs/${etfId}/edit`)
 }
 
 const handleDelete = async (etfCode) => {
@@ -583,7 +595,16 @@ const handlePageSizeChange = () => {
   currentPage.value = 1
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // 관리자 권한 확인을 위해 로그인 상태이면 사용자 정보 로드
+  if (authStore.isAuthenticated && !authStore.user) {
+    try {
+      await authStore.getMyInfo()
+    } catch (err) {
+      console.error('사용자 정보 조회 실패:', err)
+    }
+  }
+  
   handleSearch()
 })
 </script>

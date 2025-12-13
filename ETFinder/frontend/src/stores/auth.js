@@ -1,5 +1,6 @@
 import router from '@/router'
 import http from '@/util/http-common'
+import { getRoleFromToken } from '@/util/jwt-helper'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -7,8 +8,12 @@ export const useAuthStore = defineStore('auth', () => {
   // 상태(State)
   const token = ref(localStorage.getItem('accessToken') || null)
   const user = ref(null) // 사용자 정보 (닉네임 등)
+  const role = ref(null) // 사용자 권한 (ROLE_USER, ROLE_ADMIN)
 
-  const ADMIN_PROVIDER_ID = "4604028154";
+  // 초기화: 토큰이 있으면 role 추출
+  if (token.value) {
+    role.value = getRoleFromToken(token.value)
+  }
 
   // 동작(Actions)
   const kakaoLogin = async (code) => {
@@ -24,9 +29,11 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = accessToken
       localStorage.setItem('accessToken', accessToken)
       
-      console.log('로그인 성공:', message)
+      // 4. JWT에서 role 추출
+      role.value = getRoleFromToken(accessToken)
+      console.log('로그인 성공:', message, '/ Role:', role.value)
       
-      // 4. 메인 페이지로 이동
+      // 5. 메인 페이지로 이동
       router.replace('/')
       
     } catch (error) {
@@ -39,7 +46,9 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = () => {
     token.value = null
     user.value = null
+    role.value = null
     localStorage.removeItem('accessToken')
+    console.log('로그아웃 완료')
     // 로그아웃 후 홈으로 보내기
     router.push('/')
   }
@@ -55,16 +64,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // 관리자 권한 체크: JWT 토큰의 role이 "ROLE_ADMIN"인지 확인
   const isAdmin = computed(() => {
-    // 1. 유저 정보가 없으면 false
-    if (!user.value) return false;
-
-    // 2. 내 providerId가 관리자 ID랑 똑같은지 확인 (문자열 비교)
-    return String(user.value.providerId) === ADMIN_PROVIDER_ID;
-  });
+    return role.value === 'ROLE_ADMIN'
+  })
 
   // Getters (토큰이 있는지 확인)
   const isAuthenticated = computed(() => !!token.value)
 
-  return { token, user, kakaoLogin, logout, isAuthenticated, getMyInfo, isAdmin}
+  return { token, user, role, kakaoLogin, logout, isAuthenticated, getMyInfo, isAdmin}
 })
