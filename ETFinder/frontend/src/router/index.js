@@ -8,6 +8,7 @@ import LikeView from '@/views/LikeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import PortfolioView from '@/views/PortfolioView.vue'
+import PropensityTestView from '@/views/PropensityTestView.vue'
 import RecommendResultView from '@/views/RecommendResultView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
@@ -74,6 +75,12 @@ const router = createRouter({
       path: '/etfs/recommend',
       name: 'recommend',
       component: RecommendResultView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/propensity/test',
+      name: 'propensityTest',
+      component: PropensityTestView,
       meta: { requiresAuth: true }
     },
   ],

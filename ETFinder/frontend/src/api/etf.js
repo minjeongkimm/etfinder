@@ -39,3 +39,12 @@ export const updateEtf = (etfCode, etfData) => {
 export const deleteEtf = (etfCode) => {
   return http.delete(`/etfs/${etfCode}`);
 };
+
+// ==============================
+// 추천 API
+// ==============================
+
+// 7. 투자 성향 기반 ETF 추천 조회
+export const getRecommendedEtfs = () => {
+  return http.get("/etfs/recommend");
+};
