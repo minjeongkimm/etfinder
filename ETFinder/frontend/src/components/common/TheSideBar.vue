@@ -32,14 +32,14 @@
         <span>ETF 탐색</span>
       </router-link>
 
-      <!-- 투자 선별 분석 -->
+      <!-- 투자 성향 테스트 -->
       <router-link
-        :to="{ name: 'recommend' }"
+        :to="{ name: 'propensityTest' }"
         class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground relative overflow-hidden"
-        :class="$route.path === '/etfs/recommend' ? 'bg-gradient-to-r from-primary/[0.08] to-primary/[0.12] text-primary font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_-1px_2px_0_rgba(0,0,0,0.05)] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-gradient-to-b before:from-primary before:to-primary/70 before:rounded-r' : 'text-muted-foreground'"
+        :class="$route.path === '/propensity/test' ? 'bg-gradient-to-r from-primary/[0.08] to-primary/[0.12] text-primary font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_-1px_2px_0_rgba(0,0,0,0.05)] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-gradient-to-b before:from-primary before:to-primary/70 before:rounded-r' : 'text-muted-foreground'"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-        <span>투자 선별 분석</span>
+        <span>투자 성향 테스트</span>
       </router-link>
 
       <!-- 나의 포트폴리오 -->
