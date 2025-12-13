@@ -324,21 +324,121 @@
               <!-- 한줄평 탭 -->
               <div v-if="activeTab === 'comments'">
                 <h3 class="text-lg font-semibold text-foreground mb-4">투자자 한줄평</h3>
-                <div class="rounded-lg border border-border bg-muted/30 p-4 mb-4">
+                
+                <!-- 한줄평 작성 폼 -->
+                <div class="rounded-lg border border-border bg-muted/30 p-4 mb-6">
                   <textarea
-                    placeholder="이 ETF에 대한 의견을 남겨주세요 (로그인 필요)"
-                    class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                    v-model="newCommentContent"
+                    :disabled="!authStore.isAuthenticated || commentSubmitting"
+                    :placeholder="authStore.isAuthenticated ? '이 ETF에 대한 의견을 남겨주세요' : '로그인이 필요합니다'"
+                    class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary resize-none disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                     rows="3"
+                    @keydown.ctrl.enter="handleSubmitComment"
+                    @keydown.meta.enter="handleSubmitComment"
                   ></textarea>
-                  <div class="flex justify-end mt-2">
-                    <button class="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200">
-                      등록하기
+                  <div class="flex justify-between items-center mt-2">
+                    <p v-if="!authStore.isAuthenticated" class="text-xs text-muted-foreground">
+                      💡 한줄평을 작성하려면 로그인이 필요합니다
+                    </p>
+                    <p v-else class="text-xs text-muted-foreground">
+                      Ctrl+Enter로 빠르게 등록
+                    </p>
+                    <button 
+                      @click="handleSubmitComment"
+                      :disabled="!authStore.isAuthenticated || !newCommentContent.trim() || commentSubmitting"
+                      class="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    >
+                      {{ commentSubmitting ? '등록 중...' : '등록하기' }}
                     </button>
                   </div>
                 </div>
-                <p class="text-sm text-muted-foreground text-center py-8">
-                  아직 작성된 한줄평이 없습니다.
-                </p>
+
+                <!-- 한줄평 목록 -->
+                <div v-if="commentsLoading" class="text-center py-8">
+                  <p class="text-sm text-muted-foreground">한줄평을 불러오는 중...</p>
+                </div>
+
+                <div v-else-if="comments.length === 0" class="text-center py-12">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-muted-foreground/50">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  <p class="text-sm text-muted-foreground">아직 작성된 한줄평이 없습니다.</p>
+                  <p class="text-xs text-muted-foreground mt-1">첫 번째 한줄평을 남겨보세요!</p>
+                </div>
+
+                <div v-else class="space-y-3">
+                  <div 
+                    v-for="comment in comments" 
+                    :key="comment.commentId"
+                    class="rounded-lg border border-border bg-card p-4 hover:shadow-sm transition-all duration-200"
+                  >
+                    <!-- 수정 모드 -->
+                    <div v-if="editingCommentId === comment.commentId" class="space-y-2">
+                      <textarea
+                        v-model="editingContent"
+                        class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary resize-none transition-all duration-200"
+                        rows="3"
+                      ></textarea>
+                      <div class="flex justify-end gap-2">
+                        <button
+                          @click="cancelEdit"
+                          class="px-3 py-1.5 text-xs font-medium rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                        >
+                          취소
+                        </button>
+                        <button
+                          @click="handleUpdateComment(comment.commentId)"
+                          :disabled="!editingContent.trim() || commentSubmitting"
+                          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                        >
+                          {{ commentSubmitting ? '저장 중...' : '저장' }}
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- 일반 표시 모드 -->
+                    <div v-else>
+                      <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-medium text-foreground">{{ comment.nickname }}</span>
+                          <span v-if="comment.edited" class="text-xs text-muted-foreground px-2 py-0.5 rounded bg-muted/50">
+                            수정됨
+                          </span>
+                          <span v-if="comment.sentiment" :class="[
+                            'text-xs px-2 py-0.5 rounded font-medium',
+                            comment.sentiment === 'POSITIVE' ? 'bg-chart-1/10 text-chart-1' :
+                            comment.sentiment === 'NEGATIVE' ? 'bg-destructive/10 text-destructive' :
+                            'bg-chart-2/10 text-chart-2'
+                          ]">
+                            {{ comment.sentiment === 'POSITIVE' ? '긍정' : comment.sentiment === 'NEGATIVE' ? '부정' : '중립' }}
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <span class="text-xs font-mono text-muted-foreground">
+                            {{ formatCommentDate(comment) }}
+                          </span>
+                          <!-- 본인 댓글인 경우 수정/삭제 버튼 -->
+                          <div v-if="authStore.isAuthenticated && authStore.user && authStore.user.nickname === comment.nickname" class="flex gap-1">
+                            <button
+                              @click="startEdit(comment)"
+                              class="text-xs text-muted-foreground hover:text-primary transition-all duration-200"
+                            >
+                              수정
+                            </button>
+                            <span class="text-xs text-muted-foreground">·</span>
+                            <button
+                              @click="handleDeleteComment(comment.commentId)"
+                              class="text-xs text-muted-foreground hover:text-destructive transition-all duration-200"
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{{ comment.content }}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -365,11 +465,12 @@
 </template>
 
 <script setup>
+import { addComment, deleteComment, getComments, updateComment } from '@/api/comments'
 import { deleteEtf, getEtfDetail } from '@/api/etf'
 import { useAuthStore } from '@/stores/auth'
 import { useBookmarkStore } from '@/stores/bookmark'
 import { useLikeStore } from '@/stores/like'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -384,6 +485,14 @@ const error = ref(null)
 const activeTab = ref('chart')
 const likeLoading = ref(false)
 const bookmarkLoading = ref(false)
+
+// 한줄평 관련 상태
+const comments = ref([])
+const commentsLoading = ref(false)
+const newCommentContent = ref('')
+const commentSubmitting = ref(false)
+const editingCommentId = ref(null)
+const editingContent = ref('')
 
 const tabs = [
   { id: 'chart', label: '차트/수익률' },
@@ -562,8 +671,213 @@ const handleDelete = async () => {
   }
 }
 
-onMounted(() => {
-  fetchEtfDetail()
+// ==============================
+// 한줄평 관련 함수
+// ==============================
+
+// 한줄평 목록 조회
+const fetchComments = async () => {
+  if (!route.params.etfId) return
+  
+  try {
+    commentsLoading.value = true
+    console.log('[한줄평 조회]', route.params.etfId)
+    const commentList = await getComments(route.params.etfId)
+    comments.value = commentList
+    console.log('[한줄평 조회 성공]', commentList.length, '개')
+  } catch (err) {
+    console.error('한줄평 조회 실패:', err)
+    // 사용자에게는 에러 표시 안 함 (빈 목록으로 처리)
+    comments.value = []
+  } finally {
+    commentsLoading.value = false
+  }
+}
+
+// 한줄평 등록
+const handleSubmitComment = async () => {
+  // 로그인 체크
+  if (!authStore.isAuthenticated) {
+    alert('로그인이 필요합니다.')
+    router.push('/login')
+    return
+  }
+
+  // 내용 검증
+  if (!newCommentContent.value.trim()) {
+    alert('한줄평 내용을 입력해주세요.')
+    return
+  }
+
+  try {
+    commentSubmitting.value = true
+    console.log('[한줄평 등록 시작]', { 
+      etfId: route.params.etfId, 
+      content: newCommentContent.value.substring(0, 30) + '...' 
+    })
+    
+    const response = await addComment(route.params.etfId, newCommentContent.value)
+    
+    console.log('[한줄평 등록 성공]', response.data)
+    
+    // 성공 메시지 표시
+    alert(response.data || '한줄평이 등록되었습니다.')
+    
+    // 입력 필드 초기화
+    newCommentContent.value = ''
+    
+    // 목록 새로고침
+    await fetchComments()
+  } catch (err) {
+    console.error('한줄평 등록 실패:', err)
+    
+    if (err.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push('/login')
+    } else if (err.response?.data) {
+      alert(err.response.data)
+    } else {
+      alert('한줄평 등록에 실패했습니다.')
+    }
+  } finally {
+    commentSubmitting.value = false
+  }
+}
+
+// 수정 모드 시작
+const startEdit = (comment) => {
+  editingCommentId.value = comment.commentId
+  editingContent.value = comment.content
+}
+
+// 수정 취소
+const cancelEdit = () => {
+  editingCommentId.value = null
+  editingContent.value = ''
+}
+
+// 한줄평 수정
+const handleUpdateComment = async (commentId) => {
+  if (!editingContent.value.trim()) {
+    alert('내용을 입력해주세요.')
+    return
+  }
+
+  try {
+    commentSubmitting.value = true
+    console.log('[한줄평 수정 시작]', { commentId })
+    
+    const response = await updateComment(route.params.etfId, commentId, editingContent.value)
+    
+    console.log('[한줄평 수정 성공]', response.data)
+    alert(response.data || '한줄평이 수정되었습니다.')
+    
+    // 수정 모드 종료
+    cancelEdit()
+    
+    // 목록 새로고침
+    await fetchComments()
+  } catch (err) {
+    console.error('한줄평 수정 실패:', err)
+    
+    if (err.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push('/login')
+    } else if (err.response?.status === 403) {
+      alert('수정 권한이 없거나 댓글이 존재하지 않습니다.')
+    } else if (err.response?.data) {
+      alert(err.response.data)
+    } else {
+      alert('한줄평 수정에 실패했습니다.')
+    }
+  } finally {
+    commentSubmitting.value = false
+  }
+}
+
+// 한줄평 삭제
+const handleDeleteComment = async (commentId) => {
+  if (!confirm('이 한줄평을 삭제하시겠습니까?')) return
+
+  try {
+    console.log('[한줄평 삭제 시작]', { commentId })
+    
+    const response = await deleteComment(route.params.etfId, commentId)
+    
+    console.log('[한줄평 삭제 성공]', response.data)
+    alert(response.data || '한줄평이 삭제되었습니다.')
+    
+    // 목록 새로고침
+    await fetchComments()
+  } catch (err) {
+    console.error('한줄평 삭제 실패:', err)
+    
+    if (err.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push('/login')
+    } else if (err.response?.status === 403) {
+      alert('삭제 권한이 없거나 댓글이 존재하지 않습니다.')
+    } else if (err.response?.data) {
+      alert(err.response.data)
+    } else {
+      alert('한줄평 삭제에 실패했습니다.')
+    }
+  }
+}
+
+// 시간 포맷팅 (edited인 경우 updatedAt, 아니면 createdAt)
+const formatCommentDate = (comment) => {
+  const dateStr = comment.edited ? comment.updatedAt : comment.createdAt
+  if (!dateStr) return ''
+  
+  try {
+    const date = new Date(dateStr)
+    const now = new Date()
+    const diffMs = now - date
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+    
+    if (diffMins < 1) return '방금 전'
+    if (diffMins < 60) return `${diffMins}분 전`
+    if (diffHours < 24) return `${diffHours}시간 전`
+    if (diffDays < 7) return `${diffDays}일 전`
+    
+    // 7일 이상이면 날짜 표시
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\. /g, '.').replace(/\.$/, '')
+  } catch (err) {
+    console.error('날짜 포맷팅 실패:', err)
+    return dateStr
+  }
+}
+
+// 한줄평 탭 활성화 시 댓글 로드
+watch(activeTab, (newTab) => {
+  if (newTab === 'comments' && comments.value.length === 0 && !commentsLoading.value) {
+    fetchComments()
+  }
+})
+
+onMounted(async () => {
+  await fetchEtfDetail()
+  
+  // 사용자 정보 로드 (댓글 수정/삭제 권한 확인용)
+  if (authStore.isAuthenticated && !authStore.user) {
+    try {
+      await authStore.getMyInfo()
+    } catch (err) {
+      console.error('사용자 정보 조회 실패:', err)
+    }
+  }
+  
+  // 초기 로드 시 한줄평 탭이 활성화되어 있으면 댓글 로드
+  if (activeTab.value === 'comments') {
+    fetchComments()
+  }
 })
 </script>
 
