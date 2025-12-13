@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.service.EtfSearchService;
@@ -97,6 +98,13 @@ public class EtfSearchController {
 		}
 
 		return ResponseEntity.ok(list);
+	}
+	
+	// 4. ETF 상세 조회 페이지 내 ai 설명 불러오기
+	@GetMapping("/{etfId}/ai")
+	public ResponseEntity<EtfAiDescriptionResponse> aiSummary(@PathVariable("etfId") Long etfId){
+		EtfAiDescriptionResponse response = etfSearchService.updateEtfDescription(etfId);
+		return new ResponseEntity<EtfAiDescriptionResponse>(response, HttpStatus.OK);
 	}
 
 }

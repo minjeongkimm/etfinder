@@ -49,34 +49,6 @@ public class EtfSearchServiceImpl implements EtfSearchService {
         EtfProduct etf = etfMapper.selectOneEtf(etfId);
         if (etf == null) return null;
         
-        // ai 설명이 없으면 생성 후 저장
-        if (etf.getDescription() == null || etf.getDescription().trim().isEmpty()) {
-            try {
-                log.info("AI 설명 생성 시작: {}", etf.getEtfName());
-
-                // 1) AI에게 요청 (이름, 코드, 카테고리, 위험등급)
-                EtfAiDescriptionResponse aiRes = etfAiService.generateDescription(
-                    etf.getEtfName(), 
-                    etf.getEtfCode(), 
-                    etf.getTheme(), 
-                    etf.getRiskRating()
-                );
-                
-                // 2) DTO -> JSON String 변환
-                String jsonDescription = objectMapper.writeValueAsString(aiRes);
-                
-                // 3) DB 및 현재 객체 업데이트
-                etfMapper.updateEtfDescription(etf.getEtfCode(), jsonDescription); // DB 저장
-                etf.setDescription(jsonDescription); // 화면에 보여줄 객체에도 세팅
-
-                log.info("AI 설명 저장 완료");
-
-            } catch (Exception e) {
-                log.error("AI 설명 생성 실패: {}", e.getMessage());
-                // 실패해도 상세 페이지는 보여줘야 하므로 예외를 던지지 않고 넘어감
-            }
-        }
-
         // 로그인 안 했으면 무조건 false
         if (userId == null) {
             etf.setLikedByMe(false);
@@ -106,5 +78,44 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 			viewRankingMapper.insertInitial(etfId);
 		
 		return updated;
+	}
+
+	// 5. ETF 상세 페이지 내 ai 설명 없으면 생성 후 저장
+	@Override
+	public EtfAiDescriptionResponse updateEtfDescription(Long etfId) {
+		EtfProduct etf = etfMapper.selectOneEtf(etfId);
+		if (etf == null) throw new RuntimeException("ETF 없음");
+
+	    // 1. 이미 DB에 설명이 있으면 바로 파싱해서 리턴
+	    if (etf.getDescription() != null && !etf.getDescription().trim().isEmpty()) {
+	        try {
+	            return objectMapper.readValue(etf.getDescription(), EtfAiDescriptionResponse.class);
+	        } catch (Exception e) {
+	            log.error("JSON 파싱 에러", e);
+	        }
+	    }
+
+	    // 2. 설명이 없으면 AI 생성 시작
+	    try {
+	        log.info("AI 설명 생성 시작: {}", etf.getEtfName());
+	        
+	        EtfAiDescriptionResponse aiRes = etfAiService.generateDescription(
+	            etf.getEtfName(), 
+	            etf.getEtfCode(), 
+	            etf.getTheme(),
+	            etf.getRiskRating()
+	        );
+
+	        // DB 저장
+	        String jsonDescription = objectMapper.writeValueAsString(aiRes);
+	        etfMapper.updateEtfDescription(etf.getEtfCode(), jsonDescription);
+	        
+	        return aiRes;
+
+	    } catch (Exception e) {
+	        log.error("AI 생성 실패", e);
+	        // 실패 시 빈 껍데기라도 리턴하거나 에러 던짐
+	        return new EtfAiDescriptionResponse("분석 중...", "잠시 후 다시 시도해주세요.", "보통", "보통", "#분석대기");
+	    }
 	}
 }
