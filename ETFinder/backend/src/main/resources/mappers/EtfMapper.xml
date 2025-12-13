@@ -77,7 +77,8 @@
 		e.return_1yr,
 		e.return_3yr,
 		e.created_at,
-		e.like_count
+		e.like_count,
+		e.description
 
 		FROM
 		etf_product e
@@ -200,4 +201,11 @@
 		DELETE FROM etf_product
 		WHERE etf_code = #{etfCode}
 	</delete>
+	
+	<!-- 9. ETF Ai 요약 업데이트 -->
+	<update id="updateEtfDescription">
+		UPDATE etf_product 
+   		SET description = #{description} 
+	    WHERE etf_code = #{etfCode}
+	</update>
 </mapper>
