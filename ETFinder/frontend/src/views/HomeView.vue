@@ -31,7 +31,7 @@
               <!-- CTA 버튼 -->
               <div class="flex flex-wrap gap-3">
                 <router-link
-                  :to="{ name: 'recommend' }"
+                  :to="{ name: 'propensityTest' }"
                   class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg text-sm"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
