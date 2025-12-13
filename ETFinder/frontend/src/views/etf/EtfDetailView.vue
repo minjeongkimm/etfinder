@@ -513,8 +513,20 @@ const formatPrice = (price) => {
 
 const formatAumDetail = (aum) => {
   if (!aum) return '-'
-  const aukInOk = Math.round(aum / 100000000)
-  return `2조 ${aukInOk.toLocaleString('ko-KR')}억원`
+  
+  // 조 단위 계산 (1조 = 1,000,000,000,000원 = 10,000억원)
+  const trillion = Math.floor(aum / 1000000000000)
+  const billion = Math.round((aum % 1000000000000) / 100000000)
+  
+  if (trillion > 0 && billion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조 ${billion.toLocaleString('ko-KR')}억원`
+  } else if (trillion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조원`
+  } else if (billion > 0) {
+    return `${billion.toLocaleString('ko-KR')}억원`
+  } else {
+    return `${aum.toLocaleString('ko-KR')}원`
+  }
 }
 
 const fetchEtfDetail = async () => {
@@ -655,7 +667,7 @@ const handleShare = () => {
 }
 
 const handleEdit = () => {
-  router.push(`/etfs/${etf.value.etfCode}/edit`)
+  router.push(`/etfs/${etf.value.etfId}/edit`)
 }
 
 const handleDelete = async () => {
