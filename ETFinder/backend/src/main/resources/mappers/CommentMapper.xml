@@ -3,7 +3,7 @@
 <mapper namespace="com.etfinder.mvc.comment.mapper.CommentMapper">
 
 	<!-- 1. 한줄평 등록 -->
-	<insert id="addComment" parameterType="Comment">
+	<insert id="addComment" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId">
 		INSERT INTO
 		comments(user_id, etf_id, content)
 		VALUES(#{userId}, #{etfId},
@@ -57,7 +57,7 @@
 			COUNT(CASE WHEN sentiment = 'POSITIVE' THEN 1 END) as positiveCount,
 	        COUNT(CASE WHEN sentiment = 'NEGATIVE' THEN 1 END) as negativeCount,
 	        COUNT(*) as totalCount
-	    FROM comment
+	    FROM comments
     	WHERE etf_id = #{etfId}
 	</select>
 </mapper>
