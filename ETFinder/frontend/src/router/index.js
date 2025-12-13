@@ -47,7 +47,7 @@ const router = createRouter({
       component: EtfDetailView,
     },
     {
-      path: '/etfs/:etfCode/edit',
+      path: '/etfs/:etfId/edit',
       name: 'etfEdit',
       component: EtfEditView,
       meta: { requiresAuth: true }
