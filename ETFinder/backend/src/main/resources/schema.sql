@@ -163,3 +163,21 @@ CREATE TABLE etf_statistics (
     -- ETF 하나당 통계 row는 하나만!
     UNIQUE KEY uk_etf_stats (etf_id)
 );
+
+-- ==========================================
+-- 11. ETF 구성종목 (Constituents / PDF)
+-- ==========================================
+CREATE TABLE etf_constituents (
+    constituent_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    etf_id         BIGINT NOT NULL COMMENT 'etf_product 테이블 참조',
+    stock_code     VARCHAR(20) NOT NULL COMMENT '종목코드 (예: 005930)',
+    stock_name     VARCHAR(100) NOT NULL COMMENT '종목명 (예: 삼성전자)',
+    weight         DECIMAL(5, 2) NOT NULL COMMENT '구성비중 % (예: 25.45)',
+    stock_price    INT COMMENT '기준가/전일종가 (단순 참고용)',
+    updated_at     DATETIME DEFAULT NOW() COMMENT '배치 돌 때마다 갱신됨',
+
+    FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE,
+    
+    -- 한 ETF 안에서 같은 종목이 두 번 들어갈 순 없음
+    UNIQUE KEY uk_etf_stock (etf_id, stock_code)
+);
