@@ -30,10 +30,10 @@ public class SimulationServiceImpl implements SimulationService{
 		
 		List<PortfolioItem> items = request.getPortfolio();
 		if (items == null || items.isEmpty()) {
-            // [CASE A: 기본 모드] 리스트가 없으면 -> DB에서 찜 목록 가져와서 1/n 계산
+            // [CASE A: 기본 모드] 사용자 설정 비율 없으면 -> DB에서 북마크(포트폴리오) 목록 가져와서 자동 1/n 계산
             return calculateEqualWeight(userId, request.getInvestmentAmount());
         } else {
-            // [CASE B: 커스텀 모드] 리스트가 있으면 -> 사용자가 보낸 비율대로 계산
+            // [CASE B: 커스텀 모드] 사용자 설정 비율 있으면 -> 비율대로 계산
             return calculateCustomWeight(items, request.getInvestmentAmount());
         }
 	}
@@ -44,7 +44,7 @@ public class SimulationServiceImpl implements SimulationService{
         List<Bookmark> bookmarks = bookmarkMapper.getBookmarksByUserId(userId);
 
         if (bookmarks.isEmpty()) {
-            return emptyResponse(amount); // 찜한 게 없으면 0원 리턴
+            return emptyResponse(amount); // 북마크한 게 없으면 0원 리턴
         }
      // 2. 유효한 ETF만 먼저 골라내기 (1/n 정확히 나누기 위해)
         List<EtfProduct> validEtfs = new ArrayList<>();
