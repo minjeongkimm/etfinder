@@ -1,7 +1,5 @@
 package com.etfinder.mvc.comment.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.etfinder.mvc.comment.dto.Comment;
-import com.etfinder.mvc.comment.dto.CommentResponse;
+import com.etfinder.mvc.comment.dto.CommentListResponse;
 import com.etfinder.mvc.comment.service.CommentService;
 import com.etfinder.mvc.user.dto.User;
 import com.etfinder.mvc.user.service.UserService;
@@ -65,14 +63,11 @@ public class CommentController {
 
 	// 2. 한줄평 조회
 	@GetMapping
-	public ResponseEntity<?> list(@PathVariable("etfId") Long etfId) {
+	public ResponseEntity<CommentListResponse> list(@PathVariable("etfId") Long etfId) {
 
-	    List<CommentResponse> list = commentService.getCommentsByEtfId(etfId);
+	    CommentListResponse result = commentService.getCommentsByEtfId(etfId);
 
-	    if (list == null || list.size() == 0)
-	        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-
-	    return new ResponseEntity<List<CommentResponse>>(list, HttpStatus.OK);
+	    return new ResponseEntity<CommentListResponse>(result, HttpStatus.OK);
 	}
 
 	// 3. 한줄평 수정

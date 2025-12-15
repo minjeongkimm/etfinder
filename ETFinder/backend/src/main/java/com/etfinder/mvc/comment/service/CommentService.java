@@ -1,9 +1,7 @@
 package com.etfinder.mvc.comment.service;
 
-import java.util.List;
-
 import com.etfinder.mvc.comment.dto.Comment;
-import com.etfinder.mvc.comment.dto.CommentResponse;
+import com.etfinder.mvc.comment.dto.CommentListResponse;
 
 public interface CommentService {
 	
@@ -18,7 +16,7 @@ public interface CommentService {
 	/*
 	 * 2. 한줄평 조회 (특정 ETF의 전체 댓글)
 	 */
-	List<CommentResponse> getCommentsByEtfId(Long etfId);
+	CommentListResponse getCommentsByEtfId(Long etfId);
 
 	/*
 	 * 3. 한줄평 수정
