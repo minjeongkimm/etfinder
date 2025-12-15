@@ -40,7 +40,7 @@ public class SimulationServiceImpl implements SimulationService{
 
 	// 기본 모드
 	private SimulationResponse calculateEqualWeight(Long userId, Long amount) {
-		// 1. 찜한 ETF 목록 DB에서 가져오기
+		// 1. 북마크한 ETF 목록 DB에서 가져오기
         List<Bookmark> bookmarks = bookmarkMapper.getBookmarksByUserId(userId);
 
         if (bookmarks.isEmpty()) {
