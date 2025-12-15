@@ -6,10 +6,12 @@ import EtfSearchView from '@/views/EtfSearchView.vue'
 import KakaoCallback from '@/views/KakaoCallback.vue'
 import LikeView from '@/views/LikeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import MockInvestmentView from '@/views/MockInvestmentView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import PortfolioView from '@/views/PortfolioView.vue'
 import PropensityTestView from '@/views/PropensityTestView.vue'
 import RecommendResultView from '@/views/RecommendResultView.vue'
+import SimulationView from '@/views/SimulationView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
@@ -81,6 +83,18 @@ const router = createRouter({
       path: '/propensity/test',
       name: 'propensityTest',
       component: PropensityTestView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/simulation',
+      name: 'simulation',
+      component: SimulationView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/mock-investment',
+      name: 'mockInvestment',
+      component: MockInvestmentView,
       meta: { requiresAuth: true }
     },
   ],

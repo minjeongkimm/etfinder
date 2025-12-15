@@ -21,7 +21,7 @@
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                모의투자 실행하기
+                시뮬레이션
               </span>
             </button>
           </div>
@@ -298,14 +298,9 @@ const handleRemove = async (etfId) => {
   }
 }
 
-// 모의투자 실행
+// 시뮬레이션 페이지로 이동
 const handleSimulation = () => {
-  if (bookmarkStore.bookmarkedEtfs.length === 0) {
-    alert('포트폴리오에 ETF를 추가한 후 모의투자를 실행할 수 있습니다.')
-    return
-  }
-  // 모의투자 페이지로 이동 (필요시 구현)
-  alert('모의투자 기능은 준비 중입니다.')
+  router.push('/simulation')
 }
 </script>
 
