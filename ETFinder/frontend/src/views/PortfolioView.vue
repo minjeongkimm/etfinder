@@ -169,10 +169,10 @@
 <script setup>
 import { useBookmarkStore } from '@/stores/bookmark'
 import {
-    ArcElement,
-    Chart as ChartJS,
-    Legend,
-    Tooltip
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip
 } from 'chart.js'
 import { computed, onMounted } from 'vue'
 import { Doughnut } from 'vue-chartjs'
