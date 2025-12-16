@@ -71,12 +71,14 @@ CREATE TABLE comments (
     etf_id       BIGINT NOT NULL,
     content      VARCHAR(200) NOT NULL COMMENT '내용 200자 제한',
     sentiment    VARCHAR(10) COMMENT 'AI 감성분석 결과 (POSITIVE/NEGATIVE)',
-    created_at   DATETIME DEFAULT NOW(),
-    updated_at DATETIME DEFAULT NOW() ON UPDATE NOW(),
+    
+    created_at   DATETIME DEFAULT NOW() COMMENT '최초 작성 시간',
+    updated_at   DATETIME DEFAULT NOW() COMMENT '사용자 수정 시간',
     
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE
 );
+
 
 -- ==========================================
 -- 5. 좋아요 (Likes)

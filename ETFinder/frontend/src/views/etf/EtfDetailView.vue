@@ -323,7 +323,194 @@
 
               <!-- 한줄평 탭 -->
               <div v-if="activeTab === 'comments'">
-                <h3 class="text-lg font-semibold text-foreground mb-4">투자자 한줄평</h3>
+                <h3 class="text-lg font-semibold text-foreground mb-6">투자자 한줄평</h3>
+                
+                <!-- AI 댓글 분석 섹션 -->
+                <div v-if="!commentsLoading" class="rounded-xl border border-border bg-card shadow-sm p-8 mb-6">
+                  <!-- 헤더 -->
+                  <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary">
+                        <path d="M12 8V4H8"/>
+                        <rect width="16" height="12" x="4" y="8" rx="2"/>
+                        <path d="M2 14h2"/>
+                        <path d="M20 14h2"/>
+                        <path d="M15 13v2"/>
+                        <path d="M9 13v2"/>
+                      </svg>
+                      <h4 class="text-lg font-bold text-foreground">AI 댓글 분석</h4>
+                    </div>
+                    <button class="px-4 py-1.5 text-xs font-semibold rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors">
+                      최신 분석
+                    </button>
+                  </div>
+
+                  <!-- 데이터 부족 상태 -->
+                  <div v-if="!shouldShowChart" class="text-center py-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-muted-foreground/30">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                      <path d="M12 17h.01"/>
+                    </svg>
+                    <p class="text-base font-medium text-muted-foreground mb-2">데이터 부족</p>
+                    <p class="text-sm text-muted-foreground mb-6">댓글이 5개 이상일 때 AI 분석이 표시됩니다</p>
+                    
+                    <!-- moodMessage는 항상 표시 -->
+                    <div v-if="aiAnalysis.moodMessage" class="mt-6 p-4 rounded-lg bg-amber-50 border border-amber-200 max-w-md mx-auto">
+                      <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600 mt-0.5 flex-shrink-0">
+                          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                          <path d="M12 9v4"/>
+                          <path d="M12 17h.01"/>
+                        </svg>
+                        <p class="text-sm text-amber-800 leading-relaxed">
+                          {{ aiAnalysis.moodMessage }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 분석 결과 (totalCnt >= 5) -->
+                  <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 왼쪽: 전체 감정 분석 -->
+                    <div class="space-y-6">
+                      <h5 class="text-sm font-medium text-muted-foreground">전체 감정 분석</h5>
+                      
+                      <!-- 바 차트 (2행 구조, 100% 겹침 방지) -->
+                      <div class="space-y-2">
+                        <!-- Row A: 라벨 행 (각 세그먼트 너비와 동일) -->
+                        <div class="flex gap-0">
+                          <!-- 긍정 라벨 영역 -->
+                          <div 
+                            class="flex justify-start items-end pb-1 transition-all duration-500"
+                            :style="{ width: aiAnalysis.positivePercent + '%' }"
+                          >
+                            <div 
+                              v-if="aiAnalysis.positivePercent >= 8"
+                              class="text-3xl sm:text-4xl font-bold text-green-600 whitespace-nowrap pl-1"
+                            >
+                              {{ aiAnalysis.positivePercent }}%
+                            </div>
+                          </div>
+                          
+                          <!-- 중립 라벨 영역 -->
+                          <div 
+                            class="flex justify-start items-end pb-1 transition-all duration-500"
+                            :style="{ width: neutralPercent + '%' }"
+                          >
+                            <div 
+                              v-if="neutralPercent >= 8"
+                              class="text-3xl sm:text-4xl font-bold text-gray-500 whitespace-nowrap pl-1"
+                            >
+                              {{ neutralPercent }}%
+                            </div>
+                          </div>
+                          
+                          <!-- 부정 라벨 영역 -->
+                          <div 
+                            class="flex justify-start items-end pb-1 transition-all duration-500"
+                            :style="{ width: aiAnalysis.negativePercent + '%' }"
+                          >
+                            <div 
+                              v-if="aiAnalysis.negativePercent >= 8"
+                              class="text-3xl sm:text-4xl font-bold text-red-600 whitespace-nowrap pl-1"
+                            >
+                              {{ aiAnalysis.negativePercent }}%
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <!-- Row B: 바 행 (단일 스택 바) -->
+                        <div class="h-3 rounded-full overflow-hidden shadow-inner flex">
+                          <div 
+                            class="bg-green-500 transition-all duration-500"
+                            :style="{ width: aiAnalysis.positivePercent + '%' }"
+                          ></div>
+                          <div 
+                            class="bg-gray-400 transition-all duration-500"
+                            :style="{ width: neutralPercent + '%' }"
+                          ></div>
+                          <div 
+                            class="bg-red-500 transition-all duration-500"
+                            :style="{ width: aiAnalysis.negativePercent + '%' }"
+                          ></div>
+                        </div>
+                        
+                        <!-- 하단 범례 (모든 퍼센트 항상 표시) -->
+                        <div class="flex items-center justify-between text-xs text-gray-500 pt-1">
+                          <span>긍정 ({{ aiAnalysis.positivePercent }}%)</span>
+                          <span>중립 ({{ neutralPercent }}%)</span>
+                          <span>부정 ({{ aiAnalysis.negativePercent }}%)</span>
+                        </div>
+                      </div>
+
+                      <!-- 통계 카드 3개 -->
+                      <div class="grid grid-cols-3 gap-4 pt-4">
+                        <div class="text-center p-4 rounded-lg bg-blue-50 border border-blue-100">
+                          <div class="text-3xl font-bold text-blue-600 mb-1">{{ aiAnalysis.totalCnt }}</div>
+                          <div class="text-xs text-blue-700 font-medium">분석된 댓글</div>
+                        </div>
+                        <div class="text-center p-4 rounded-lg bg-green-50 border border-green-100">
+                          <div class="text-3xl font-bold text-green-600 mb-1">{{ positiveCount }}</div>
+                          <div class="text-xs text-green-700 font-medium">긍정 댓글</div>
+                        </div>
+                        <div class="text-center p-4 rounded-lg bg-red-50 border border-red-100">
+                          <div class="text-3xl font-bold text-red-600 mb-1">{{ negativeCount }}</div>
+                          <div class="text-xs text-red-700 font-medium">부정 댓글</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 오른쪽: AI 인사이트 카드 (variant 기반) -->
+                    <div class="flex items-center justify-center">
+                      <div 
+                        :class="[
+                          'w-full rounded-xl border p-6 shadow-sm',
+                          'flex flex-col items-center justify-center text-center gap-3',
+                          variantConfig.bgClass,
+                          variantConfig.borderClass
+                        ]"
+                      >
+                        <!-- 상단 배지 -->
+                        <div 
+                          :class="[
+                            'px-3 py-1 rounded-full text-xs font-semibold',
+                            variantConfig.badgeBg,
+                            variantConfig.badgeText
+                          ]"
+                        >
+                          AI 인사이트
+                        </div>
+
+                        <!-- 아이콘 -->
+                        <component 
+                          :is="variantConfig.icon" 
+                          :size="48" 
+                          :class="variantConfig.iconColor"
+                          :stroke-width="2"
+                        />
+
+                        <!-- 타이틀 (헤드라인) -->
+                        <h3 :class="['text-xl font-bold', variantConfig.textColor]">
+                          {{ variantConfig.headline }}
+                        </h3>
+
+                        <!-- 메시지 본문 -->
+                        <p :class="['text-sm leading-relaxed', variantConfig.textColor, 'opacity-90']">
+                          {{ aiAnalysis.moodMessage || '댓글 데이터를 분석 중입니다...' }}
+                        </p>
+
+                        <!-- 푸터 (표본 개수) - totalCnt >= 5일 때만 표시 -->
+                        <div 
+                          v-if="shouldShowChart" 
+                          :class="['text-xs mt-2', variantConfig.textColor, 'opacity-60']"
+                        >
+                          표본 {{ aiAnalysis.totalCnt }}개 기준
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 
                 <!-- 한줄평 작성 폼 -->
                 <div class="rounded-lg border border-border bg-muted/30 p-4 mb-6">
@@ -404,14 +591,6 @@
                           <span v-if="comment.edited" class="text-xs text-muted-foreground px-2 py-0.5 rounded bg-muted/50">
                             수정됨
                           </span>
-                          <span v-if="comment.sentiment" :class="[
-                            'text-xs px-2 py-0.5 rounded font-medium',
-                            comment.sentiment === 'POSITIVE' ? 'bg-chart-1/10 text-chart-1' :
-                            comment.sentiment === 'NEGATIVE' ? 'bg-destructive/10 text-destructive' :
-                            'bg-chart-2/10 text-chart-2'
-                          ]">
-                            {{ comment.sentiment === 'POSITIVE' ? '긍정' : comment.sentiment === 'NEGATIVE' ? '부정' : '중립' }}
-                          </span>
                         </div>
                         <div class="flex items-center gap-2">
                           <span class="text-xs font-mono text-muted-foreground">
@@ -470,8 +649,22 @@ import { deleteEtf, getEtfDetail } from '@/api/etf'
 import { useAuthStore } from '@/stores/auth'
 import { useBookmarkStore } from '@/stores/bookmark'
 import { useLikeStore } from '@/stores/like'
-import { computed, onMounted, ref, watch } from 'vue'
+import { Chart, registerables } from 'chart.js'
+import {
+    BarChart3,
+    Info,
+    MessageSquare,
+    Scale,
+    ShieldAlert,
+    Sparkles,
+    TrendingDown,
+    TrendingUp
+} from 'lucide-vue-next'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+// Chart.js 전역 등록
+Chart.register(...registerables)
 
 const route = useRoute()
 const router = useRouter()
@@ -493,6 +686,240 @@ const newCommentContent = ref('')
 const commentSubmitting = ref(false)
 const editingCommentId = ref(null)
 const editingContent = ref('')
+
+// AI 댓글 분석 관련 상태
+const aiAnalysis = ref({
+  positivePercent: 0,
+  negativePercent: 0,
+  totalCnt: 0,
+  moodMessage: ''
+})
+
+// Chart.js 관련
+const sentimentChartCanvas = ref(null)
+let sentimentChartInstance = null
+
+// 중립 비율 계산 (프론트엔드에서 계산)
+const neutralPercent = computed(() => {
+  const positive = aiAnalysis.value.positivePercent || 0
+  const negative = aiAnalysis.value.negativePercent || 0
+  const neutral = 100 - (positive + negative)
+  // 음수 방지 (데이터 오류 대비)
+  return Math.max(0, neutral)
+})
+
+// 감정별 개수 계산 (백엔드에서 제공하지 않으므로 프론트엔드에서 계산)
+const positiveCount = computed(() => {
+  return Math.round(aiAnalysis.value.totalCnt * aiAnalysis.value.positivePercent / 100)
+})
+
+const negativeCount = computed(() => {
+  return Math.round(aiAnalysis.value.totalCnt * aiAnalysis.value.negativePercent / 100)
+})
+
+const neutralCount = computed(() => {
+  // 반올림 오차 조정
+  return aiAnalysis.value.totalCnt - positiveCount.value - negativeCount.value
+})
+
+// 차트가 표시되어야 하는지 여부
+const shouldShowChart = computed(() => {
+  return aiAnalysis.value.totalCnt >= 5
+})
+
+// moodMessage variant 감지 (우선순위 순서)
+const moodVariant = computed(() => {
+  const msg = aiAnalysis.value.moodMessage || ''
+  const total = aiAnalysis.value.totalCnt
+  
+  // 1. cold: totalCnt < 5 OR contains "데이터가 부족"
+  if (total < 5 || msg.includes('데이터가 부족')) return 'cold'
+  
+  // 2. neutral: contains "(중립 우세)"
+  if (msg.includes('(중립 우세)')) return 'neutral'
+  
+  // 3. strongBuy: contains "매수세" or "📈"
+  if (msg.includes('매수세') || msg.includes('📈')) return 'strongBuy'
+  
+  // 4. positive: contains "긍정적인 전망"
+  if (msg.includes('긍정적인 전망')) return 'positive'
+  
+  // 5. freeze: contains "냉각" or "주의" or "❄️"
+  if (msg.includes('냉각') || msg.includes('주의') || msg.includes('❄️')) return 'freeze'
+  
+  // 6. negative: contains "하락"
+  if (msg.includes('하락')) return 'negative'
+  
+  // 7. balanced: contains "팽팽" or "⚖️"
+  if (msg.includes('팽팽') || msg.includes('⚖️')) return 'balanced'
+  
+  // 8. default
+  return 'default'
+})
+
+// variant별 설정
+const variantConfig = computed(() => {
+  const configs = {
+    cold: {
+      icon: MessageSquare,
+      headline: '아직 데이터가 부족해요',
+      bgClass: 'bg-gray-50',
+      borderClass: 'border-gray-200',
+      iconColor: 'text-gray-500',
+      textColor: 'text-gray-900',
+      badgeBg: 'bg-gray-100',
+      badgeText: 'text-gray-700'
+    },
+    neutral: {
+      icon: Info,
+      headline: '관망 분위기',
+      bgClass: 'bg-slate-50',
+      borderClass: 'border-slate-200',
+      iconColor: 'text-slate-600',
+      textColor: 'text-slate-900',
+      badgeBg: 'bg-slate-100',
+      badgeText: 'text-slate-700'
+    },
+    strongBuy: {
+      icon: TrendingUp,
+      headline: '강한 매수 심리',
+      bgClass: 'bg-emerald-50',
+      borderClass: 'border-emerald-300',
+      iconColor: 'text-emerald-600',
+      textColor: 'text-emerald-900',
+      badgeBg: 'bg-emerald-100',
+      badgeText: 'text-emerald-700'
+    },
+    positive: {
+      icon: Sparkles,
+      headline: '긍정 우세',
+      bgClass: 'bg-green-50',
+      borderClass: 'border-green-300',
+      iconColor: 'text-green-600',
+      textColor: 'text-green-900',
+      badgeBg: 'bg-green-100',
+      badgeText: 'text-green-700'
+    },
+    freeze: {
+      icon: ShieldAlert,
+      headline: '주의 구간',
+      bgClass: 'bg-blue-50',
+      borderClass: 'border-blue-300',
+      iconColor: 'text-blue-600',
+      textColor: 'text-blue-900',
+      badgeBg: 'bg-blue-100',
+      badgeText: 'text-blue-700'
+    },
+    negative: {
+      icon: TrendingDown,
+      headline: '하락 우려',
+      bgClass: 'bg-rose-50',
+      borderClass: 'border-rose-300',
+      iconColor: 'text-rose-600',
+      textColor: 'text-rose-900',
+      badgeBg: 'bg-rose-100',
+      badgeText: 'text-rose-700'
+    },
+    balanced: {
+      icon: Scale,
+      headline: '의견 팽팽',
+      bgClass: 'bg-violet-50',
+      borderClass: 'border-violet-300',
+      iconColor: 'text-violet-600',
+      textColor: 'text-violet-900',
+      badgeBg: 'bg-violet-100',
+      badgeText: 'text-violet-700'
+    },
+    default: {
+      icon: BarChart3,
+      headline: '시장 분위기',
+      bgClass: 'bg-gray-50',
+      borderClass: 'border-gray-200',
+      iconColor: 'text-gray-600',
+      textColor: 'text-gray-900',
+      badgeBg: 'bg-gray-100',
+      badgeText: 'text-gray-700'
+    }
+  }
+  
+  return configs[moodVariant.value] || configs.default
+})
+
+// 차트 초기화 및 업데이트
+const updateSentimentChart = async () => {
+  // 차트를 보여주지 않아야 하면 기존 차트 삭제
+  if (!shouldShowChart.value) {
+    if (sentimentChartInstance) {
+      sentimentChartInstance.destroy()
+      sentimentChartInstance = null
+    }
+    return
+  }
+
+  // DOM이 렌더링될 때까지 대기
+  await nextTick()
+
+  if (!sentimentChartCanvas.value) {
+    console.warn('차트 캔버스를 찾을 수 없습니다.')
+    return
+  }
+
+  const ctx = sentimentChartCanvas.value.getContext('2d')
+
+  // 기존 차트가 있으면 데이터만 업데이트
+  if (sentimentChartInstance) {
+    sentimentChartInstance.data.datasets[0].data = [
+      aiAnalysis.value.positivePercent,
+      neutralPercent.value,
+      aiAnalysis.value.negativePercent
+    ]
+    sentimentChartInstance.update()
+    return
+  }
+
+  // 새 차트 생성
+  sentimentChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['긍정', '중립', '부정'],
+      datasets: [{
+        data: [
+          aiAnalysis.value.positivePercent,
+          neutralPercent.value,
+          aiAnalysis.value.negativePercent
+        ],
+        backgroundColor: [
+          'rgba(16, 185, 129, 0.9)',  // 녹색 (긍정) #10b981
+          'rgba(209, 213, 219, 0.9)', // 회색 (중립) #d1d5db
+          'rgba(239, 68, 68, 0.9)'    // 빨강 (부정) #ef4444
+        ],
+        borderColor: [
+          'rgba(16, 185, 129, 1)',
+          'rgba(209, 213, 219, 1)',
+          'rgba(239, 68, 68, 1)'
+        ],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      cutout: '65%',
+      plugins: {
+        legend: {
+          display: false  // 범례 숨김 (커스텀 범례 사용)
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.label + ': ' + context.parsed + '%'
+            }
+          }
+        }
+      }
+    }
+  })
+}
 
 const tabs = [
   { id: 'chart', label: '차트/수익률' },
@@ -694,13 +1121,49 @@ const fetchComments = async () => {
   try {
     commentsLoading.value = true
     console.log('[한줄평 조회]', route.params.etfId)
-    const commentList = await getComments(route.params.etfId)
-    comments.value = commentList
-    console.log('[한줄평 조회 성공]', commentList.length, '개')
+    
+    // CommentListResponse 구조로 응답 받기
+    const response = await getComments(route.params.etfId)
+    
+    // 댓글 목록 설정
+    comments.value = response.comments || []
+    
+    // AI 분석 데이터 설정
+    aiAnalysis.value = {
+      positivePercent: response.positivePercent || 0,
+      negativePercent: response.negativePercent || 0,
+      totalCnt: response.totalCnt || 0,
+      moodMessage: response.moodMessage || ''
+    }
+    
+    console.log('[한줄평 조회 성공]', comments.value.length, '개')
+    console.log('[AI 분석]', aiAnalysis.value)
+    
+    // 감정 비율 합계 검증 (100%인지 확인)
+    await nextTick()
+    const total = aiAnalysis.value.positivePercent + neutralPercent.value + aiAnalysis.value.negativePercent
+    console.log('[감정 비율 검증]', {
+      긍정: aiAnalysis.value.positivePercent + '%',
+      중립: neutralPercent.value + '%',
+      부정: aiAnalysis.value.negativePercent + '%',
+      합계: total + '%',
+      검증: total === 100 ? '✅ 정상' : '⚠️ 오류'
+    })
+    
+    // 차트 업데이트 (한줄평 탭이 활성화된 경우에만)
+    if (activeTab.value === 'comments') {
+      await updateSentimentChart()
+    }
   } catch (err) {
     console.error('한줄평 조회 실패:', err)
     // 사용자에게는 에러 표시 안 함 (빈 목록으로 처리)
     comments.value = []
+    aiAnalysis.value = {
+      positivePercent: 0,
+      negativePercent: 0,
+      totalCnt: 0,
+      moodMessage: ''
+    }
   } finally {
     commentsLoading.value = false
   }
@@ -867,10 +1330,15 @@ const formatCommentDate = (comment) => {
   }
 }
 
-// 한줄평 탭 활성화 시 댓글 로드
-watch(activeTab, (newTab) => {
-  if (newTab === 'comments' && comments.value.length === 0 && !commentsLoading.value) {
-    fetchComments()
+// 한줄평 탭 활성화 시 댓글 로드 및 차트 업데이트
+watch(activeTab, async (newTab) => {
+  if (newTab === 'comments') {
+    if (comments.value.length === 0 && !commentsLoading.value) {
+      await fetchComments()
+    } else {
+      // 이미 데이터가 있으면 차트만 업데이트
+      await updateSentimentChart()
+    }
   }
 })
 
