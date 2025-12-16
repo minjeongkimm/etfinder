@@ -1,5 +1,6 @@
 package com.etfinder.mvc.etf.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -123,6 +124,12 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 	// 6. ETF 상세 페이지 내 구성종목 조회
 	@Override
 	public List<EtfHolding> selectHoldingsByEtfId(Long etfId) {
-		return etfMapper.selectHoldingsByEtfId(etfId);
+		List<EtfHolding> list = etfMapper.selectHoldingsByEtfId(etfId);
+		
+		// 구성종목 정보가 없으면 빈 리스트 반환
+		if(list == null)
+			return new ArrayList<>();
+		
+		return list;
 	}
 }
