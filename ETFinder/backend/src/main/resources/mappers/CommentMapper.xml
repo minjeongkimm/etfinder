@@ -59,5 +59,6 @@
 	        COUNT(*) as totalCount
 	    FROM comments
     	WHERE etf_id = #{etfId}
+    		AND user_id IS NOT NULL
 	</select>
 </mapper>
