@@ -101,11 +101,25 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 	    try {
 	        log.info("AI 설명 생성 시작: {}", etf.getEtfName());
 	        
+	        List<EtfHolding> holdings = etfMapper.selectHoldingsByEtfId(etfId);
+	        
+	        // 상위 3개 종목명만 추출 (데이터 없으면 빈 리스트가 됨)
+	        List<String> top3Names = new ArrayList<>();
+	        if (holdings != null && !holdings.isEmpty()) {
+	            top3Names = holdings.stream()
+	                    .limit(3) // 상위 3개만
+	                    .map(EtfHolding::getStockName) // 이름만 뽑기
+	                    .toList();
+	        }
+	        
+	        log.info(">>> AI로 넘기는 종목 리스트: {}", top3Names);
+	        
 	        EtfAiDescriptionResponse aiRes = etfAiService.generateDescription(
 	            etf.getEtfName(), 
 	            etf.getEtfCode(), 
 	            etf.getTheme(),
-	            etf.getRiskRating()
+	            etf.getRiskRating(),
+	            top3Names
 	        );
 
 	        // DB 저장
