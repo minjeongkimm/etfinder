@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
+import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.mapper.EtfMapper;
@@ -117,5 +118,11 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 	        // 실패 시 빈 껍데기라도 리턴하거나 에러 던짐
 	        return new EtfAiDescriptionResponse("분석 중...", "잠시 후 다시 시도해주세요.", "보통", "보통", "#분석대기");
 	    }
+	}
+
+	// 6. ETF 상세 페이지 내 구성종목 조회
+	@Override
+	public EtfHolding selectHoldingsByEtfId(Long etfId) {
+		return etfMapper.selectHoldingsByEtfId(etfId);
 	}
 }
