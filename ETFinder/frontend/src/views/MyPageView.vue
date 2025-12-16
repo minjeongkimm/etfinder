@@ -40,15 +40,67 @@
             </div>
           </div>
 
-          <!-- 폼 영역 -->
-          <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
-            <!-- 기본 정보 섹션 -->
-            <div>
-              <h3 class="text-lg font-semibold text-foreground mb-4">기본 정보 수정</h3>
-              <p class="text-sm text-muted-foreground mb-6">
-                서비스 이용에 필요한 기본 정보를 관리합니다.
-              </p>
+          <!-- 기본 정보 영역 -->
+          <div class="p-6 space-y-6">
+            <!-- 기본 정보 섹션 헤더 -->
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-semibold text-foreground mb-1">기본 정보</h3>
+                <p class="text-sm text-muted-foreground">
+                  서비스 이용에 필요한 기본 정보를 관리합니다.
+                </p>
+              </div>
+              <!-- Edit 버튼 (View 모드일 때만 표시) -->
+              <button
+                v-if="!isEditMode"
+                @click="enterEditMode"
+                class="px-4 py-2 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-all duration-200"
+              >
+                수정하기
+              </button>
+            </div>
 
+            <!-- View 모드: 읽기 전용 -->
+            <div v-if="!isEditMode" class="space-y-5">
+              <!-- 닉네임 -->
+              <div>
+                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  닉네임
+                </label>
+                <p class="text-base font-medium text-foreground">{{ formData.nickname || '-' }}</p>
+              </div>
+
+              <!-- 이메일 -->
+              <div>
+                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  이메일
+                </label>
+                <p class="text-base font-medium text-foreground">{{ formData.email || '-' }}</p>
+              </div>
+
+              <!-- 나이 -->
+              <div>
+                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                  나이
+                </label>
+                <p class="text-base font-medium text-foreground">{{ formData.age ? `${formData.age}세` : '-' }}</p>
+              </div>
+
+              <!-- 투자 성향 -->
+              <div>
+                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                  투자 성향
+                </label>
+                <p class="text-base font-medium text-foreground">{{ formData.propensity || '-' }}</p>
+              </div>
+            </div>
+
+            <!-- Edit 모드: 편집 가능한 폼 -->
+            <form v-else @submit.prevent="handleSubmit" class="space-y-6">
               <div class="space-y-5">
                 <!-- 닉네임 -->
                 <div>
@@ -118,30 +170,30 @@
                   </p>
                 </div>
               </div>
-            </div>
 
-            <!-- 버튼 영역 -->
-            <div class="flex gap-3 pt-4">
-              <button
-                type="submit"
-                :disabled="saving"
-                class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <div v-else class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground"></div>
-                <span>{{ saving ? '저장 중...' : '변경사항 저장' }}</span>
-              </button>
+              <!-- 버튼 영역 -->
+              <div class="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  :disabled="saving || !hasChanges"
+                  class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <div v-else class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground"></div>
+                  <span>{{ saving ? '저장 중...' : '변경사항 저장' }}</span>
+                </button>
 
-              <button
-                type="button"
-                @click="resetForm"
-                :disabled="saving"
-                class="px-6 py-3 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                취소
-              </button>
-            </div>
-          </form>
+                <button
+                  type="button"
+                  @click="cancelEdit"
+                  :disabled="saving"
+                  class="px-6 py-3 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  취소
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
         <!-- 추가 정보 카드 -->
@@ -442,7 +494,7 @@
 <script setup>
 import { deleteUser, getMyRecommendedEtfs, updateMyInfo } from '@/api/user'
 import { useAuthStore } from '@/stores/auth'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
@@ -451,6 +503,9 @@ const route = useRoute()
 
 const loading = ref(true)
 const saving = ref(false)
+
+// View/Edit 모드 관리
+const isEditMode = ref(false)
 
 // 회원 탈퇴 관련 상태
 const showWithdrawalModal = ref(false)
@@ -462,7 +517,16 @@ const recommendedEtfs = ref([])
 const recommendedLoading = ref(false)
 const recommendedError = ref(null)
 
+// 현재 폼 데이터
 const formData = reactive({
+  nickname: '',
+  email: '',
+  age: null,
+  propensity: ''
+})
+
+// 원본 데이터 스냅샷 (변경 감지용)
+const originalData = reactive({
   nickname: '',
   email: '',
   age: null,
@@ -485,14 +549,53 @@ const formatDate = (dateString) => {
   return `${year}.${month}.${day}`
 }
 
-// 폼 초기화
+// 변경사항 감지
+const hasChanges = computed(() => {
+  return (
+    formData.nickname !== originalData.nickname ||
+    formData.age !== originalData.age ||
+    formData.propensity !== originalData.propensity
+  )
+})
+
+// 폼 초기화 (데이터 로드 시)
 const resetForm = () => {
   if (authStore.user) {
     formData.nickname = authStore.user.nickname || ''
     formData.email = authStore.user.email || ''
     formData.age = authStore.user.age || null
     formData.propensity = authStore.user.propensity || ''
+    
+    // originalData도 업데이트
+    originalData.nickname = authStore.user.nickname || ''
+    originalData.email = authStore.user.email || ''
+    originalData.age = authStore.user.age || null
+    originalData.propensity = authStore.user.propensity || ''
   }
+}
+
+// Edit 모드 진입
+const enterEditMode = () => {
+  // 현재 데이터를 originalData에 스냅샷 저장
+  originalData.nickname = formData.nickname
+  originalData.email = formData.email
+  originalData.age = formData.age
+  originalData.propensity = formData.propensity
+  
+  isEditMode.value = true
+  console.log('[Edit 모드 진입] originalData 스냅샷:', { ...originalData })
+}
+
+// Edit 모드 취소
+const cancelEdit = () => {
+  // originalData로 복원
+  formData.nickname = originalData.nickname
+  formData.email = originalData.email
+  formData.age = originalData.age
+  formData.propensity = originalData.propensity
+  
+  isEditMode.value = false
+  console.log('[Edit 모드 취소] 데이터 복원됨')
 }
 
 // 데이터 로드
@@ -509,32 +612,50 @@ const loadUserData = async () => {
   }
 }
 
-// 폼 제출
+// 폼 제출 (변경된 필드만 PATCH)
 const handleSubmit = async () => {
+  // 변경사항 없으면 API 호출하지 않음
+  if (!hasChanges.value) {
+    alert('변경된 내용이 없습니다.')
+    return
+  }
+
   saving.value = true
   try {
-    const updateData = {
-      nickname: formData.nickname,
-      age: formData.age,
-      propensity: formData.propensity
+    // 변경된 필드만 포함하는 PATCH payload 생성
+    const patchPayload = {}
+    
+    if (formData.nickname !== originalData.nickname && formData.nickname.trim() !== '') {
+      patchPayload.nickname = formData.nickname
     }
-
-    // 1. 업데이트 요청
-    const response = await updateMyInfo(updateData)
+    
+    if (formData.age !== originalData.age && formData.age !== null) {
+      patchPayload.age = formData.age
+    }
+    
+    if (formData.propensity !== originalData.propensity && formData.propensity !== null) {
+      patchPayload.propensity = formData.propensity
+    }
+    
+    // ⚠️ email은 절대 포함하지 않음 (백엔드 정책)
+    
+    console.log('[PATCH Payload] 변경된 필드만 전송:', patchPayload)
+    
+    // PATCH 요청
+    const response = await updateMyInfo(patchPayload)
     
     if (response.status === 200) {
-      // 2. 최신 사용자 정보를 다시 가져와서 동기화
-      const updatedUser = await authStore.getMyInfo()
+      // 최신 사용자 정보 다시 가져오기
+      await authStore.getMyInfo()
       
-      // 3. 폼 데이터를 최신 데이터로 업데이트
-      if (updatedUser) {
-        formData.nickname = updatedUser.nickname || ''
-        formData.email = updatedUser.email || ''
-        formData.age = updatedUser.age || null
-        formData.propensity = updatedUser.propensity || ''
-      }
+      // formData 및 originalData 업데이트
+      resetForm()
+      
+      // View 모드로 전환
+      isEditMode.value = false
       
       alert('회원 정보가 성공적으로 업데이트되었습니다.')
+      console.log('[업데이트 성공] View 모드로 전환')
     }
   } catch (error) {
     console.error('정보 업데이트 실패:', error)
