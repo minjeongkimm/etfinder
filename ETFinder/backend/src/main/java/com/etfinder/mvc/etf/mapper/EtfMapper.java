@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 
@@ -39,4 +40,13 @@ public interface EtfMapper {
 	
 	// 9. Etf ai 요약 업데이트
 	int updateEtfDescription(@Param("etfCode") String etfCode, @Param("description") String description);
+
+	// 10. Etf 구성종목 등록
+	int insertHolding(EtfHolding holding);
+
+	// 11. Etf 구성종목 삭제
+	int deleteHoldingsByEtfId(Long etfId);
+	
+	// 12. Etf 구성종목 조회 
+	List<EtfHolding> selectHoldingsByEtfId(Long etfId);
 }

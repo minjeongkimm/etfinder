@@ -1,11 +1,13 @@
 package com.etfinder.mvc.etf.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
+import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.mapper.EtfMapper;
@@ -99,11 +101,25 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 	    try {
 	        log.info("AI 설명 생성 시작: {}", etf.getEtfName());
 	        
+	        List<EtfHolding> holdings = etfMapper.selectHoldingsByEtfId(etfId);
+	        
+	        // 상위 3개 종목명만 추출 (데이터 없으면 빈 리스트가 됨)
+	        List<String> top3Names = new ArrayList<>();
+	        if (holdings != null && !holdings.isEmpty()) {
+	            top3Names = holdings.stream()
+	                    .limit(3) // 상위 3개만
+	                    .map(EtfHolding::getStockName) // 이름만 뽑기
+	                    .toList();
+	        }
+	        
+	        log.info(">>> AI로 넘기는 종목 리스트: {}", top3Names);
+	        
 	        EtfAiDescriptionResponse aiRes = etfAiService.generateDescription(
 	            etf.getEtfName(), 
 	            etf.getEtfCode(), 
 	            etf.getTheme(),
-	            etf.getRiskRating()
+	            etf.getRiskRating(),
+	            top3Names
 	        );
 
 	        // DB 저장
@@ -117,5 +133,17 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 	        // 실패 시 빈 껍데기라도 리턴하거나 에러 던짐
 	        return new EtfAiDescriptionResponse("분석 중...", "잠시 후 다시 시도해주세요.", "보통", "보통", "#분석대기");
 	    }
+	}
+
+	// 6. ETF 상세 페이지 내 구성종목 조회
+	@Override
+	public List<EtfHolding> selectHoldingsByEtfId(Long etfId) {
+		List<EtfHolding> list = etfMapper.selectHoldingsByEtfId(etfId);
+		
+		// 구성종목 정보가 없으면 빈 리스트 반환
+		if(list == null)
+			return new ArrayList<>();
+		
+		return list;
 	}
 }
