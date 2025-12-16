@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-background">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
     <!-- 메인 콘텐츠 -->
     <main class="flex-1 p-6 lg:p-8">
       <div class="container max-w-4xl">
@@ -20,20 +20,22 @@
         </div>
 
         <!-- 메인 카드 -->
-        <div v-else class="rounded-xl border border-border bg-card shadow-sm">
+        <div v-else class="rounded-2xl border border-gray-200 bg-white shadow-lg overflow-hidden">
           <!-- 프로필 헤더 -->
-          <div class="p-6 border-b border-border bg-gradient-to-br from-primary/5 to-transparent">
+          <div class="p-6 border-b border-gray-100 bg-gradient-to-br from-blue-50/50 via-white to-white relative">
+            <!-- 상단 하이라이트 -->
+            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400/0 via-blue-400/60 to-blue-400/0"></div>
             <div class="flex items-center gap-4">
-              <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                <span class="text-2xl font-bold text-primary-foreground">
+              <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-md ring-4 ring-blue-50">
+                <span class="text-3xl font-bold text-white">
                   {{ getUserInitial() }}
                 </span>
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-foreground mb-1">
+                <h2 class="text-2xl font-bold text-gray-900 mb-1">
                   {{ formData.nickname || '사용자' }}님
                 </h2>
-                <p class="text-sm text-muted-foreground">
+                <p class="text-sm text-gray-500">
                   ETFinder와 함께 스마트한 투자를 시작하세요
                 </p>
               </div>
@@ -43,10 +45,10 @@
           <!-- 기본 정보 영역 -->
           <div class="p-6 space-y-6">
             <!-- 기본 정보 섹션 헤더 -->
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-6">
               <div>
-                <h3 class="text-lg font-semibold text-foreground mb-1">기본 정보</h3>
-                <p class="text-sm text-muted-foreground">
+                <h3 class="text-xl font-bold text-gray-900 mb-1">기본 정보</h3>
+                <p class="text-sm text-gray-500">
                   서비스 이용에 필요한 기본 정보를 관리합니다.
                 </p>
               </div>
@@ -54,48 +56,48 @@
               <button
                 v-if="!isEditMode"
                 @click="enterEditMode"
-                class="px-4 py-2 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-all duration-200"
+                class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 수정하기
               </button>
             </div>
 
             <!-- View 모드: 읽기 전용 -->
-            <div v-if="!isEditMode" class="space-y-5">
+            <div v-if="!isEditMode" class="space-y-6">
               <!-- 닉네임 -->
-              <div>
-                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <div class="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100">
+                <label class="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   닉네임
                 </label>
-                <p class="text-base font-medium text-foreground">{{ formData.nickname || '-' }}</p>
+                <p class="text-lg font-semibold text-gray-900">{{ formData.nickname || '-' }}</p>
               </div>
 
               <!-- 이메일 -->
-              <div>
-                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <div class="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100">
+                <label class="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                   이메일
                 </label>
-                <p class="text-base font-medium text-foreground">{{ formData.email || '-' }}</p>
+                <p class="text-lg font-semibold text-gray-900 font-mono">{{ formData.email || '-' }}</p>
               </div>
 
               <!-- 나이 -->
-              <div>
-                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              <div class="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100">
+                <label class="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                   나이
                 </label>
-                <p class="text-base font-medium text-foreground">{{ formData.age ? `${formData.age}세` : '-' }}</p>
+                <p class="text-lg font-semibold text-gray-900">{{ formData.age ? `${formData.age}세` : '-' }}</p>
               </div>
 
               <!-- 투자 성향 -->
-              <div>
-                <label class="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+              <div class="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100">
+                <label class="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
                   투자 성향
                 </label>
-                <p class="text-base font-medium text-foreground">{{ formData.propensity || '-' }}</p>
+                <p class="text-lg font-semibold text-gray-900">{{ formData.propensity || '-' }}</p>
               </div>
             </div>
 
@@ -172,14 +174,14 @@
               </div>
 
               <!-- 버튼 영역 -->
-              <div class="flex gap-3 pt-4">
+              <div class="flex gap-3 pt-6">
                 <button
                   type="submit"
                   :disabled="saving || !hasChanges"
-                  class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                  <div v-else class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground"></div>
+                  <div v-else class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   <span>{{ saving ? '저장 중...' : '변경사항 저장' }}</span>
                 </button>
 
@@ -187,7 +189,7 @@
                   type="button"
                   @click="cancelEdit"
                   :disabled="saving"
-                  class="px-6 py-3 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-6 py-3.5 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   취소
                 </button>
@@ -197,54 +199,60 @@
         </div>
 
         <!-- 추가 정보 카드 -->
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <!-- 가입일 -->
-          <div class="rounded-xl border border-border bg-card shadow-sm p-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+          <div class="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white shadow-sm hover:shadow-md transition-all duration-250 p-5">
+            <div class="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
+              <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              </div>
               가입일
             </div>
-            <p class="text-lg font-semibold text-foreground">
+            <p class="text-xl font-bold text-gray-900 font-mono">
               {{ formatDate(authStore.user?.createdAt) }}
             </p>
           </div>
 
           <!-- 투자 성향 -->
-          <div class="rounded-xl border border-border bg-card shadow-sm p-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-              현재 투자 성향
+          <div class="rounded-xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white shadow-sm hover:shadow-md transition-all duration-250 p-5">
+            <div class="flex items-center gap-2 text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2">
+              <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+              </div>
+              투자 성향
             </div>
-            <p class="text-lg font-semibold text-foreground">
+            <p class="text-xl font-bold text-gray-900">
               {{ formData.propensity || '-' }}
             </p>
           </div>
 
           <!-- 로그인 방식 -->
-          <div class="rounded-xl border border-border bg-card shadow-sm p-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <div class="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-100 to-white shadow-sm hover:shadow-md transition-all duration-250 p-5">
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+              <div class="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
               로그인 방식
             </div>
-            <p class="text-lg font-semibold text-foreground">
+            <p class="text-xl font-bold text-gray-900">
               카카오
             </p>
           </div>
         </div>
 
         <!-- 추천 ETF 섹션 -->
-        <div class="mt-8 rounded-xl border border-border bg-card shadow-sm p-6">
+        <div class="mt-8 rounded-2xl border border-gray-200 bg-white shadow-lg p-6">
           <!-- 섹션 헤더 -->
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h3 class="text-lg font-semibold text-foreground mb-1">추천 ETF</h3>
-              <p class="text-sm text-muted-foreground">
+              <h3 class="text-xl font-bold text-gray-900 mb-1">추천 ETF</h3>
+              <p class="text-sm text-gray-500">
                 회원님의 투자 성향에 맞는 ETF를 추천합니다
               </p>
             </div>
             <button
               @click="router.push({ name: 'propensityTest' })"
-              class="text-sm text-primary hover:text-primary/80 font-semibold transition whitespace-nowrap flex items-center gap-1"
+              class="text-sm text-gray-600 hover:text-gray-900 font-semibold transition whitespace-nowrap flex items-center gap-1"
             >
               <span>다시 분석하기</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -276,43 +284,43 @@
                 v-for="etf in recommendedEtfs.slice(0, 3)"
                 :key="etf.etfId"
                 @click="goToRecommendedEtfDetail(etf.etfId)"
-                class="rounded-lg border border-border bg-card hover:border-primary/50 hover:-translate-y-1 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden"
+                class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-slate-50 hover:border-blue-300 hover:-translate-y-1 hover:shadow-xl transition-all duration-250 cursor-pointer overflow-hidden"
               >
                 <!-- 카드 헤더 -->
-                <header class="px-4 pt-4 pb-3 border-b border-border">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="px-2 py-1 text-xs font-semibold rounded bg-primary/10 text-primary">
+                <header class="px-5 pt-5 pb-4 border-b border-gray-100">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700">
                       {{ etf.country || etf.market }}
                     </span>
-                    <span v-if="etf.priority" class="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-700">
-                      우선순위 {{ etf.priority }}
+                    <span v-if="etf.priority" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-700">
+                      #{{ etf.priority }}
                     </span>
                   </div>
-                  <h4 class="text-base font-bold text-foreground mb-1 line-clamp-2">
+                  <h4 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
                     {{ etf.etfName }}
                   </h4>
-                  <p class="text-xs font-mono text-muted-foreground">{{ etf.etfCode }}</p>
+                  <p class="text-xs font-mono text-gray-500 font-semibold tracking-tight">{{ etf.etfCode }}</p>
                 </header>
 
                 <!-- 카드 본문 -->
-                <section class="px-4 py-3 space-y-2">
-                  <div class="grid grid-cols-2 gap-2">
-                    <div>
-                      <div class="text-xs text-muted-foreground">총보수</div>
-                      <div class="text-sm font-bold text-foreground">{{ etf.expenseRatio }}%</div>
+                <section class="px-5 py-4 space-y-3">
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white/80 rounded-lg p-2.5">
+                      <div class="text-xs text-gray-400 font-semibold mb-1">총보수</div>
+                      <div class="text-base font-bold text-gray-900 font-mono">{{ etf.expenseRatio }}%</div>
                     </div>
-                    <div>
-                      <div class="text-xs text-muted-foreground">순자산</div>
-                      <div class="text-sm font-bold text-foreground">{{ formatAum(etf.netAsset) }}</div>
+                    <div class="bg-white/80 rounded-lg p-2.5">
+                      <div class="text-xs text-gray-400 font-semibold mb-1">순자산</div>
+                      <div class="text-base font-bold text-gray-900 font-mono">{{ formatAum(etf.netAsset) }}</div>
                     </div>
                   </div>
                   
-                  <div v-if="etf.returnRate1y !== null" class="flex items-center justify-between pt-2 border-t border-border">
-                    <span class="text-xs text-muted-foreground">1년 수익률</span>
+                  <div v-if="etf.returnRate1y !== null" class="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span class="text-xs text-gray-500 font-semibold">1년 수익률</span>
                     <span
                       :class="[
-                        'text-sm font-bold font-mono',
-                        etf.returnRate1y > 0 ? 'text-chart-1' : etf.returnRate1y < 0 ? 'text-destructive' : 'text-muted-foreground'
+                        'px-3 py-1 text-sm font-bold font-mono rounded-full',
+                        etf.returnRate1y > 0 ? 'bg-emerald-100 text-emerald-700' : etf.returnRate1y < 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
                       ]"
                     >
                       {{ etf.returnRate1y > 0 ? '+' : '' }}{{ etf.returnRate1y }}%
@@ -321,10 +329,10 @@
                 </section>
 
                 <!-- 카드 푸터 -->
-                <footer class="px-4 py-2 bg-muted/30 border-t border-border">
-                  <button class="w-full text-xs font-medium text-primary hover:text-primary/80 transition flex items-center justify-center gap-1">
+                <footer class="px-5 py-3 bg-slate-50 border-t border-gray-100">
+                  <button class="w-full text-sm font-semibold text-blue-600 hover:text-blue-700 transition flex items-center justify-center gap-1.5">
                     <span>자세히 보기</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="m9 18 6-6-6-6"/>
                     </svg>
                   </button>
@@ -336,7 +344,7 @@
             <div class="flex gap-3">
               <button
                 @click="router.push({ name: 'recommend' })"
-                class="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-2"
+                class="flex-1 px-4 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 <span>전체 추천 ETF 보기</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -345,7 +353,7 @@
               </button>
               <button
                 @click="router.push({ name: 'propensityTest' })"
-                class="px-6 py-3 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition whitespace-nowrap"
+                class="px-6 py-3.5 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-200 whitespace-nowrap"
               >
                 다시 분석하기
               </button>
@@ -353,18 +361,18 @@
           </div>
 
           <!-- 빈 상태 -->
-          <div v-else class="text-center py-12">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
+          <div v-else class="text-center py-16">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400">
                 <path d="M3 3v18h18"/>
                 <path d="m19 9-5 5-4-4-3 3"/>
               </svg>
             </div>
-            <p class="text-sm font-medium text-foreground mb-2">추천 가능한 ETF가 없습니다</p>
-            <p class="text-xs text-muted-foreground mb-4">투자 성향 테스트를 먼저 진행해주세요</p>
+            <p class="text-base font-bold text-gray-900 mb-2">추천 가능한 ETF가 없습니다</p>
+            <p class="text-sm text-gray-500 mb-6">투자 성향 테스트를 먼저 진행해주세요</p>
             <button
               @click="router.push({ name: 'propensityTest' })"
-              class="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition text-sm"
+              class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg text-sm"
             >
               투자 성향 분석하기
             </button>
@@ -372,12 +380,12 @@
         </div>
 
         <!-- 계정 삭제 섹션 -->
-        <div class="mt-8 rounded-xl border border-red-200 bg-red-50/30 shadow-sm p-6">
+        <div class="mt-8 rounded-xl border border-red-200 bg-red-50 shadow-inner p-6">
           <div class="flex items-center justify-between">
             <!-- 왼쪽: 제목 + 설명 -->
             <div>
-              <h3 class="text-sm font-semibold text-gray-900 mb-1">계정 삭제</h3>
-              <p class="text-xs text-gray-500">
+              <h3 class="text-base font-bold text-gray-900 mb-1">계정 삭제</h3>
+              <p class="text-sm text-gray-600">
                 회원 탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.
               </p>
             </div>
@@ -385,7 +393,7 @@
             <!-- 오른쪽: 탈퇴 버튼 -->
             <button
               @click="showWithdrawalModal = true"
-              class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg font-semibold hover:bg-red-700 transition whitespace-nowrap"
+              class="px-5 py-2.5 bg-red-600 text-white text-sm rounded-lg font-semibold hover:bg-red-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
             >
               회원 탈퇴
             </button>
