@@ -25,6 +25,6 @@ public interface EtfSearchService {
 	EtfAiDescriptionResponse updateEtfDescription(Long etfId);
 	
 	// 6. 상세 페이지 내 구성종목 조회
-	EtfHolding selectHoldingsByEtfId(Long etfId);
+	List<EtfHolding> selectHoldingsByEtfId(Long etfId);
 	
 }

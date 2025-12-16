@@ -122,7 +122,7 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 
 	// 6. ETF 상세 페이지 내 구성종목 조회
 	@Override
-	public EtfHolding selectHoldingsByEtfId(Long etfId) {
+	public List<EtfHolding> selectHoldingsByEtfId(Long etfId) {
 		return etfMapper.selectHoldingsByEtfId(etfId);
 	}
 }
