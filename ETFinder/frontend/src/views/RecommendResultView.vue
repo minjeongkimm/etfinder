@@ -3,9 +3,10 @@ import { getRecommendedEtfs } from '@/api/etf'
 import { useAuthStore } from '@/stores/auth'
 import { Loader2 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 // ==============================
@@ -37,7 +38,14 @@ const fetchRecommendedEtfs = async () => {
 }
 
 const goToDetail = (etfId) => {
-  router.push({ name: 'etfDetail', params: { etfId } })
+  router.push({ 
+    name: 'etfDetail', 
+    params: { etfId },
+    query: {
+      from: 'recommended',
+      returnTo: route.fullPath
+    }
+  })
 }
 
 const formatPrice = (price) => {

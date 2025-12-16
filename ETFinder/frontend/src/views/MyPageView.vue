@@ -180,6 +180,145 @@
           </div>
         </div>
 
+        <!-- 추천 ETF 섹션 -->
+        <div class="mt-8 rounded-xl border border-border bg-card shadow-sm p-6">
+          <!-- 섹션 헤더 -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-1">추천 ETF</h3>
+              <p class="text-sm text-muted-foreground">
+                회원님의 투자 성향에 맞는 ETF를 추천합니다
+              </p>
+            </div>
+            <button
+              @click="router.push({ name: 'propensityTest' })"
+              class="text-sm text-primary hover:text-primary/80 font-semibold transition whitespace-nowrap flex items-center gap-1"
+            >
+              <span>다시 분석하기</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 로딩 상태 -->
+          <div v-if="recommendedLoading" class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+
+          <!-- 에러 상태 -->
+          <div v-else-if="recommendedError" class="text-center py-8">
+            <p class="text-sm text-muted-foreground mb-4">{{ recommendedError }}</p>
+            <button
+              @click="loadRecommendedEtfs"
+              class="text-sm text-primary hover:text-primary/80 font-medium"
+            >
+              다시 시도
+            </button>
+          </div>
+
+          <!-- 추천 ETF 목록 (상위 3개) -->
+          <div v-else-if="recommendedEtfs.length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              <article
+                v-for="etf in recommendedEtfs.slice(0, 3)"
+                :key="etf.etfId"
+                @click="goToRecommendedEtfDetail(etf.etfId)"
+                class="rounded-lg border border-border bg-card hover:border-primary/50 hover:-translate-y-1 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden"
+              >
+                <!-- 카드 헤더 -->
+                <header class="px-4 pt-4 pb-3 border-b border-border">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="px-2 py-1 text-xs font-semibold rounded bg-primary/10 text-primary">
+                      {{ etf.country || etf.market }}
+                    </span>
+                    <span v-if="etf.priority" class="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-700">
+                      우선순위 {{ etf.priority }}
+                    </span>
+                  </div>
+                  <h4 class="text-base font-bold text-foreground mb-1 line-clamp-2">
+                    {{ etf.etfName }}
+                  </h4>
+                  <p class="text-xs font-mono text-muted-foreground">{{ etf.etfCode }}</p>
+                </header>
+
+                <!-- 카드 본문 -->
+                <section class="px-4 py-3 space-y-2">
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <div class="text-xs text-muted-foreground">총보수</div>
+                      <div class="text-sm font-bold text-foreground">{{ etf.expenseRatio }}%</div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-muted-foreground">순자산</div>
+                      <div class="text-sm font-bold text-foreground">{{ formatAum(etf.netAsset) }}</div>
+                    </div>
+                  </div>
+                  
+                  <div v-if="etf.returnRate1y !== null" class="flex items-center justify-between pt-2 border-t border-border">
+                    <span class="text-xs text-muted-foreground">1년 수익률</span>
+                    <span
+                      :class="[
+                        'text-sm font-bold font-mono',
+                        etf.returnRate1y > 0 ? 'text-chart-1' : etf.returnRate1y < 0 ? 'text-destructive' : 'text-muted-foreground'
+                      ]"
+                    >
+                      {{ etf.returnRate1y > 0 ? '+' : '' }}{{ etf.returnRate1y }}%
+                    </span>
+                  </div>
+                </section>
+
+                <!-- 카드 푸터 -->
+                <footer class="px-4 py-2 bg-muted/30 border-t border-border">
+                  <button class="w-full text-xs font-medium text-primary hover:text-primary/80 transition flex items-center justify-center gap-1">
+                    <span>자세히 보기</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </button>
+                </footer>
+              </article>
+            </div>
+
+            <!-- 하단 액션 버튼 -->
+            <div class="flex gap-3">
+              <button
+                @click="router.push({ name: 'recommend' })"
+                class="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-2"
+              >
+                <span>전체 추천 ETF 보기</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6"/>
+                </svg>
+              </button>
+              <button
+                @click="router.push({ name: 'propensityTest' })"
+                class="px-6 py-3 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition whitespace-nowrap"
+              >
+                다시 분석하기
+              </button>
+            </div>
+          </div>
+
+          <!-- 빈 상태 -->
+          <div v-else class="text-center py-12">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
+                <path d="M3 3v18h18"/>
+                <path d="m19 9-5 5-4-4-3 3"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-foreground mb-2">추천 가능한 ETF가 없습니다</p>
+            <p class="text-xs text-muted-foreground mb-4">투자 성향 테스트를 먼저 진행해주세요</p>
+            <button
+              @click="router.push({ name: 'propensityTest' })"
+              class="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition text-sm"
+            >
+              투자 성향 분석하기
+            </button>
+          </div>
+        </div>
+
         <!-- 계정 삭제 섹션 -->
         <div class="mt-8 rounded-xl border border-red-200 bg-red-50/30 shadow-sm p-6">
           <div class="flex items-center justify-between">
@@ -301,13 +440,14 @@
 </template>
 
 <script setup>
-import { deleteUser, updateMyInfo } from '@/api/user'
+import { deleteUser, getMyRecommendedEtfs, updateMyInfo } from '@/api/user'
 import { useAuthStore } from '@/stores/auth'
 import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 const loading = ref(true)
 const saving = ref(false)
@@ -316,6 +456,11 @@ const saving = ref(false)
 const showWithdrawalModal = ref(false)
 const withdrawalConfirmed = ref(false)
 const isWithdrawing = ref(false)
+
+// 추천 ETF 관련 상태
+const recommendedEtfs = ref([])
+const recommendedLoading = ref(false)
+const recommendedError = ref(null)
 
 const formData = reactive({
   nickname: '',
@@ -407,6 +552,70 @@ const closeWithdrawalModal = () => {
   }
 }
 
+// 추천 ETF 조회
+// 추천 ETF 조회
+const loadRecommendedEtfs = async () => {
+  recommendedLoading.value = true
+  recommendedError.value = null
+
+  try {
+    const response = await getMyRecommendedEtfs()
+
+    // 1) 응답에서 "배열"을 먼저 뽑아내기
+    const rawList = Array.isArray(response.data)
+      ? response.data
+      : (response.data?.recommendedETFs ?? [])
+
+    // 2) 백엔드 필드명 -> 프론트에서 쓰는 필드명으로 매핑
+    recommendedEtfs.value = rawList.map((e) => ({
+      ...e,
+      etfId: e.etfId ?? e.etfid ?? e.etf_id ?? e.id ?? e.etfID ?? null,
+      expenseRatio: e.expenseRatio ?? e.fee ?? null,
+      netAsset: e.netAsset ?? e.aum ?? null,
+      returnRate1y: e.returnRate1y ?? e.return1yr ?? e.return1Y ?? null
+    }))
+
+    console.log('추천 ETF 조회 성공:', recommendedEtfs.value)
+  } catch (error) {
+    console.error('추천 ETF 조회 실패:', error)
+
+    if (error.response?.status === 404) {
+      recommendedError.value = '아직 투자 성향 테스트를 진행하지 않았습니다.'
+    } else if (error.response?.status === 401) {
+      recommendedError.value = '로그인이 필요합니다.'
+    } else {
+      recommendedError.value = '추천 ETF를 불러올 수 없습니다.'
+    }
+
+    recommendedEtfs.value = []
+  } finally {
+    recommendedLoading.value = false
+  }
+}
+
+
+// 추천 ETF 상세로 이동 (from/returnTo 전달)
+const goToRecommendedEtfDetail = (etfId) => {
+  console.log('[추천→상세] etfId =', etfId) // 디버깅용 로그
+  router.push({
+    name: 'etfDetail',
+    params: { etfId },
+    query: {
+      from: 'recommended',
+      returnTo: route.fullPath
+    }
+  })
+}
+
+// AUM 포맷팅 함수
+const formatAum = (aum) => {
+  if (!aum) return '0억'
+  if (aum >= 10000) {
+    return `${(aum / 10000).toFixed(1)}조`
+  }
+  return `${aum.toLocaleString()}억`
+}
+
 // 회원 탈퇴 처리
 const handleWithdrawal = async () => {
   if (!withdrawalConfirmed.value) {
@@ -451,6 +660,7 @@ const handleWithdrawal = async () => {
 // 초기 로드
 onMounted(() => {
   loadUserData()
+  loadRecommendedEtfs()
 })
 </script>
 
