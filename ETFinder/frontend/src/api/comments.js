@@ -8,16 +8,24 @@ import http from "@/util/http-common";
 /**
  * 특정 ETF의 한줄평 목록 조회
  * @param {number} etfId - ETF ID
- * @returns {Promise<Array>} 댓글 목록 (204 응답 시 빈 배열 반환)
+ * @returns {Promise<CommentListResponse>} 댓글 목록 및 AI 분석 정보
+ * CommentListResponse: {
+ *   comments: CommentResponse[],
+ *   positivePercent: number,
+ *   negativePercent: number,
+ *   totalCnt: number,
+ *   moodMessage: string
+ * }
  */
 export const getComments = async (etfId) => {
   try {
     const response = await http.get(`/etfs/${etfId}/comments`);
-    return response.data || [];
+    // 백엔드가 CommentListResponse 전체 구조를 반환
+    return response.data || { comments: [], positivePercent: 0, negativePercent: 0, totalCnt: 0, moodMessage: '' };
   } catch (error) {
     // 204 No Content 처리
     if (error.response?.status === 204) {
-      return [];
+      return { comments: [], positivePercent: 0, negativePercent: 0, totalCnt: 0, moodMessage: '' };
     }
     throw error;
   }
