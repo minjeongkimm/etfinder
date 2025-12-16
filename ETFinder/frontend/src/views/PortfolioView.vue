@@ -98,7 +98,6 @@
                     <th class="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">종목명</th>
                     <th class="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">티커</th>
                     <th class="text-right py-3 px-4 text-sm font-semibold text-muted-foreground">현재가</th>
-                    <th class="text-right py-3 px-4 text-sm font-semibold text-muted-foreground">목표 비중</th>
                     <th class="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">관리</th>
                   </tr>
                 </thead>
@@ -129,19 +128,6 @@
                         ]"
                       >
                         {{ etf.return1mo >= 0 ? '↑' : '↓' }} {{ Math.abs(etf.return1mo).toFixed(1) }}%
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <div class="flex items-center justify-end gap-2">
-                        <div class="w-24 bg-muted rounded-full h-2">
-                          <div 
-                            class="bg-primary h-2 rounded-full transition-all duration-300"
-                            :style="{ width: `${calculateWeight(etf.etfId)}%` }"
-                          ></div>
-                        </div>
-                        <span class="text-sm font-semibold text-foreground font-mono w-12 text-right">
-                          {{ calculateWeight(etf.etfId) }}%
-                        </span>
                       </div>
                     </td>
                     <td class="py-4 px-4 text-center">
@@ -271,13 +257,6 @@ const chartOptions = {
       }
     }
   }
-}
-
-// 개별 종목 비중 계산 (균등 배분)
-const calculateWeight = (etfId) => {
-  const total = bookmarkStore.bookmarkedEtfs.length
-  if (total === 0) return 0
-  return Math.round(100 / total)
 }
 
 // 가격 포맷
