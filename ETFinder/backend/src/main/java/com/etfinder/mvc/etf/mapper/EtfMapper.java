@@ -46,4 +46,7 @@ public interface EtfMapper {
 
 	// 11. Etf 구성종목 삭제
 	int deleteHoldingsByEtfId(Long etfId);
+	
+	// 12. Etf 구성종목 조회 
+	EtfHolding selectHoldingsByEtfId(Long etfId);
 }
