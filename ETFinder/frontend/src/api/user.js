@@ -18,3 +18,12 @@ export const updateMyInfo = (userData) => {
 export const deleteUser = () => {
   return http.delete("/users/me");
 };
+
+// ==============================
+// 추천 ETF API
+// ==============================
+
+// 사용자 맞춤 추천 ETF 조회 (My Page용)
+export const getMyRecommendedEtfs = () => {
+  return http.get("/etfs/recommend");
+};
