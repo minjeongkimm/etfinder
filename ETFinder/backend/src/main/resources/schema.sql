@@ -183,3 +183,28 @@ CREATE TABLE etf_holdings (
     -- 한 ETF 안에서 같은 종목이 두 번 들어갈 순 없음
     UNIQUE KEY uk_etf_stock (etf_id, stock_code)
 );
+
+-- ==========================================
+-- 12. ETF 과거 시세 (Daily Price History)
+-- 차트 그리기에 필요한 일별 데이터 저장소
+-- ==========================================
+CREATE TABLE etf_daily_history (
+    history_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    etf_id       BIGINT NOT NULL COMMENT 'etf_product 테이블 참조',
+    base_date    DATE NOT NULL COMMENT '기준 날짜 (YYYY-MM-DD)',
+    
+    -- 차트 데이터 (OHLCV)
+    close_price  BIGINT NOT NULL COMMENT '종가 (라인 차트의 기준)',
+    open_price   BIGINT COMMENT '시가 (캔들 차트용)',
+    high_price   BIGINT COMMENT '고가 (캔들 차트용)',
+    low_price    BIGINT COMMENT '저가 (캔들 차트용)',
+    volume       BIGINT COMMENT '거래량 (보조 지표용)',
+    
+    created_at   DATETIME DEFAULT NOW() COMMENT '데이터 수집 시점',
+    
+    FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE,
+    
+    -- [중요] 한 ETF에 같은 날짜 데이터가 중복으로 쌓이는 것 방지
+    -- 조회 성능 향상 (Index 역할 겸용)
+    UNIQUE KEY uk_etf_history (etf_id, base_date)
+);
