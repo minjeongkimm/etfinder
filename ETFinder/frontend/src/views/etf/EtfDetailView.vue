@@ -382,10 +382,7 @@
 
               <!-- 구성 종목 탭 -->
               <div v-if="activeTab === 'holdings'">
-                <h3 class="text-lg font-semibold text-foreground mb-4">보유 종목 비중</h3>
-                <p class="text-sm text-muted-foreground text-center py-8">
-                  보유 종목 정보는 준비 중입니다.
-                </p>
+                 <EtfHoldings :etf-id="etf.etfId" />
               </div>
 
               <!-- 한줄평 탭 -->
@@ -713,6 +710,7 @@
 <script setup>
 import { addComment, deleteComment, getComments, updateComment } from '@/api/comments'
 import { deleteEtf, getEtfDetail, getEtfAiSummary } from '@/api/etf'
+import EtfHoldings from '@/components/etf/EtfHoldings.vue'
 import EtfPriceChart from '@/components/etf/EtfPriceChart.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBookmarkStore } from '@/stores/bookmark'

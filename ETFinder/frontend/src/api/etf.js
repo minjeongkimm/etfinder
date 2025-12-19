@@ -31,6 +31,11 @@ export const getEtfAiSummary = (etfId) => {
   return http.get(`/etfs/${etfId}/ai`);
 };
 
+// 3-3. ETF 구성종목 조회
+export const getEtfHoldings = (etfId) => {
+  return http.get(`/etfs/${etfId}/holdings`);
+};
+
 // ==============================
 // 관리자 전용 API (EtfController)
 // ==============================
