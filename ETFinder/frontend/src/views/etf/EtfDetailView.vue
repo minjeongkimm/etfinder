@@ -157,11 +157,20 @@
                   </div>
                 </div>
 
-                <!-- 분배금 -->
+                <!-- 위험등급 -->
                 <div>
-                  <div class="text-sm text-muted-foreground mb-1">분배금</div>
+                  <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                    위험등급
+                    <div class="group relative">
+                      <HelpCircle :size="14" class="cursor-help" />
+                      <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
+                        1등급(매우 높은 위험) ~ 5등급(매우 낮은 위험)
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-800"></div>
+                      </div>
+                    </div>
+                  </div>
                   <div class="text-xl font-mono font-semibold text-foreground">
-                    분기지급
+                    {{ etf.riskRating }}등급
                   </div>
                 </div>
               </div>
@@ -718,6 +727,7 @@ import { useLikeStore } from '@/stores/like'
 import { Chart, registerables } from 'chart.js'
 import {
     BarChart3,
+    HelpCircle,
     Info,
     MessageSquare,
     Scale,
