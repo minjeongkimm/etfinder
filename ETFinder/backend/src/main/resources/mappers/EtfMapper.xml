@@ -232,4 +232,27 @@
 	    WHERE etf_id = #{etfId}
 	    ORDER BY weight DESC 
 	</select>
+	
+	<!-- 13. ETF 과거 시세 저장 -->
+	<insert id="insertDailyHistory" parameterType="EtfDailyHistory">
+		INSERT INTO etf_daily_history (etf_id, base_date, close_price, open_price, high_price, low_price, volume)
+		VALUES (#{etfId}, #{baseDate}, #{closePrice}, #{openPrice}, #{highPrice}, #{lowPrice}, #{volume})
+	</insert>
+	
+	<!-- 14. ETF 차트용 과거 시세 조회 -->
+	<select id="selectDailyHistory" resultType="EtfDailyHistory">
+		SELECT 
+			base_date, close_price, open_price, 
+			high_price, low_price, volume
+		FROM etf_daily_history
+		WHERE etf_id = #{etfId}
+		ORDER BY base_date ASC
+	</select>
+	
+	<!-- 15. 중복 데이터 방지용 조회 -->
+	<select id="countHistoryByDate" resultType="int">
+		SELECT COUNT(*)
+		FROM etf_daily_history
+		WHERE etf_id = #{etfId} AND base_date = #{baseDate}
+	</select>
 </mapper>

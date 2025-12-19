@@ -15,7 +15,7 @@ public class EtfHoldingScheduler {
         this.service = service;
     }
 
-    // 매일 저녁 7시 30분
+    // 매일 저녁 7시 10분
     @Scheduled(cron = "0 10 19 * * *", zone = "Asia/Seoul")
     public void runHoldingUpdate() {
         log.info("Triggering Daily Holdings Update...");
