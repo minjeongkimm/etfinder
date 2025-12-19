@@ -198,9 +198,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <!-- 차트 영역 -->
                   <div class="lg:col-span-2">
-                    <h3 class="text-lg font-semibold text-foreground mb-4">수익률 추이</h3>
-                    <div class="rounded-lg border border-border bg-muted/30 h-80 flex items-center justify-center">
-                      <p class="text-muted-foreground text-sm">차트 영역 (추후 구현)</p>
+                    <h3 class="text-lg font-semibold text-foreground mb-4">주가 추이</h3>
+                    <div class="rounded-lg border border-border bg-card p-4 h-96">
+                      <EtfPriceChart :etf-id="etf.etfId" />
                     </div>
                   </div>
 
@@ -658,6 +658,7 @@
 <script setup>
 import { addComment, deleteComment, getComments, updateComment } from '@/api/comments'
 import { deleteEtf, getEtfDetail } from '@/api/etf'
+import EtfPriceChart from '@/components/etf/EtfPriceChart.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBookmarkStore } from '@/stores/bookmark'
 import { useLikeStore } from '@/stores/like'

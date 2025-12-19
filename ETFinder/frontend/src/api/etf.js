@@ -21,6 +21,11 @@ export const getEtfDetail = (etfId) => {
   return http.get(`/etfs/${etfId}`);
 };
 
+// 3-1. ETF 차트 데이터 조회 (과거 시세)
+export const getEtfPriceHistory = (etfId) => {
+  return http.get(`/etfs/${etfId}/history`);
+};
+
 // ==============================
 // 관리자 전용 API (EtfController)
 // ==============================
