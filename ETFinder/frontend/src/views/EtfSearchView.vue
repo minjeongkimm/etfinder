@@ -276,7 +276,7 @@
                 <!-- 하단 정보 -->
                 <div class="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
                   <span>수수료 {{ etf.fee }}%</span>
-                  <span>거래량 {{ formatAum(etf.aum) }}</span>
+                  <span>시가총액 {{ formatAum(etf.aum) }}</span>
                 </div>
               </div>
             </section>
@@ -508,8 +508,20 @@ const formatPrice = (price) => {
 
 const formatAum = (aum) => {
   if (!aum) return '-'
-  const aukInOk = Math.round(aum / 100000000)
-  return `${aukInOk.toLocaleString('ko-KR')}억`
+  
+  // 조 단위 계산 (1조 = 1,000,000,000,000원 = 10,000억원)
+  const trillion = Math.floor(aum / 1000000000000)
+  const billion = Math.round((aum % 1000000000000) / 100000000)
+  
+  if (trillion > 0 && billion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조 ${billion.toLocaleString('ko-KR')}억원`
+  } else if (trillion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조원`
+  } else if (billion > 0) {
+    return `${billion.toLocaleString('ko-KR')}억원`
+  } else {
+    return `${aum.toLocaleString('ko-KR')}원`
+  }
 }
 
 const handleSearch = async () => {
