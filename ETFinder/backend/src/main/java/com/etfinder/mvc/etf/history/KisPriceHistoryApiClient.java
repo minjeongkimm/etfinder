@@ -64,7 +64,7 @@ public class KisPriceHistoryApiClient {
     public KisPriceHistoryRes fetchDailyPriceFromKis(String accessToken, String etfCode, String startDate, String endDate) {
         
         // 1. URL 및 쿼리 파라미터 설정
-        String url = BASE_URL + "uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
+        String url = BASE_URL + "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
                 .queryParam("FID_COND_MRKT_DIV_CODE", "J")      // 주식/ETF
