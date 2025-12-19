@@ -11,20 +11,20 @@ public class EtfHolding {
 	private String stockName;			// 종목명 
 	private BigDecimal weight;			// 구성 비율 
 	private Integer stockPrice;			// 기준가(종가)
-	private LocalDateTime updateAt;		// 갱신일
+	private LocalDateTime updatedAt;		// 갱신일
 	
 	public EtfHolding() {
 	}
 
 	public EtfHolding(Long holdingId, Long etfId, String stockCode, String stockName, BigDecimal weight,
-			Integer stockPrice, LocalDateTime updateAt) {
+			Integer stockPrice, LocalDateTime updatedAt) {
 		this.holdingId = holdingId;
 		this.etfId = etfId;
 		this.stockCode = stockCode;
 		this.stockName = stockName;
 		this.weight = weight;
 		this.stockPrice = stockPrice;
-		this.updateAt = updateAt;
+		this.updatedAt = updatedAt;
 	}
 
 	public Long getHoldingId() {
@@ -75,17 +75,17 @@ public class EtfHolding {
 		this.stockPrice = stockPrice;
 	}
 
-	public LocalDateTime getUpdateAt() {
-		return updateAt;
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setUpdateAt(LocalDateTime updateAt) {
-		this.updateAt = updateAt;
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	@Override
 	public String toString() {
 		return "EtfHolding [holdingId=" + holdingId + ", etfId=" + etfId + ", stockCode=" + stockCode + ", stockName="
-				+ stockName + ", weight=" + weight + ", stockPrice=" + stockPrice + ", updateAt=" + updateAt + "]";
+				+ stockName + ", weight=" + weight + ", stockPrice=" + stockPrice + ", updatedAt=" + updatedAt + "]";
 	}
 }
