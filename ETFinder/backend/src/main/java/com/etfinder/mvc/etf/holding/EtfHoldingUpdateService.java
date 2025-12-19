@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +26,9 @@ public class EtfHoldingUpdateService {
         this.etfMapper = etfMapper;
     }
 
+   @Async
     public void updateAllEtfHoldings() {
-        log.info("Starting daily ETF Holdings update...");
+        log.info("Starting daily ETF Holdings update... (Thread: {})", Thread.currentThread().getName());
 
         // 1. 토큰 발급
         String token = apiClient.getAccessToken();
