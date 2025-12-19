@@ -26,6 +26,11 @@ export const getEtfPriceHistory = (etfId) => {
   return http.get(`/etfs/${etfId}/history`);
 };
 
+// 3-2. ETF AI 요약 정보 조회
+export const getEtfAiSummary = (etfId) => {
+  return http.get(`/etfs/${etfId}/ai`);
+};
+
 // ==============================
 // 관리자 전용 API (EtfController)
 // ==============================
