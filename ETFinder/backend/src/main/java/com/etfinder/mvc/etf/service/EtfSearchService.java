@@ -3,6 +3,7 @@ package com.etfinder.mvc.etf.service;
 import java.util.List;
 
 import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
+import com.etfinder.mvc.etf.dto.EtfDailyHistory;
 import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
@@ -26,5 +27,8 @@ public interface EtfSearchService {
 	
 	// 6. 상세 페이지 내 구성종목 조회
 	List<EtfHolding> selectHoldingsByEtfId(Long etfId);
+	
+	// 7. 상세 페이지 내 차트용 과거 시세 조회
+	List<EtfDailyHistory> selectDailyHistory(Long etfId);
 	
 }

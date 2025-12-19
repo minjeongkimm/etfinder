@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
+import com.etfinder.mvc.etf.dto.EtfDailyHistory;
 import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
@@ -146,4 +147,11 @@ public class EtfSearchServiceImpl implements EtfSearchService {
 		
 		return list;
 	}
+
+	// 7. ETF 상세 페이지 내 차트 조회용 과거 시세 조회
+	@Override
+	public List<EtfDailyHistory> selectDailyHistory(Long etfId) {
+		return etfMapper.selectDailyHistory(etfId);
+	}
+	
 }
