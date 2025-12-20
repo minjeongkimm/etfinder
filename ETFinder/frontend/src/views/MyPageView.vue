@@ -336,7 +336,7 @@
                       <div class="text-base font-bold text-gray-900 font-mono">{{ etf.expenseRatio }}%</div>
                     </div>
                     <div class="bg-white/80 rounded-lg p-2.5">
-                      <div class="text-xs text-gray-400 font-semibold mb-1">순자산</div>
+                      <div class="text-xs text-gray-400 font-semibold mb-1">시가총액</div>
                       <div class="text-base font-bold text-gray-900 font-mono">{{ formatAum(etf.netAsset) }}</div>
                     </div>
                   </div>
@@ -763,12 +763,23 @@ const goToRecommendedEtfDetail = (etfId) => {
 }
 
 // AUM 포맷팅 함수
+// AUM 포맷팅 함수 (단위: 원)
 const formatAum = (aum) => {
-  if (!aum) return '0억'
-  if (aum >= 10000) {
-    return `${(aum / 10000).toFixed(1)}조`
+  if (!aum) return '-'
+  
+  // 조 단위 계산 (1조 = 1,000,000,000,000원 = 10,000억원)
+  const trillion = Math.floor(aum / 1000000000000)
+  const billion = Math.round((aum % 1000000000000) / 100000000)
+  
+  if (trillion > 0 && billion > 0) {
+    return `${trillion.toLocaleString()}조 ${billion.toLocaleString()}억원`
+  } else if (trillion > 0) {
+    return `${trillion.toLocaleString()}조원`
+  } else if (billion > 0) {
+    return `${billion.toLocaleString()}억원`
+  } else {
+    return `${aum.toLocaleString()}원`
   }
-  return `${aum.toLocaleString()}억`
 }
 
 // 회원 탈퇴 처리
