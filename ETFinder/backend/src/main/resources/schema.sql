@@ -208,3 +208,22 @@ CREATE TABLE etf_daily_history (
     -- 조회 성능 향상 (Index 역할 겸용)
     UNIQUE KEY uk_etf_history (etf_id, base_date)
 );
+
+-- ==========================================
+-- 13. [모의투자] 일별 자산 스냅샷 (Wallet Daily Snapshot)
+--     - DailyAssetPoint 매핑용
+-- ==========================================
+CREATE TABLE wallet_daily_snapshot (
+    snapshot_id     BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id         BIGINT NOT NULL COMMENT 'users.user_id 참조',
+    base_date       DATE NOT NULL COMMENT '기준 일자 (YYYY-MM-DD)',
+    total_asset     BIGINT NOT NULL COMMENT '총 자산 (잔액 + 평가금)',
+    realized_profit BIGINT NOT NULL COMMENT '누적 실현 손익 (기준 일자까지 확정된 손익)',
+    created_at      DATETIME DEFAULT NOW() COMMENT '스냅샷 생성 시각',
+    
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    
+    -- 유저별 날짜 1건만
+    UNIQUE KEY uk_wallet_snapshot (user_id, base_date)
+);
+
