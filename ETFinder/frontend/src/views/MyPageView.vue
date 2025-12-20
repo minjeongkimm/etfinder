@@ -250,6 +250,7 @@
               </p>
             </div>
             <button
+              v-if="formData.propensity"
               @click="router.push({ name: 'propensityTest' })"
               class="text-sm text-gray-600 hover:text-gray-900 font-semibold transition whitespace-nowrap flex items-center gap-1"
             >
@@ -263,6 +264,32 @@
           <!-- 로딩 상태 -->
           <div v-if="recommendedLoading" class="flex justify-center items-center py-12">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+
+          <!-- 투자 성향 미보유 시 안내 (New) -->
+          <div v-else-if="!formData.propensity" class="text-center py-12 px-4">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center shadow-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500">
+                <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-gray-900 mb-2">
+              나만의 맞춤형 ETF를 추천받아보세요!
+            </h4>
+            <p class="text-sm text-gray-600 mb-8 max-w-sm mx-auto leading-relaxed">
+              투자 성향을 분석하면 회원님의 목표와 위험 선호도에 딱 맞는<br />
+              <span class="font-semibold text-blue-600">최적의 ETF</span>를 추천해 드립니다.
+            </p>
+            <button
+              @click="router.push({ name: 'propensityTest' })"
+              class="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 mx-auto"
+            >
+              <span>투자 성향 테스트 하러 가기</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
           </div>
 
           <!-- 에러 상태 -->
