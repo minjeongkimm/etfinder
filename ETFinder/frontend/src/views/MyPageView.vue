@@ -159,13 +159,12 @@
                   </label>
                   <select
                     v-model="formData.propensity"
-                    required
                     class="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200 cursor-pointer"
                   >
                     <option value="" disabled>투자 성향을 선택하세요</option>
-                    <option value="안정형">안정형 (Stable)</option>
-                    <option value="중립형">중립형 (Neutral)</option>
-                    <option value="공격형">공격형 (Aggressive)</option>
+                    <option value="STABLE">안정형 (Stable)</option>
+                    <option value="NEUTRAL">중립형 (Neutral)</option>
+                    <option value="AGGRESSIVE">공격형 (Aggressive)</option>
                   </select>
                   <p class="text-xs text-muted-foreground mt-2">
                     투자 성향에 따라 최적의 ETF 추천을 받을 수 있습니다.
