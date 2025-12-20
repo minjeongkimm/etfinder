@@ -260,16 +260,20 @@
                     <span class="text-2xl font-mono font-bold text-foreground">
                       {{ formatPrice(etf.currentPrice) }}원
                     </span>
-                    <span
+                    <div
                       v-if="etf.return1mo !== null"
                       :class="[
+                        'flex flex-col items-end',
                         'font-mono text-sm font-medium',
                         etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
                       ]"
                     >
-                      {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
-                      {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
-                    </span>
+                      <span class="text-xs text-muted-foreground mb-0.5">1개월</span>
+                      <span>
+                        {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
+                        {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -318,12 +322,16 @@
                 <div
                   v-if="etf.return1mo !== null"
                   :class="[
+                    'flex items-center justify-center gap-1',
                     'text-xs font-mono font-medium',
                     etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
                   ]"
                 >
-                  {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
-                  {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                  <span class="text-muted-foreground">1개월</span>
+                  <span>
+                    {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
+                    {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                  </span>
                 </div>
               </div>
 
