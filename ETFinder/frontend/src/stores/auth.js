@@ -21,21 +21,22 @@ export const useAuthStore = defineStore('auth', () => {
       // 1. 백엔드로 인가 코드 전달 (GET 요청)
       // 백엔드 컨트롤러 주소: /api/auth/kakao/callback?code=...
       const response = await http.get(`/auth/kakao/callback?code=${code}`)
-      
+
       // 2. 백엔드가 준 데이터 받기
+      console.log('Login Response Data:', response.data)
       const { accessToken, message } = response.data
-      
+
       // 3. 토큰 저장 (Pinia 상태 + 로컬 스토리지)
       token.value = accessToken
       localStorage.setItem('accessToken', accessToken)
-      
+
       // 4. JWT에서 role 추출
       role.value = getRoleFromToken(accessToken)
       console.log('로그인 성공:', message, '/ Role:', role.value)
-      
-      // 5. 메인 페이지로 이동
-      router.replace('/')
-      
+
+      // 5. 결과 반환 (컴포넌트에서 라우팅 처리)
+      return { isNewMember: response.data.isNewMember, nickname: response.data.nickname }
+
     } catch (error) {
       console.error('로그인 실패:', error)
       alert('로그인에 실패했습니다.')
@@ -72,5 +73,5 @@ export const useAuthStore = defineStore('auth', () => {
   // Getters (토큰이 있는지 확인)
   const isAuthenticated = computed(() => !!token.value)
 
-  return { token, user, role, kakaoLogin, logout, isAuthenticated, getMyInfo, isAdmin}
+  return { token, user, role, kakaoLogin, logout, isAuthenticated, getMyInfo, isAdmin }
 })

@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-screen">
-    <!-- 로그인 페이지가 아닐 때만 사이드바 표시 -->
-    <TheSideBar v-if="!isLoginPage" />
+    <!-- 전체 화면 페이지(로그인, 온보딩 등)가 아닐 때만 사이드바 표시 -->
+    <TheSideBar v-if="!isFullScreenPage" />
     <div class="flex-1">
       <router-view></router-view>
     </div>
@@ -17,9 +17,9 @@ import { useAuthStore } from './stores/auth'
 const route = useRoute()
 const authStore = useAuthStore()
 
-// 로그인 페이지인지 확인
-const isLoginPage = computed(() => {
-  return route.name === 'login' || route.name === 'kakao-callback'
+// 사이드바를 숨길 페이지 목록
+const isFullScreenPage = computed(() => {
+  return ['login', 'kakao-callback', 'onboarding'].includes(route.name)
 })
 
 onMounted(async () => {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
+import com.etfinder.mvc.etf.dto.EtfDailyHistory;
 import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
@@ -114,6 +115,13 @@ public class EtfSearchController {
 		List<EtfHolding> etfHolding = etfSearchService.selectHoldingsByEtfId(etfId);
 		
 		return new ResponseEntity<List<EtfHolding>>(etfHolding, HttpStatus.OK);
+	}
+	
+	// 6. ETF 상세 조회 페이지 내 차트용 과거 시세 조회
+	@GetMapping("/{etfId}/history")
+	public ResponseEntity<?> etfPriceHistory(@PathVariable("etfId") Long etfId){
+		List<EtfDailyHistory> etfPrices = etfSearchService.selectDailyHistory(etfId);
+		return new ResponseEntity<List<EtfDailyHistory>>(etfPrices, HttpStatus.OK);
 	}
 
 }

@@ -14,6 +14,7 @@ import RecommendResultView from '@/views/RecommendResultView.vue'
 import SimulationView from '@/views/SimulationView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import OnboardingView from '@/views/OnboardingView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,12 @@ const router = createRouter({
       path: '/auth/callback',
       name: 'kakao-callback',
       component: KakaoCallback
+    },
+    {
+      path: '/onboarding',
+      name: 'onboarding',
+      component: OnboardingView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/etfs',
@@ -102,7 +109,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
+
   // 1. 가려는 곳이 'requiresAuth' 딱지가 붙어있는지 확인
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     // 2. 로그인 안 했으면 팝업 띄우고 로그인 페이지로 보내기

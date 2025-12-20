@@ -28,9 +28,10 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
 onMounted(() => {
@@ -40,7 +41,19 @@ onMounted(() => {
   if (code) {
     // 2. Pinia 액션 호출
     console.log("인가 코드 확인:", code)
-    authStore.kakaoLogin(code)
+    authStore.kakaoLogin(code).then((data) => {
+      // data가 없을 수도 있으므로 체크
+      if (data && data.isNewMember) {
+        // 신규 회원이면 온보딩 페이지로 이동 (닉네임 router state로 전달)
+        router.push({ 
+          name: 'onboarding', 
+          state: { nickname: data.nickname } 
+        })
+      } else {
+        // 기존 회원이면 메인으로 이동
+        router.replace('/')
+      }
+    })
   } else {
     alert("인가 코드가 없습니다.")
     // 로그인 페이지로 리다이렉트

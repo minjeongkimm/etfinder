@@ -342,12 +342,20 @@ const portfolioData = computed(() => {
           </div>
 
           <!-- 네비게이션 버튼 -->
-          <div class="pt-2">
+          <div class="pt-2 flex gap-3">
+            <button
+              v-if="currentStep > 0"
+              @click="prevStep"
+              :disabled="isSubmitting"
+              class="px-6 py-3 rounded-lg font-semibold transition-all duration-200 bg-muted text-muted-foreground hover:bg-muted/80 flex items-center justify-center gap-2"
+            >
+              이전
+            </button>
             <button
               @click="nextStep"
               :disabled="!canProceed || isSubmitting"
               :class="[
-                'w-full px-6 py-3 rounded-lg font-semibold transition-all duration-200',
+                'flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-200',
                 'flex items-center justify-center gap-2',
                 canProceed && !isSubmitting
                   ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm'

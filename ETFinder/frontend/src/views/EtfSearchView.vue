@@ -260,23 +260,27 @@
                     <span class="text-2xl font-mono font-bold text-foreground">
                       {{ formatPrice(etf.currentPrice) }}원
                     </span>
-                    <span
+                    <div
                       v-if="etf.return1mo !== null"
                       :class="[
+                        'flex flex-col items-end',
                         'font-mono text-sm font-medium',
                         etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
                       ]"
                     >
-                      {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
-                      {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
-                    </span>
+                      <span class="text-xs text-muted-foreground mb-0.5">1개월</span>
+                      <span>
+                        {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
+                        {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 <!-- 하단 정보 -->
                 <div class="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
                   <span>수수료 {{ etf.fee }}%</span>
-                  <span>거래량 {{ formatAum(etf.aum) }}</span>
+                  <span>시가총액 {{ formatAum(etf.aum) }}</span>
                 </div>
               </div>
             </section>
@@ -318,12 +322,16 @@
                 <div
                   v-if="etf.return1mo !== null"
                   :class="[
+                    'flex items-center justify-center gap-1',
                     'text-xs font-mono font-medium',
                     etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
                   ]"
                 >
-                  {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
-                  {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                  <span class="text-muted-foreground">1개월</span>
+                  <span>
+                    {{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}
+                    {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                  </span>
                 </div>
               </div>
 
@@ -508,8 +516,20 @@ const formatPrice = (price) => {
 
 const formatAum = (aum) => {
   if (!aum) return '-'
-  const aukInOk = Math.round(aum / 100000000)
-  return `${aukInOk.toLocaleString('ko-KR')}억`
+  
+  // 조 단위 계산 (1조 = 1,000,000,000,000원 = 10,000억원)
+  const trillion = Math.floor(aum / 1000000000000)
+  const billion = Math.round((aum % 1000000000000) / 100000000)
+  
+  if (trillion > 0 && billion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조 ${billion.toLocaleString('ko-KR')}억원`
+  } else if (trillion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조원`
+  } else if (billion > 0) {
+    return `${billion.toLocaleString('ko-KR')}억원`
+  } else {
+    return `${aum.toLocaleString('ko-KR')}원`
+  }
 }
 
 const handleSearch = async () => {
