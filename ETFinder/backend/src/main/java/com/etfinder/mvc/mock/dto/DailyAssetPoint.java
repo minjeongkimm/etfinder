@@ -5,15 +5,17 @@ import java.time.LocalDate;
 //자산 추이 차트 포인트
 public class DailyAssetPoint {
 
-	private LocalDate baseDate;	//기준 일자 
-	private Long totalAsset;	//총 자산 
+	private LocalDate baseDate; 	// 기준 일자
+	private Long totalAsset; 		// 총 자산(잔액 + 평가금)
+	private Long realizedProfit; 	// 누적 실현 손익 (기준 일자까지 확정된 손익)
 
 	public DailyAssetPoint() {
 	}
 
-	public DailyAssetPoint(LocalDate baseDate, Long totalAsset) {
+	public DailyAssetPoint(LocalDate baseDate, Long totalAsset, Long realizedProfit) {
 		this.baseDate = baseDate;
 		this.totalAsset = totalAsset;
+		this.realizedProfit = realizedProfit;
 	}
 
 	public LocalDate getBaseDate() {
@@ -32,9 +34,18 @@ public class DailyAssetPoint {
 		this.totalAsset = totalAsset;
 	}
 
+	public Long getRealizedProfit() {
+		return realizedProfit;
+	}
+
+	public void setRealizedProfit(Long realizedProfit) {
+		this.realizedProfit = realizedProfit;
+	}
+
 	@Override
 	public String toString() {
-		return "DailyAssetPoint [baseDate=" + baseDate + ", totalAsset=" + totalAsset + "]";
+		return "DailyAssetPoint [baseDate=" + baseDate + ", totalAsset=" + totalAsset + ", realizedProfit="
+				+ realizedProfit + "]";
 	}
 
 }

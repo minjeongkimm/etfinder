@@ -5,21 +5,21 @@ import java.util.List;
 //대시보드 통합 응답 DTO
 public class DashboardResponse {
 	
-	private WalletResponse walletResponse;		//지갑 정보 
-	private List<DailyAssetPoint> assetTrend;	//최근 7일/30일
-	private List<MockHoldingResponse> holdings;		//보유 종목 
-	private List<TradeHistory> recentTrades;//최근 거래 내역
-	private MockRankingResponse ranking;		//랭킹 정보 
+	private WalletResponse walletResponse;				//지갑 정보 
+	private List<DailyAssetPoint> assetTrend;			//최근 7일/30일
+	private List<MockHoldingResponse> holdings;			//보유 종목 
+	private List<TradeHistoryResponse> recentTrades;	//최근 거래 내역
+	private MockRankingResponse ranking;				//랭킹 정보 
 	
 	public DashboardResponse() {
 	}
 
 	public DashboardResponse(WalletResponse walletResponse, List<DailyAssetPoint> assetTrend,
-			List<MockHoldingResponse> holdings, List<TradeHistory> recebtTrades, MockRankingResponse ranking) {
+			List<MockHoldingResponse> holdings, List<TradeHistoryResponse> recentTrades, MockRankingResponse ranking) {
 		this.walletResponse = walletResponse;
 		this.assetTrend = assetTrend;
 		this.holdings = holdings;
-		this.recentTrades = recebtTrades;
+		this.recentTrades = recentTrades;
 		this.ranking = ranking;
 	}
 
@@ -47,12 +47,12 @@ public class DashboardResponse {
 		this.holdings = holdings;
 	}
 
-	public List<TradeHistory> getRecebtTrades() {
+	public List<TradeHistoryResponse> getRecentTrades() {
 		return recentTrades;
 	}
 
-	public void setRecebtTrades(List<TradeHistory> recebtTrades) {
-		this.recentTrades = recebtTrades;
+	public void setRecentTrades(List<TradeHistoryResponse> recentTrades) {
+		this.recentTrades = recentTrades;
 	}
 
 	public MockRankingResponse getRanking() {

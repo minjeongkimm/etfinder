@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etfinder.mvc.mock.mapper.WalletSnapshotMapper">
+
+    <resultMap id="DailyAssetPointMap" type="com.etfinder.mvc.mock.dto.DailyAssetPoint">
+        <result property="baseDate" column="base_date"/>
+        <result property="totalAsset" column="total_asset"/>
+        <result property="realizedProfit" column="realized_profit"/>
+    </resultMap>
+
+    <select id="selectSnapshots" resultMap="DailyAssetPointMap">
+        SELECT
+            base_date,
+            total_asset,
+            realized_profit
+        FROM wallet_daily_snapshot
+        WHERE user_id = #{userId}
+          AND base_date BETWEEN #{from} AND #{to}
+        ORDER BY base_date
+    </select>
+
+</mapper>

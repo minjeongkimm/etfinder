@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etfinder.mvc.mock.mapper.WalletMapper">
+
+	<!-- 1. 지갑 조회 -->
+	<select id="selectByUserId" parameterType="Long" resultType="com.etfinder.mvc.mock.dto.Wallet">
+		SELECT
+			user_id,
+			balance,
+			total_asset,
+			updated_at
+		FROM wallet
+		WHERE user_id = #{userId}
+	</select>
+
+	<!-- 2. 지갑 초기 설정 -->
+	<insert id="insertInitialWallet" parameterType="Long">
+		INSERT INTO wallet (user_id, balance, total_asset)
+		VALUES (#{userId}, 10000000, 10000000)
+	</insert>
+
+	<!-- 3. 가용 잔액 업데이트 -->
+	<update id="updateBalance" parameterType="map">
+		UPDATE wallet
+		SET balance = #{balance}
+		WHERE user_id = #{userId}
+	</update>
+
+	<!-- 4. 총 자산 업데이트 -->
+	<update id="updateTotalAsset" parameterType="map">
+		UPDATE wallet
+		SET total_asset = #{totalAsset}
+		WHERE user_id = #{userId}
+	</update>
+
+	<!-- 5. 지갑 삭제 (리셋 용) -->
+	<delete id="deleteByUserId" parameterType="Long">
+		DELETE FROM wallet
+		WHERE user_id = #{userId}
+	</delete>
+
+</mapper>

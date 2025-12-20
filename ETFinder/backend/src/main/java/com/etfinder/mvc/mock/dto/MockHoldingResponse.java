@@ -10,9 +10,9 @@ public class MockHoldingResponse {
 	private Integer averagePrice;	//평단가
 	private Integer currentPrice;	//종가
 	
-	private Long evalAmount;		//평가 금액
-	private Long profitAmount;		//평가 손익
-	private Double profitRate;		//평가 수익률 
+	private Long evalAmount;		//평가 금액 = currentPrice * quantity
+	private Long profitAmount;		//평가 손익 = evalAmount - evalCost
+	private Double profitRate;		//평가 수익률 = profitAmount / evalCost * 100
 	
 	public MockHoldingResponse() {
 	}
@@ -104,10 +104,11 @@ public class MockHoldingResponse {
 
 	@Override
 	public String toString() {
-		return "HoldingResponse [etfId=" + etfId + ", etfCode=" + etfCode + ", etfName=" + etfName + ", quantity="
+		return "MockHoldingResponse [etfId=" + etfId + ", etfCode=" + etfCode + ", etfName=" + etfName + ", quantity="
 				+ quantity + ", averagePrice=" + averagePrice + ", currentPrice=" + currentPrice + ", evalAmount="
 				+ evalAmount + ", profitAmount=" + profitAmount + ", profitRate=" + profitRate + "]";
 	}
 
+	
 	
 }

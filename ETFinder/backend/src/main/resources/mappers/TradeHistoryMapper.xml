@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etfinder.mvc.mock.mapper.TradeHistoryMapper">
+
+	<!-- 1. 거래 내역 추가 -->
+	<insert id="insert" parameterType="com.etfinder.mvc.mock.dto.TradeHistory"
+			useGeneratedKeys="true" keyProperty="tradeId">
+		INSERT INTO trade_history (user_id, etf_id, trade_type, price, quantity, amount)
+		VALUES (#{userId}, #{etfId}, #{tradeType}, #{price}, #{quantity}, #{amount})
+	</insert>
+
+	<!-- 2. 최근 거래 내역 조회 (프론트 UI용, etf_product 조인) -->
+	<select id="selectRecentTrades" parameterType="Long"
+			resultType="com.etfinder.mvc.mock.dto.TradeHistoryResponse">
+		SELECT
+			t.trade_id AS tradeId,
+			t.etf_id AS etfId,
+			e.etf_name AS etfName,
+			t.trade_type AS tradeType,
+			t.price AS price,
+			t.quantity AS quantity,
+			t.amount AS amount,
+			t.created_at AS createdAt
+		FROM trade_history t
+		INNER JOIN etf_product e ON t.etf_id = e.etf_id
+		WHERE t.user_id = #{userId}
+		ORDER BY t.created_at DESC
+		LIMIT 50
+	</select>
+
+	<!-- 3. 특정 날짜까지의 거래 내역 조회 -->
+	<select id="selectTradesUpToDate" resultType="com.etfinder.mvc.mock.dto.TradeHistory">
+		SELECT
+			trade_id,
+			user_id,
+			etf_id,
+			trade_type,
+			price,
+			quantity,
+			amount,
+			created_at
+		FROM trade_history
+		WHERE user_id = #{userId}
+		  AND DATE(created_at) <![CDATA[<=]]> #{toDate}
+		ORDER BY created_at
+	</select>
+
+	<!-- 4. 특정 기간 동안의 거래 내역 조회 -->
+	<select id="selectTradesBetween" resultType="com.etfinder.mvc.mock.dto.TradeHistory">
+		SELECT
+			trade_id,
+			user_id,
+			etf_id,
+			trade_type,
+			price,
+			quantity,
+			amount,
+			created_at
+		FROM trade_history
+		WHERE user_id = #{userId}
+		  AND created_at BETWEEN #{from} AND #{to}
+		ORDER BY created_at
+	</select>
+
+	<!-- 5. 유저의 거래 내역 전체 삭제 (계좌 리셋 용) -->
+	<delete id="deleteAllByUserId">
+		DELETE FROM trade_history
+		WHERE user_id = #{userId}
+	</delete>
+
+</mapper>

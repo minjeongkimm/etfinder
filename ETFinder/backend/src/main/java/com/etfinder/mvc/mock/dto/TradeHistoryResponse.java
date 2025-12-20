@@ -2,27 +2,29 @@ package com.etfinder.mvc.mock.dto;
 
 import java.time.LocalDateTime;
 
-//거래 내역 DTO
-public class TradeHistory {
+/*
+ *  거래 내역 조회 응답 DTO 
+ *  - 프론트 UI 표시용 
+ */
+public class TradeHistoryResponse {
 
-	private Long tradeId;		//거래 id
-	private Long userId;		//user id
-	private Long etfId;			//etf id
-	private String etfName;		//etf 종목 이름 
-
-	private String tradeType;	 //BUY / SELL
-	private Integer price;		 //체결 단가
-	private Integer quantity;	 //체결 수량
-	private Long amount;		//총 거래액 (price * quantity)
-	private LocalDateTime createdAt;
-
-	public TradeHistory() {
+	private Long tradeId;				//거래 ID
+	private Long etfId;					//ETF ID
+	private String etfName;				//종목명
+	
+	private String tradeType;			//BUY / SELL
+	private Integer price;				//체결 단가
+	private Integer quantity;			//체결 수량
+	private Long amount;				//총 거래액 
+	
+	private LocalDateTime createdAt;	//거래 시각 
+	
+	public TradeHistoryResponse() {
 	}
 
-	public TradeHistory(Long tradeId, Long userId, Long etfId, String etfName, String tradeType, Integer price,
+	public TradeHistoryResponse(Long tradeId, Long etfId, String etfName, String tradeType, Integer price,
 			Integer quantity, Long amount, LocalDateTime createdAt) {
 		this.tradeId = tradeId;
-		this.userId = userId;
 		this.etfId = etfId;
 		this.etfName = etfName;
 		this.tradeType = tradeType;
@@ -38,14 +40,6 @@ public class TradeHistory {
 
 	public void setTradeId(Long tradeId) {
 		this.tradeId = tradeId;
-	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
 	}
 
 	public Long getEtfId() {
@@ -106,11 +100,11 @@ public class TradeHistory {
 
 	@Override
 	public String toString() {
-		return "TradeHistory [tradeId=" + tradeId + ", userId=" + userId + ", etfId=" + etfId + ", etfName=" + etfName
-				+ ", tradeType=" + tradeType + ", price=" + price + ", quantity=" + quantity + ", amount=" + amount
-				+ ", createdAt=" + createdAt + "]";
+		return "TradeHistoryResponse [tradeId=" + tradeId + ", etfId=" + etfId + ", etfName=" + etfName + ", tradeType="
+				+ tradeType + ", price=" + price + ", quantity=" + quantity + ", amount=" + amount + ", createdAt="
+				+ createdAt + "]";
 	}
-
 	
-
+	
+	
 }

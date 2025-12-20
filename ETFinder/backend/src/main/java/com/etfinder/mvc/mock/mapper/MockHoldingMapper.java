@@ -50,4 +50,10 @@ public interface MockHoldingMapper {
 	 */
 	MockHolding findByUserIdAndEtfId(@Param("userId") Long userId,
 						@Param("etfId") Long etfId);
+	
+	/*
+	 * 7. 유저의 보유 종목 전체 삭제 (계좌 리셋 용) 
+	 */
+	int deleteAllByUserId(@Param("userId") Long userId);
+
 }

@@ -2,93 +2,109 @@ package com.etfinder.mvc.mock.dto;
 
 import java.time.LocalDateTime;
 
-//모의투자 보유 종목 dto
+// 모의투자 보유 종목 엔티티 (DB holdings 테이블 매핑)
 public class MockHolding {
 
-	private Long holdingId;
-	private Long userId;
-	private Long etfId;
-	private Integer quantity;
-	private Integer averagePrice;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
-	
-	public MockHolding() {
-	}
+    private Long holdingId;        // 보유 레코드 PK
+    private Long userId;           // 보유한 사용자 ID
+    private Long etfId;            // 보유 ETF ID
+    private Integer quantity;      // 보유 수량
+    private Integer averagePrice;  // 매입 평균 단가
+    private LocalDateTime createdAt; // 최초 생성 시각
+    private LocalDateTime updatedAt; // 최근 수정 시각
 
-	public MockHolding(Long holdingId, Long userId, Long etfId, Integer quantity, Integer averagePrice,
-			LocalDateTime createdAt, LocalDateTime updatedAt) {
-		this.holdingId = holdingId;
-		this.userId = userId;
-		this.etfId = etfId;
-		this.quantity = quantity;
-		this.averagePrice = averagePrice;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-	}
+    private Long evalCost;         // 총 매입 금액 (averagePrice * quantity)
+    private Long evalProfit;       // 종목별 누적 수익 (실현 + 평가 손익)
 
-	public Long getHoldingId() {
-		return holdingId;
-	}
+    public MockHolding() {}
 
-	public void setHoldingId(Long holdingId) {
-		this.holdingId = holdingId;
-	}
+    public MockHolding(Long holdingId, Long userId, Long etfId, Integer quantity, Integer averagePrice,
+                       LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.holdingId = holdingId;
+        this.userId = userId;
+        this.etfId = etfId;
+        this.quantity = quantity;
+        this.averagePrice = averagePrice;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
-	public Long getUserId() {
-		return userId;
-	}
+    public Long getHoldingId() {
+        return holdingId;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public void setHoldingId(Long holdingId) {
+        this.holdingId = holdingId;
+    }
 
-	public Long getEtfId() {
-		return etfId;
-	}
+    public Long getUserId() {
+        return userId;
+    }
 
-	public void setEtfId(Long etfId) {
-		this.etfId = etfId;
-	}
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-	public Integer getQuantity() {
-		return quantity;
-	}
+    public Long getEtfId() {
+        return etfId;
+    }
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
+    public void setEtfId(Long etfId) {
+        this.etfId = etfId;
+    }
 
-	public Integer getAveragePrice() {
-		return averagePrice;
-	}
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-	public void setAveragePrice(Integer averagePrice) {
-		this.averagePrice = averagePrice;
-	}
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    public Integer getAveragePrice() {
+        return averagePrice;
+    }
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
+    public void setAveragePrice(Integer averagePrice) {
+        this.averagePrice = averagePrice;
+    }
 
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-	@Override
-	public String toString() {
-		return "MockHolding [holdingId=" + holdingId + ", userId=" + userId + ", etfId=" + etfId + ", quantity="
-				+ quantity + ", averagePrice=" + averagePrice + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
-				+ "]";
-	}
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 
-	
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getEvalCost() {
+        return evalCost;
+    }
+
+    public void setEvalCost(Long evalCost) {
+        this.evalCost = evalCost;
+    }
+
+    public Long getEvalProfit() {
+        return evalProfit;
+    }
+
+    public void setEvalProfit(Long evalProfit) {
+        this.evalProfit = evalProfit;
+    }
+
+    @Override
+    public String toString() {
+        return "MockHolding [holdingId=" + holdingId + ", userId=" + userId + ", etfId=" + etfId
+                + ", quantity=" + quantity + ", averagePrice=" + averagePrice + ", createdAt=" + createdAt
+                + ", updatedAt=" + updatedAt + ", evalCost=" + evalCost + ", evalProfit=" + evalProfit + "]";
+    }
 }

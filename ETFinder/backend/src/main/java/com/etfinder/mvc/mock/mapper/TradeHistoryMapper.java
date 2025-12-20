@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.etfinder.mvc.mock.dto.TradeHistory;
+import com.etfinder.mvc.mock.dto.TradeHistoryResponse;
 
 @Mapper
 public interface TradeHistoryMapper {
@@ -15,8 +16,8 @@ public interface TradeHistoryMapper {
 	//1. 거래 내역 추가
 	int insert(TradeHistory trade);
 	
-	//2. 최근 거래 내역 조회
-	List<TradeHistory> selectRecentTrades(@Param("userId") Long userId);	
+	//2. 최근 거래 내역 조회 (프론트 UI용, etf_product 조인)
+	List<TradeHistoryResponse> selectRecentTrades(@Param("userId") Long userId);	
 	
 	//3. 전체 거래 내역 조회
 	List<TradeHistory> selectTradesUpToDate(@Param("userId") Long userId,
@@ -27,6 +28,7 @@ public interface TradeHistoryMapper {
 											@Param("from") LocalDateTime from,
 											@Param("to") LocalDateTime to);
 	
-	
+	//5. 유저의 거래 내역 전체 삭제 (계좌 리셋 용)
+	int deleteAllByUserId(@Param("userId") Long userId);
 	
 }
