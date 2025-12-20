@@ -227,7 +227,8 @@
 	        holding_id,   stock_code,
 	        stock_name,
 	        weight,
-	        stock_price
+	        stock_price,
+	        updated_at
 	        FROM etf_holdings 
 	    WHERE etf_id = #{etfId}
 	    ORDER BY weight DESC 

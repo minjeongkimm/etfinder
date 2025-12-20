@@ -53,9 +53,7 @@
                 <h1 class="text-3xl font-bold tracking-tight text-foreground mb-2">
                   {{ etf.etfName }}
                 </h1>
-                <p v-if="etf.description" class="text-sm text-muted-foreground">
-                  {{ etf.description }}
-                </p>
+
               </div>
 
               <!-- 액션 버튼 -->
@@ -132,14 +130,14 @@
                     {{ formatPrice(etf.currentPrice) }}원
                   </div>
                   <div
-                    v-if="etf.return1mo !== null"
+                    v-if="priceChange"
                     :class="[
                       'text-sm font-mono font-medium flex items-center gap-1',
-                      etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
+                      priceChange.diff > 0 ? 'text-chart-1' : priceChange.diff < 0 ? 'text-destructive' : 'text-chart-2'
                     ]"
                   >
-                    <span>{{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}</span>
-                    <span>{{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}% (360원)</span>
+                    <span>{{ priceChange.sign === '+' ? '▲' : priceChange.diff < 0 ? '▼' : '-' }}</span>
+                    <span>{{ priceChange.sign }}{{ priceChange.rate }}% ({{ priceChange.sign }}{{ formatPrice(Math.abs(priceChange.diff)) }}원)</span>
                   </div>
                 </div>
 
@@ -159,11 +157,20 @@
                   </div>
                 </div>
 
-                <!-- 분배금 -->
+                <!-- 위험등급 -->
                 <div>
-                  <div class="text-sm text-muted-foreground mb-1">분배금</div>
+                  <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                    위험등급
+                    <div class="group relative">
+                      <HelpCircle :size="14" class="cursor-help" />
+                      <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
+                        1등급(매우 높은 위험) ~ 5등급(매우 낮은 위험)
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-800"></div>
+                      </div>
+                    </div>
+                  </div>
                   <div class="text-xl font-mono font-semibold text-foreground">
-                    분기지급
+                    {{ etf.riskRating }}등급
                   </div>
                 </div>
               </div>
@@ -198,33 +205,88 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <!-- 차트 영역 -->
                   <div class="lg:col-span-2">
-                    <h3 class="text-lg font-semibold text-foreground mb-4">수익률 추이</h3>
-                    <div class="rounded-lg border border-border bg-muted/30 h-80 flex items-center justify-center">
-                      <p class="text-muted-foreground text-sm">차트 영역 (추후 구현)</p>
+                    <h3 class="text-lg font-semibold text-foreground mb-4">주가 추이</h3>
+                    <div class="rounded-lg border border-border bg-card p-4 h-96">
+                      <EtfPriceChart :etf-id="etf.etfId" />
                     </div>
                   </div>
 
-                  <!-- AI 견해 -->
-                  <div class="rounded-lg border border-border bg-accent/50 p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-                      <h4 class="font-semibold text-foreground">AI 견해</h4>
+                  <!-- AI 인사이트 (AI 견해) -->
+                  <div class="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-white p-5 shadow-sm relative overflow-hidden">
+                    <!-- 배경 장식 -->
+                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-indigo-100/50 rounded-full blur-2xl"></div>
+                    <div class="absolute -left-6 -bottom-6 w-32 h-32 bg-purple-100/50 rounded-full blur-2xl"></div>
+
+                    <!-- 헤더 -->
+                    <div class="flex items-center gap-2 mb-4 relative z-10">
+                      <div class="p-1.5 rounded-lg bg-indigo-100 text-indigo-600">
+                        <Bot :size="20" stroke-width="2.5" />
+                      </div>
+                      <h4 class="font-bold text-lg text-indigo-950">AI 인사이트</h4>
+                      <div v-if="aiSummaryLoading" class="ml-auto">
+                        <span class="flex h-3 w-3 relative">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                        </span>
+                      </div>
                     </div>
-                    <p class="text-sm text-muted-foreground mb-4">
-                      이 ETF는 기술주 중심의 공격적인 투자를 선호하는 투자자에게 적합합니다. 최근 AI 산업 성장과 반의 높은 수익률 기대감이 있으며, 변동성도 다소 높은 편입니다.
-                    </p>
-                    <div class="space-y-2">
-                      <div class="flex justify-between text-sm">
-                        <span class="text-muted-foreground">변동성</span>
-                        <span class="font-medium text-destructive">높음</span>
+
+                    <!-- 로딩 상태 (스피너 & 텍스트) -->
+                    <div v-if="aiSummaryLoading" class="flex flex-col items-center justify-center py-12 relative z-10 space-y-4">
+                      <div class="relative">
+                        <div class="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-25"></div>
+                        <Loader2 :size="40" class="text-indigo-600 animate-spin relative z-10" />
                       </div>
-                      <div class="flex justify-between text-sm">
-                        <span class="text-muted-foreground">성장성</span>
-                        <span class="font-medium text-chart-1">매우 높음</span>
+                      <div class="text-center">
+                        <p class="text-lg font-bold text-indigo-950 mb-1">AI가 분석중입니다..</p>
+                        <p class="text-sm text-indigo-600/70">잠시만 기다려주세요</p>
                       </div>
-                      <div class="flex justify-between text-sm">
-                        <span class="text-muted-foreground">배당수익</span>
-                        <span class="font-medium text-chart-2">낮음</span>
+                    </div>
+
+                    <!-- 데이터 없음 상태 -->
+                    <div v-else-if="!aiSummary" class="text-center py-8 relative z-10">
+                      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 mb-4 shadow-inner">
+                        <Search :size="32" class="text-slate-300" />
+                      </div>
+                      <p class="text-base font-semibold text-slate-600 mb-1">데이터 준비 중</p>
+                      <p class="text-sm text-slate-400">AI가 아직 이 ETF를 분석하지 않았어요.<br>조금만 기다려주세요!</p>
+                    </div>
+
+                    <!-- 데이터 표시 -->
+                    <div v-else class="relative z-10">
+                      <!-- 요약 (Summary) -->
+                      <div class="mb-4">
+                        <p class="text-lg font-bold text-indigo-900 leading-snug">
+                          "{{ aiSummary.summary }}"
+                        </p>
+                      </div>
+
+                      <!-- 설명 (Description) -->
+                      <div class="text-sm text-slate-600 leading-relaxed mb-5 bg-white/60 p-3 rounded-lg border border-indigo-50/50">
+                        {{ aiSummary.description }}
+                      </div>
+
+                      <!-- 지표 그리드 -->
+                      <div class="grid grid-cols-2 gap-3 mb-5">
+                        <div class="bg-white/80 rounded-lg p-3 border border-indigo-50 shadow-sm">
+                          <span class="text-xs text-slate-400 font-medium block mb-1">성장성</span>
+                          <span class="text-sm font-bold text-slate-700">{{ aiSummary.growthLevel || '-' }}</span>
+                        </div>
+                        <div class="bg-white/80 rounded-lg p-3 border border-indigo-50 shadow-sm">
+                          <span class="text-xs text-slate-400 font-medium block mb-1">배당수익</span>
+                          <span class="text-sm font-bold text-slate-700">{{ aiSummary.dividendLevel || '-' }}</span>
+                        </div>
+                      </div>
+
+                      <!-- 태그 (Tags) -->
+                      <div v-if="aiSummary.recommendTag" class="flex flex-wrap gap-2">
+                         <span 
+                           v-for="tag in aiSummary.recommendTag.split(',')" 
+                           :key="tag"
+                           class="px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-600 text-xs font-semibold border border-indigo-100/50"
+                         >
+                           {{ tag.trim().startsWith('#') ? tag.trim() : '#' + tag.trim() }}
+                         </span>
                       </div>
                     </div>
                   </div>
@@ -327,10 +389,7 @@
 
               <!-- 구성 종목 탭 -->
               <div v-if="activeTab === 'holdings'">
-                <h3 class="text-lg font-semibold text-foreground mb-4">보유 종목 비중</h3>
-                <p class="text-sm text-muted-foreground text-center py-8">
-                  보유 종목 정보는 준비 중입니다.
-                </p>
+                 <EtfHoldings :etf-id="etf.etfId" />
               </div>
 
               <!-- 한줄평 탭 -->
@@ -657,20 +716,26 @@
 
 <script setup>
 import { addComment, deleteComment, getComments, updateComment } from '@/api/comments'
-import { deleteEtf, getEtfDetail } from '@/api/etf'
+import { deleteEtf, getEtfDetail, getEtfAiSummary, getEtfPriceHistory } from '@/api/etf'
+import EtfHoldings from '@/components/etf/EtfHoldings.vue'
+import EtfPriceChart from '@/components/etf/EtfPriceChart.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBookmarkStore } from '@/stores/bookmark'
 import { useLikeStore } from '@/stores/like'
 import { Chart, registerables } from 'chart.js'
 import {
     BarChart3,
+    HelpCircle,
     Info,
     MessageSquare,
     Scale,
     ShieldAlert,
     Sparkles,
     TrendingDown,
-    TrendingUp
+    TrendingUp,
+    Bot,
+    Search,
+    Loader2
 } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -685,6 +750,7 @@ const bookmarkStore = useBookmarkStore()
 const likeStore = useLikeStore()
 
 const etf = ref(null)
+const historyList = ref([])
 const loading = ref(true)
 const error = ref(null)
 const activeTab = ref('chart')
@@ -707,6 +773,10 @@ const aiAnalysis = ref({
   moodMessage: ''
 })
 
+// AI 인사이트 관련 상태
+const aiSummary = ref(null)
+const aiSummaryLoading = ref(false)
+
 // Chart.js 관련
 const sentimentChartCanvas = ref(null)
 let sentimentChartInstance = null
@@ -727,6 +797,31 @@ const positiveCount = computed(() => {
 
 const negativeCount = computed(() => {
   return Math.round(aiAnalysis.value.totalCnt * aiAnalysis.value.negativePercent / 100)
+})
+
+// 전일 대비 등락폭 계산
+const priceChange = computed(() => {
+  if (!historyList.value || historyList.value.length < 2) {
+    return null
+  }
+
+  // historyList는 이미 날짜 오름차순 정렬됨 (API 호출 시 정렬함)
+  const list = historyList.value
+  const todayPrice = list[list.length - 1].closePrice
+  const yesterdayPrice = list[list.length - 2].closePrice
+
+  const diff = todayPrice - yesterdayPrice
+  // rate: (diff / yesterdayPrice) * 100, 소수점 2자리
+  const rate = ((diff / yesterdayPrice) * 100).toFixed(2)
+
+  let sign = ''
+  if (diff > 0) sign = '+'
+  
+  return {
+    diff,
+    rate,
+    sign
+  }
 })
 
 const neutralCount = computed(() => {
@@ -968,11 +1063,46 @@ const formatAumDetail = (aum) => {
   }
 }
 
+
+// AI 요약 가져오기 함수
+const fetchAiSummary = async (id) => {
+  if (!id) return;
+  
+  aiSummaryLoading.value = true;
+  aiSummary.value = null; // 초기화
+  
+  try {
+    const { data } = await getEtfAiSummary(id);
+    // backend returns "EtfAiDescriptionResponse"
+    // { summary, description, growthLevel, dividendLevel, recommendTag }
+    if (data && data.summary) {
+        aiSummary.value = data;
+    }
+  } catch (err) {
+    console.error("AI 요약 로딩 실패:", err);
+  } finally {
+    aiSummaryLoading.value = false;
+  }
+};
+
 const fetchEtfDetail = async () => {
   try {
     loading.value = true
-    const response = await getEtfDetail(route.params.etfId)
+    const etfId = route.params.etfId
+    
+    // 1. ETF 기본 정보 조회
+    const response = await getEtfDetail(etfId)
     etf.value = response.data
+
+    // 2. 가격 히스토리 조회 (등락폭 계산용)
+    try {
+      const historyResponse = await getEtfPriceHistory(etfId)
+      if (historyResponse.data && historyResponse.data.length > 0) {
+        historyList.value = historyResponse.data.sort((a, b) => new Date(a.baseDate) - new Date(b.baseDate))
+      }
+    } catch (historyErr) {
+      console.error('가격 히스토리 조회 실패:', historyErr)
+    }
     
     // 북마크 및 좋아요 목록 로드 (로그인 상태인 경우)
     if (authStore.isAuthenticated) {
@@ -982,10 +1112,12 @@ const fetchEtfDetail = async () => {
       ])
       
       // likedByMe 상태 업데이트
-      etf.value.likedByMe = likeStore.isLiked(etf.value.etfId)
+      if (etf.value) {
+        etf.value.likedByMe = likeStore.isLiked(etf.value.etfId)
+      }
     }
   } catch (err) {
-    console.error('ETF 상세 조회 실패:', err)
+    console.error('ETF 조회 실패:', err)
     error.value = 'ETF 정보를 불러오는데 실패했습니다.'
   } finally {
     loading.value = false
@@ -1370,8 +1502,26 @@ watch(activeTab, async (newTab) => {
   }
 })
 
+
+// 라우트 변경 감지 (ETF ID 변경 시)
+watch(
+  () => route.params.etfId,
+  (newId) => {
+    if (newId) {
+      // 컴포넌트 재활용 시 데이터 리로드
+      fetchEtfDetail()
+      fetchAiSummary(newId)
+    }
+  }
+)
+
 onMounted(async () => {
   await fetchEtfDetail()
+  
+  // AI 요약 정보 로드
+  if (route.params.etfId) {
+    fetchAiSummary(route.params.etfId)
+  }
   
   // 사용자 정보 로드 (댓글 수정/삭제 권한 확인용)
   if (authStore.isAuthenticated && !authStore.user) {

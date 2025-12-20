@@ -21,6 +21,21 @@ export const getEtfDetail = (etfId) => {
   return http.get(`/etfs/${etfId}`);
 };
 
+// 3-1. ETF 차트 데이터 조회 (과거 시세)
+export const getEtfPriceHistory = (etfId) => {
+  return http.get(`/etfs/${etfId}/history`);
+};
+
+// 3-2. ETF AI 요약 정보 조회
+export const getEtfAiSummary = (etfId) => {
+  return http.get(`/etfs/${etfId}/ai`);
+};
+
+// 3-3. ETF 구성종목 조회
+export const getEtfHoldings = (etfId) => {
+  return http.get(`/etfs/${etfId}/holdings`);
+};
+
 // ==============================
 // 관리자 전용 API (EtfController)
 // ==============================

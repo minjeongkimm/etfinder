@@ -54,11 +54,21 @@ const formatPrice = (price) => {
 }
 
 const formatAum = (aum) => {
-  if (!aum) return '0억'
-  if (aum >= 10000) {
-    return `${(aum / 10000).toFixed(1)}조`
+  if (!aum) return '-'
+  
+  // 조 단위 계산 (1조 = 1,000,000,000,000원 = 10,000억원)
+  const trillion = Math.floor(aum / 1000000000000)
+  const billion = Math.round((aum % 1000000000000) / 100000000)
+  
+  if (trillion > 0 && billion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조 ${billion.toLocaleString('ko-KR')}억원`
+  } else if (trillion > 0) {
+    return `${trillion.toLocaleString('ko-KR')}조원`
+  } else if (billion > 0) {
+    return `${billion.toLocaleString('ko-KR')}억원`
+  } else {
+    return `${aum.toLocaleString('ko-KR')}원`
   }
-  return `${aum.toLocaleString()}억`
 }
 
 const getRiskBadgeColor = (risk) => {
@@ -188,7 +198,7 @@ onMounted(() => {
                       <div class="text-base font-bold text-foreground">{{ etf.fee }}%</div>
                     </div>
                     <div class="bg-muted/50 rounded-lg p-3">
-                      <div class="text-xs text-muted-foreground mb-1">순자산</div>
+                      <div class="text-xs text-muted-foreground mb-1">시가총액</div>
                       <div class="text-base font-bold text-foreground">{{ formatAum(etf.aum) }}</div>
                     </div>
                   </div>
