@@ -130,14 +130,14 @@
                     {{ formatPrice(etf.currentPrice) }}원
                   </div>
                   <div
-                    v-if="etf.return1mo !== null"
+                    v-if="priceChange"
                     :class="[
                       'text-sm font-mono font-medium flex items-center gap-1',
-                      etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
+                      priceChange.diff > 0 ? 'text-chart-1' : priceChange.diff < 0 ? 'text-destructive' : 'text-chart-2'
                     ]"
                   >
-                    <span>{{ etf.return1mo > 0 ? '↗' : etf.return1mo < 0 ? '↘' : '→' }}</span>
-                    <span>{{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}% (360원)</span>
+                    <span>{{ priceChange.sign === '+' ? '▲' : priceChange.diff < 0 ? '▼' : '-' }}</span>
+                    <span>{{ priceChange.sign }}{{ priceChange.rate }}% ({{ priceChange.sign }}{{ formatPrice(Math.abs(priceChange.diff)) }}원)</span>
                   </div>
                 </div>
 
@@ -718,7 +718,7 @@
 
 <script setup>
 import { addComment, deleteComment, getComments, updateComment } from '@/api/comments'
-import { deleteEtf, getEtfDetail, getEtfAiSummary } from '@/api/etf'
+import { deleteEtf, getEtfDetail, getEtfAiSummary, getEtfPriceHistory } from '@/api/etf'
 import EtfHoldings from '@/components/etf/EtfHoldings.vue'
 import EtfPriceChart from '@/components/etf/EtfPriceChart.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -751,6 +751,7 @@ const bookmarkStore = useBookmarkStore()
 const likeStore = useLikeStore()
 
 const etf = ref(null)
+const historyList = ref([])
 const loading = ref(true)
 const error = ref(null)
 const activeTab = ref('chart')
@@ -797,6 +798,31 @@ const positiveCount = computed(() => {
 
 const negativeCount = computed(() => {
   return Math.round(aiAnalysis.value.totalCnt * aiAnalysis.value.negativePercent / 100)
+})
+
+// 전일 대비 등락폭 계산
+const priceChange = computed(() => {
+  if (!historyList.value || historyList.value.length < 2) {
+    return null
+  }
+
+  // historyList는 이미 날짜 오름차순 정렬됨 (API 호출 시 정렬함)
+  const list = historyList.value
+  const todayPrice = list[list.length - 1].closePrice
+  const yesterdayPrice = list[list.length - 2].closePrice
+
+  const diff = todayPrice - yesterdayPrice
+  // rate: (diff / yesterdayPrice) * 100, 소수점 2자리
+  const rate = ((diff / yesterdayPrice) * 100).toFixed(2)
+
+  let sign = ''
+  if (diff > 0) sign = '+'
+  
+  return {
+    diff,
+    rate,
+    sign
+  }
 })
 
 const neutralCount = computed(() => {
@@ -1061,11 +1087,23 @@ const fetchAiSummary = async (id) => {
 };
 
 const fetchEtfDetail = async () => {
-
   try {
     loading.value = true
-    const response = await getEtfDetail(route.params.etfId)
+    const etfId = route.params.etfId
+    
+    // 1. ETF 기본 정보 조회
+    const response = await getEtfDetail(etfId)
     etf.value = response.data
+
+    // 2. 가격 히스토리 조회 (등락폭 계산용)
+    try {
+      const historyResponse = await getEtfPriceHistory(etfId)
+      if (historyResponse.data && historyResponse.data.length > 0) {
+        historyList.value = historyResponse.data.sort((a, b) => new Date(a.baseDate) - new Date(b.baseDate))
+      }
+    } catch (historyErr) {
+      console.error('가격 히스토리 조회 실패:', historyErr)
+    }
     
     // 북마크 및 좋아요 목록 로드 (로그인 상태인 경우)
     if (authStore.isAuthenticated) {
@@ -1075,10 +1113,12 @@ const fetchEtfDetail = async () => {
       ])
       
       // likedByMe 상태 업데이트
-      etf.value.likedByMe = likeStore.isLiked(etf.value.etfId)
+      if (etf.value) {
+        etf.value.likedByMe = likeStore.isLiked(etf.value.etfId)
+      }
     }
   } catch (err) {
-    console.error('ETF 상세 조회 실패:', err)
+    console.error('ETF 조회 실패:', err)
     error.value = 'ETF 정보를 불러오는데 실패했습니다.'
   } finally {
     loading.value = false
