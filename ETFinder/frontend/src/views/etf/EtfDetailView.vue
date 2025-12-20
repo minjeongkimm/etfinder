@@ -231,17 +231,15 @@
                       </div>
                     </div>
 
-                    <!-- 로딩 상태 (스켈레톤) -->
-                    <div v-if="aiSummaryLoading" class="space-y-4 animate-pulse relative z-10">
-                      <div class="h-4 bg-indigo-100 rounded w-3/4"></div>
-                      <div class="space-y-2">
-                        <div class="h-3 bg-slate-100 rounded"></div>
-                        <div class="h-3 bg-slate-100 rounded"></div>
-                        <div class="h-3 bg-slate-100 rounded w-5/6"></div>
+                    <!-- 로딩 상태 (스피너 & 텍스트) -->
+                    <div v-if="aiSummaryLoading" class="flex flex-col items-center justify-center py-12 relative z-10 space-y-4">
+                      <div class="relative">
+                        <div class="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-25"></div>
+                        <Loader2 :size="40" class="text-indigo-600 animate-spin relative z-10" />
                       </div>
-                      <div class="flex gap-2 pt-2">
-                        <div class="h-6 w-16 bg-slate-100 rounded-full"></div>
-                        <div class="h-6 w-16 bg-slate-100 rounded-full"></div>
+                      <div class="text-center">
+                        <p class="text-lg font-bold text-indigo-950 mb-1">AI가 분석중입니다..</p>
+                        <p class="text-sm text-indigo-600/70">잠시만 기다려주세요</p>
                       </div>
                     </div>
 
@@ -736,7 +734,8 @@ import {
     TrendingDown,
     TrendingUp,
     Bot,
-    Search
+    Search,
+    Loader2
 } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
