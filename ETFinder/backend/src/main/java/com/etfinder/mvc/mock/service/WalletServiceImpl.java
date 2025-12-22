@@ -16,7 +16,6 @@ import com.etfinder.mvc.mock.mapper.WalletMapper;
 import com.etfinder.mvc.mock.mapper.WalletSnapshotMapper;
 
 @Service
-@Transactional
 public class WalletServiceImpl implements WalletService {
 
     private final WalletMapper walletMapper;
@@ -39,7 +38,12 @@ public class WalletServiceImpl implements WalletService {
         this.rankingService = rankingService;
     }
 
+    /**
+     * 1. 지갑 요약 데이터 조회
+     *    - 지갑이 없으면 초기 지갑을 생성한 뒤 조회
+     */
     @Override
+    @Transactional   // ✅ INSERT 가능성 있으므로 readOnly=false
     public WalletResponse getWalletSummary(Long userId) {
 
         Wallet wallet = walletMapper.selectByUserId(userId);
@@ -65,14 +69,18 @@ public class WalletServiceImpl implements WalletService {
         WalletResponse response = new WalletResponse();
         response.setBalance(balance);
         response.setTotalAsset(totalAsset);
-        response.setRealizedProfit(0L); // 실현 손익 계산 기능 구현 예정
+        response.setRealizedProfit(0L); // TODO: 실현 손익 계산 기능 구현 예정
         response.setCashRatio(cashRatio);
         response.setStockRatio(stockRatio);
         
         return response;
     }
 
+    /**
+     * 2. 지갑 잔액 + 총자산 리프레시
+     */
     @Override
+    @Transactional   // 총자산 update 발생
     public int refreshTotalAsset(Long userId) {
 
         // 보유 종목 조회
@@ -94,7 +102,11 @@ public class WalletServiceImpl implements WalletService {
         return walletMapper.updateTotalAsset(userId, total);
     }
 
+    /**
+     * 3. 가용 잔액 증감 처리
+     */
     @Override
+    @Transactional
     public int adjustBalance(Long userId, Long amountDiff) {
 
         Wallet wallet = walletMapper.selectByUserId(userId);
@@ -113,7 +125,11 @@ public class WalletServiceImpl implements WalletService {
         return walletMapper.updateBalance(userId, newBalance);
     }
 
+    /**
+     * 4. 지갑 초기화 (보유 종목, 거래 내역, 지갑 삭제 후 재생성)
+     */
     @Override
+    @Transactional
     public int resetWallet(Long userId) {
 
         // 1. 보유 종목 전체 삭제
@@ -129,15 +145,20 @@ public class WalletServiceImpl implements WalletService {
         return walletMapper.insertInitialWallet(userId);
     }
 
+    /**
+     * 5. 자산 추이 조회 (조회 전용)
+     */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)   // ✅ 조회만
     public List<DailyAssetPoint> getAssetTrend(Long userId, LocalDate from, LocalDate to) {
-
         return snapshotMapper.selectSnapshots(userId, from, to);
     }
 
+    /**
+     * 6. 대시보드 통합 정보 조회
+     */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional   // ✅ getWalletSummary 안에서 INSERT 가능성 있으므로 readOnly=false
     public DashboardResponse getDashboard(Long userId) {
 
         WalletResponse wallet = getWalletSummary(userId);
