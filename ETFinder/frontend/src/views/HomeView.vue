@@ -74,26 +74,23 @@
                   </div>
                 </router-link>
 
-                <!-- 모의투자 (Coming Soon) -->
-                <div
-                  @click="handleComingSoon"
-                  class="group rounded-xl border border-border bg-card p-6 hover:shadow-sm transition-all duration-200 cursor-not-allowed opacity-65 relative"
+                <!-- 모의투자 -->
+                <router-link
+                  to="/mock-investment"
+                  class="group rounded-xl border border-border bg-card p-6 hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
                 >
-                  <div class="absolute top-3 right-3 px-2 py-0.5 bg-primary/10 text-primary rounded text-xs font-semibold">
-                    Coming Soon
-                  </div>
                   <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-muted rounded-xl flex items-center justify-center flex-shrink-0 grayscale">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M10 7v10"/><path d="M17 7v10"/></svg>
+                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M10 7v10"/><path d="M17 7v10"/></svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                      <h3 class="text-lg font-bold text-muted-foreground mb-2">모의투자</h3>
+                      <h3 class="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">모의투자</h3>
                       <p class="text-sm text-muted-foreground leading-relaxed">
                         가상 자산으로 투자 전략과 수익률을 시뮬레이션해보세요.
                       </p>
                     </div>
                   </div>
-                </div>
+                </router-link>
 
                 <!-- 포트폴리오 -->
                 <router-link
@@ -113,26 +110,7 @@
                   </div>
                 </router-link>
 
-                <!-- AI 요약 (Coming Soon) -->
-                <div
-                  @click="handleComingSoon"
-                  class="group rounded-xl border border-border bg-card p-6 hover:shadow-sm transition-all duration-200 cursor-not-allowed opacity-65 relative"
-                >
-                  <div class="absolute top-3 right-3 px-2 py-0.5 bg-primary/10 text-primary rounded text-xs font-semibold">
-                    Coming Soon
-                  </div>
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-muted rounded-xl flex items-center justify-center flex-shrink-0 grayscale">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M12 2v2"/><path d="M12 22v-2"/><path d="m17 20.66-1-1.73"/><path d="M11 10.27 7 3.34"/><path d="m20.66 17-1.73-1"/><path d="m3.34 7 1.73 1"/><path d="M14 12h8"/><path d="M2 12h2"/><path d="m20.66 7-1.73 1"/><path d="m3.34 17 1.73-1"/><path d="m17 3.34-1 1.73"/><path d="m11 13.73-4 6.93"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="text-lg font-bold text-muted-foreground mb-2">AI 요약</h3>
-                      <p class="text-sm text-muted-foreground leading-relaxed">
-                        복잡한 ETF 정보를 AI가 요약한 핵심 정보로 빠르게 파악하세요.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </section>
 
@@ -339,11 +317,6 @@ const fetchAllRankings = () => {
 // ETF 상세 페이지로 이동
 const goToEtfDetail = (etfId) => {
   router.push({ name: 'etfDetail', params: { etfId } })
-}
-
-// Coming Soon 알림
-const handleComingSoon = () => {
-  alert('곧 출시 예정입니다! 🚀')
 }
 
 // 기간 변경 시 데이터 다시 로드
