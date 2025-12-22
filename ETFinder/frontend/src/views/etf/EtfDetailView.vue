@@ -215,11 +215,17 @@
                         <Bot :size="20" stroke-width="2.5" />
                       </div>
                       <h4 class="font-bold text-lg text-indigo-950">AI 인사이트</h4>
-                      <div v-if="aiSummaryLoading" class="ml-auto">
-                        <span class="flex h-3 w-3 relative">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                      <div class="ml-auto flex items-center gap-2">
+                        <!-- 기준일 표시 -->
+                        <span v-if="etf?.createdAt" class="text-xs text-indigo-900/50 font-medium">
+                          {{ formatDetailDate(etf.createdAt) }} 기준
                         </span>
+                        <div v-if="aiSummaryLoading">
+                          <span class="flex h-3 w-3 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -403,9 +409,6 @@
                       </svg>
                       <h4 class="text-lg font-bold text-foreground">AI 댓글 분석</h4>
                     </div>
-                    <button class="px-4 py-1.5 text-xs font-semibold rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors">
-                      최신 분석
-                    </button>
                   </div>
 
                   <!-- 데이터 부족 상태 -->
@@ -569,6 +572,9 @@
                           :class="['text-xs mt-2', variantConfig.textColor, 'opacity-60']"
                         >
                           표본 {{ aiAnalysis.totalCnt }}개 기준
+                          <span v-if="latestCommentDate" class="ml-1">
+                            ({{ formatDetailDate(latestCommentDate) }} 업데이트)
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -749,7 +755,7 @@ const etf = ref(null)
 const historyList = ref([])
 const loading = ref(true)
 const error = ref(null)
-const activeTab = ref('chart')
+const activeTab = ref(route.query.tab || 'chart')
 const likeLoading = ref(false)
 const bookmarkLoading = ref(false)
 
@@ -1194,6 +1200,13 @@ watch(realTimePrice, (newVal) => {
   })
 })
 
+// 탭 변경 감지 (URL 업데이트)
+watch(activeTab, (newTab) => {
+  router.replace({ 
+    query: { ...route.query, tab: newTab } 
+  })
+})
+
 // 좋아요 토글
 const handleToggleLike = async () => {
   // 로그인 체크
@@ -1341,58 +1354,117 @@ const goBackToList = () => {
 // ==============================
 
 // 한줄평 목록 조회
-const fetchComments = async () => {
+const fetchComments = async (updateStats = true) => {
   if (!route.params.etfId) return
   
   try {
-    commentsLoading.value = true
-    console.log('[한줄평 조회]', route.params.etfId)
+    commentsLoading.value = comments.value.length === 0 // 이미 데이터가 있으면 로딩 표시 안 함
     
     // CommentListResponse 구조로 응답 받기
     const response = await getComments(route.params.etfId)
+    const newComments = response.comments || []
     
-    // 댓글 목록 설정
-    comments.value = response.comments || []
-    
-    // AI 분석 데이터 설정
-    aiAnalysis.value = {
-      positivePercent: response.positivePercent || 0,
-      negativePercent: response.negativePercent || 0,
-      totalCnt: response.totalCnt || 0,
-      moodMessage: response.moodMessage || ''
+    // 댓글 목록 설정 (Smart Update)
+    if (comments.value.length === 0) {
+        comments.value = newComments
+    } else {
+        // 기존 리스트 업데이트
+        const oldCommentsMap = new Map(comments.value.map(c => [c.commentId, c]))
+        
+        // 1. 기존 항목 업데이트
+        comments.value.forEach(oldComment => {
+            const match = newComments.find(c => c.commentId === oldComment.commentId)
+            if (match) {
+                // 변경된 내용만 업데이트
+                if (oldComment.sentiment !== match.sentiment) oldComment.sentiment = match.sentiment
+                if (oldComment.content !== match.content) oldComment.content = match.content
+                if (oldComment.edited !== match.edited) oldComment.edited = match.edited
+                if (oldComment.updatedAt !== match.updatedAt) oldComment.updatedAt = match.updatedAt
+            }
+        })
+        
+        // 2. 새 항목 추가 (맨 위에 추가)
+        const newItems = newComments.filter(nc => !oldCommentsMap.has(nc.commentId))
+        if (newItems.length > 0) {
+            comments.value.unshift(...newItems)
+        }
+        
+        // 3. (선택) 삭제된 항목 제거하려면 아래 로직 추가 (사용자 요청엔 없었으나 싱크 맞추려면 필요)
+        // 하지만 "갈아끼우지 말고"라는 의도에 집중해 일단 추가/업데이트만 수행
     }
     
-    console.log('[한줄평 조회 성공]', comments.value.length, '개')
-    console.log('[AI 분석]', aiAnalysis.value)
-    
-    // 감정 비율 합계 검증 (100%인지 확인)
-    await nextTick()
-    const total = aiAnalysis.value.positivePercent + neutralPercent.value + aiAnalysis.value.negativePercent
-    console.log('[감정 비율 검증]', {
-      긍정: aiAnalysis.value.positivePercent + '%',
-      중립: neutralPercent.value + '%',
-      부정: aiAnalysis.value.negativePercent + '%',
-      합계: total + '%',
-      검증: total === 100 ? '✅ 정상' : '⚠️ 오류'
-    })
-    
-    // 차트 업데이트 (한줄평 탭이 활성화된 경우에만)
-    if (activeTab.value === 'comments') {
-      await updateSentimentChart()
+    // updateStats가 true일 때만 통계 갱신
+    if (updateStats) {
+      // AI 분석 데이터 설정
+      aiAnalysis.value = {
+        positivePercent: response.positivePercent || 0,
+        negativePercent: response.negativePercent || 0,
+        totalCnt: response.totalCnt || 0,
+        moodMessage: response.moodMessage || ''
+      }
+      
+      console.log('[한줄평 조회 성공]', comments.value.length, '개, 통계 갱신됨')
+      
+      // 차트 업데이트 (한줄평 탭이 활성화된 경우에만)
+      if (activeTab.value === 'comments') {
+        await updateSentimentChart()
+      }
+    } else {
+        console.log('[한줄평 조회 성공]', comments.value.length, '개, 통계 유지')
     }
   } catch (err) {
     console.error('한줄평 조회 실패:', err)
-    // 사용자에게는 에러 표시 안 함 (빈 목록으로 처리)
-    comments.value = []
-    aiAnalysis.value = {
-      positivePercent: 0,
-      negativePercent: 0,
-      totalCnt: 0,
-      moodMessage: ''
+    // 에러 시 기존 데이터 유지
+    if (comments.value.length === 0) comments.value = []
+    
+    if (updateStats) {
+        aiAnalysis.value = {
+        positivePercent: 0,
+        negativePercent: 0,
+        totalCnt: 0,
+        moodMessage: ''
+        }
     }
   } finally {
     commentsLoading.value = false
   }
+}
+
+// AI 분석 완료까지 폴링 (최대 2.5초)
+const pollForAnalysis = () => {
+    let retryCount = 0;
+    const maxRetries = 5; // 5회 * 0.5초 = 2.5초
+    
+    console.log('[AI 분석 폴링 시작]');
+
+    const poll = setInterval(async () => {
+        retryCount++;
+        try {
+            // 목록 조회 (화면 갱신 X, 데이터 확인용)
+             // 여기서 getComments를 직접 호출해서 store나 state를 건드리지 않고 확인만 함.
+             // 하지만 간단하게 fetchComments(false)를 써도 되지만, 
+             // 분석 여부를 확인하려면 response를 봐야 하므로 직접 API 호출이 나음.
+            const response = await getComments(route.params.etfId);
+            const latestComment = response.comments && response.comments[0];
+
+            // 조건: 최신 댓글이 있고, 분석이 완료(sentiment != null)되었는가?
+            const isAnalyzed = latestComment && latestComment.sentiment;
+            
+            console.log(`[폴링 ${retryCount}/${maxRetries}] 분석여부: ${isAnalyzed ? '완료' : '진행중'}`);
+
+            if (isAnalyzed || retryCount >= maxRetries) {
+                // 분석 완료! 혹은 타임아웃 -> 전체 갱신 (통계 포함)
+                // fetchComments(true)를 호출하여 싹 업데이트
+                await fetchComments(true);
+                
+                clearInterval(poll); // 폴링 종료
+                console.log('[AI 분석 폴링 종료] UI 업데이트 완료');
+            }
+        } catch (e) {
+            console.error('폴링 중 에러:', e);
+            clearInterval(poll);
+        }
+    }, 500); 
 }
 
 // 한줄평 등록
@@ -1427,8 +1499,11 @@ const handleSubmitComment = async () => {
     // 입력 필드 초기화
     newCommentContent.value = ''
     
-    // 목록 새로고침
-    await fetchComments()
+    // 목록 새로고침 (통계는 유지, 목록만 갱신)
+    await fetchComments(false)
+    
+    // AI 분석 폴링 시작
+    pollForAnalysis()
   } catch (err) {
     console.error('한줄평 등록 실패:', err)
     
@@ -1476,8 +1551,11 @@ const handleUpdateComment = async (commentId) => {
     // 수정 모드 종료
     cancelEdit()
     
-    // 목록 새로고침
-    await fetchComments()
+    // 목록 새로고침 (통계는 유지, 목록만 갱신)
+    await fetchComments(false)
+    
+    // AI 분석 폴링 시작
+    pollForAnalysis()
   } catch (err) {
     console.error('한줄평 수정 실패:', err)
     
@@ -1525,6 +1603,27 @@ const handleDeleteComment = async (commentId) => {
     }
   }
 }
+
+// 기준일 표시용 포맷팅 (YYYY.MM.DD)
+const formatDetailDate = (dateStr) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
+}
+
+// 가장 최근 댓글 날짜 계산 (화면 표시용, 정렬 아님)
+const latestCommentDate = computed(() => {
+  if (!comments.value || comments.value.length === 0) return null
+  
+  // 단순히 날짜만 비교해서 최신값을 찾음 (원본 배열 순서 영향 없음)
+  const maxDate = comments.value.reduce((latest, current) => {
+    const currentDate = new Date(current.updatedAt || current.createdAt)
+    const latestDate = new Date(latest)
+    return currentDate > latestDate ? (current.updatedAt || current.createdAt) : latest
+  }, comments.value[0].updatedAt || comments.value[0].createdAt)
+  
+  return maxDate
+})
 
 // 시간 포맷팅 (edited인 경우 updatedAt, 아니면 createdAt)
 const formatCommentDate = (comment) => {

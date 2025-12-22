@@ -172,7 +172,7 @@ CREATE TABLE etf_statistics (
 CREATE TABLE etf_holdings (
     holding_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     etf_id         BIGINT NOT NULL COMMENT 'etf_product 테이블 참조',
-    stock_code     VARCHAR(20) NOT NULL COMMENT '종목코드 (예: 005930)',
+    stock_code     VARCHAR(100) NOT NULL COMMENT '종목코드 (예: 005930)',
     stock_name     VARCHAR(100) NOT NULL COMMENT '종목명 (예: 삼성전자)',
     weight         DECIMAL(5, 2) NOT NULL COMMENT '구성비중 % (예: 25.45)',
     stock_price    INT COMMENT '기준가/전일종가 (단순 참고용)',
