@@ -48,7 +48,8 @@
 	<!-- 5. 한줄평 ai 분석 결과 저장 -->
 	<update id="updateCommentSentiment">
 		UPDATE comments
-		SET sentiment = #{sentiment}
+		SET sentiment = #{sentiment},
+			updated_at = updated_at
 		WHERE comment_id = #{commentId}
 	</update>
 	
