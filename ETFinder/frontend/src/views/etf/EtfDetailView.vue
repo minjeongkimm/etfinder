@@ -767,6 +767,7 @@ const bookmarkLoading = ref(false)
 // 실시간 가격 관련 변수
 const realTimePrice = ref(0) // 화면에 보여줄 실시간 가격
 const isUp = ref(true)       // 가격 상승/하락 (빨강/파랑 색상용)
+const yesterdayPrice = ref(0) // 어제 종가 (등락률 계산의 기준점) 
 let stompClient = null       // 웹소켓 클라이언트 객체
 // 애니메이션 전용 숫자통
 const tweened = reactive({ number: 0 })
@@ -818,18 +819,18 @@ const negativeCount = computed(() => {
 
 // 전일 대비 등락폭 계산
 const priceChange = computed(() => {
-  if (!historyList.value || historyList.value.length < 2) {
+  // 기준가(어제 가격)가 없거나 실시간 가격이 없으면 계산 불가
+  if (!yesterdayPrice.value || !realTimePrice.value) {
     return null
   }
 
-  // historyList는 이미 날짜 오름차순 정렬됨 (API 호출 시 정렬함)
-  const list = historyList.value
-  const todayPrice = list[list.length - 1].closePrice
-  const yesterdayPrice = list[list.length - 2].closePrice
+  // 변경: realTimePrice(실시간) vs yesterdayPrice(어제 종가)
+  const current = realTimePrice.value
+  const base = yesterdayPrice.value
 
-  const diff = todayPrice - yesterdayPrice
+  const diff = current - base
   // rate: (diff / yesterdayPrice) * 100, 소수점 2자리
-  const rate = ((diff / yesterdayPrice) * 100).toFixed(2)
+  const rate = ((diff / base) * 100).toFixed(2)
 
   let sign = ''
   if (diff > 0) sign = '+'
@@ -1123,6 +1124,7 @@ const fetchEtfDetail = async () => {
       const historyResponse = await getEtfPriceHistory(etfId)
       if (historyResponse.data && historyResponse.data.length > 0) {
         historyList.value = historyResponse.data.sort((a, b) => new Date(a.baseDate) - new Date(b.baseDate))
+        yesterdayPrice.value = historyList.value[historyList.value.length - 2].closePrice   // 마지막 데이터가 어제 종가
       }
     } catch (historyErr) {
       console.error('가격 히스토리 조회 실패:', historyErr)
