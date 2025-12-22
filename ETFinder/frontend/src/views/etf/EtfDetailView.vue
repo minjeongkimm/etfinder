@@ -125,9 +125,12 @@
               <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <!-- 현재가 -->
                 <div>
-                  <div class="text-sm text-muted-foreground mb-1">현재가</div>
-                  <div class="text-3xl font-mono font-bold text-foreground mb-1">
-                    {{ formatPrice(etf.currentPrice) }}원
+                  <div class="text-sm text-muted-foreground mb-1">현재가 (실시간)</div>
+                  <div 
+                    class="text-3xl font-mono font-bold mb-1 transition-colors duration-300"
+                    :class="isUp ? 'text-red-500' : 'text-blue-500'" 
+                  >
+                    {{ formatPrice(tweened.number.toFixed(0)) }}원
                   </div>
                   <div
                     v-if="priceChange"
@@ -737,8 +740,12 @@ import {
     Search,
     Loader2
 } from 'lucide-vue-next'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Client } from '@stomp/stompjs'
+import { onUnmounted } from 'vue'
+import gsap from 'gsap'
+import axios from 'axios'
 
 // Chart.js 전역 등록
 Chart.register(...registerables)
@@ -756,6 +763,17 @@ const error = ref(null)
 const activeTab = ref('chart')
 const likeLoading = ref(false)
 const bookmarkLoading = ref(false)
+
+// 실시간 가격 관련 변수
+const realTimePrice = ref(0) // 화면에 보여줄 실시간 가격
+const isUp = ref(true)       // 가격 상승/하락 (빨강/파랑 색상용)
+const yesterdayPrice = ref(0) // 어제 종가 (등락률 계산의 기준점) 
+let stompClient = null       // 웹소켓 클라이언트 객체
+// 애니메이션 전용 숫자통
+const tweened = reactive({ number: 0 })
+// 쓰로틀링용 변수
+let latestPriceBuffer = 0          // 최신값 임시 저장소
+let throttleInterval = null        // 3초 타이머
 
 // 한줄평 관련 상태
 const comments = ref([])
@@ -801,18 +819,18 @@ const negativeCount = computed(() => {
 
 // 전일 대비 등락폭 계산
 const priceChange = computed(() => {
-  if (!historyList.value || historyList.value.length < 2) {
+  // 기준가(어제 가격)가 없거나 실시간 가격이 없으면 계산 불가
+  if (!yesterdayPrice.value || !realTimePrice.value) {
     return null
   }
 
-  // historyList는 이미 날짜 오름차순 정렬됨 (API 호출 시 정렬함)
-  const list = historyList.value
-  const todayPrice = list[list.length - 1].closePrice
-  const yesterdayPrice = list[list.length - 2].closePrice
+  // 변경: realTimePrice(실시간) vs yesterdayPrice(어제 종가)
+  const current = realTimePrice.value
+  const base = yesterdayPrice.value
 
-  const diff = todayPrice - yesterdayPrice
+  const diff = current - base
   // rate: (diff / yesterdayPrice) * 100, 소수점 2자리
-  const rate = ((diff / yesterdayPrice) * 100).toFixed(2)
+  const rate = ((diff / base) * 100).toFixed(2)
 
   let sign = ''
   if (diff > 0) sign = '+'
@@ -1094,11 +1112,19 @@ const fetchEtfDetail = async () => {
     const response = await getEtfDetail(etfId)
     etf.value = response.data
 
+    // 초기값 동기화
+    // DB 가격을 애니메이션 시작점으로 설정
+    const initPrice = Number(etf.value.currentPrice)
+    realTimePrice.value = initPrice
+    tweened.number = initPrice      // 화면에 바로 보여질 값
+    latestPriceBuffer = initPrice   // 버퍼 초기화
+
     // 2. 가격 히스토리 조회 (등락폭 계산용)
     try {
       const historyResponse = await getEtfPriceHistory(etfId)
       if (historyResponse.data && historyResponse.data.length > 0) {
         historyList.value = historyResponse.data.sort((a, b) => new Date(a.baseDate) - new Date(b.baseDate))
+        yesterdayPrice.value = historyList.value[historyList.value.length - 2].closePrice   // 마지막 데이터가 어제 종가
       }
     } catch (historyErr) {
       console.error('가격 히스토리 조회 실패:', historyErr)
@@ -1123,6 +1149,61 @@ const fetchEtfDetail = async () => {
     loading.value = false
   }
 }
+
+const connectWebSocket = () => {
+  const code = etf.value.etfCode
+  
+  if (stompClient) stompClient.deactivate()
+
+  stompClient = new Client({
+    brokerURL: 'ws://localhost:8080/ws-etfinder', 
+    onConnect: async () => {
+      console.log(`📡 [${code}] 연결 성공!`)
+
+      // 데이터 수신 (무조건 받아서 버퍼에 저장)
+      stompClient.subscribe(`/topic/price/${code}`, (message) => {
+        const newPrice = parseInt(message.body)
+        
+        // 버퍼에 최신값 덮어쓰기
+        latestPriceBuffer = newPrice
+      })
+      
+      // 연결되자마자 백엔드한테 한투 데이터 가져오라고 명령 내리기 (자동화)
+      try {
+        await axios.get(`http://localhost:8080/api/realtime/connect?code=${code}`)
+        console.log(`백엔드-한투 연결 요청 완료 (${code})`)
+      } catch (err) {
+        console.error('한투 연결 요청 실패:', err)
+      }
+
+      // 2. 화면 갱신 타이머 (3초마다 실행)
+      if (throttleInterval) clearInterval(throttleInterval)
+      
+      throttleInterval = setInterval(() => {
+        // 버퍼에 새로운 값이 있으면 업데이트
+        if (latestPriceBuffer !== 0 && latestPriceBuffer !== realTimePrice.value) {
+           
+           // 색상 결정 (오름/내림)
+           isUp.value = latestPriceBuffer >= realTimePrice.value
+           
+           realTimePrice.value = latestPriceBuffer
+        }
+      }, 3000) // 3초마다 갱신
+    }
+  })
+  stompClient.activate()
+}
+
+// 애니메이션 담당
+watch(realTimePrice, (newVal) => {
+  if (!newVal || isNaN(newVal)) return // 안전장치
+
+  gsap.to(tweened, {
+    duration: 0.5,         // 0.5초 동안 굴러감
+    number: Number(newVal), 
+    ease: 'power2.out'
+  })
+})
 
 // 좋아요 토글
 const handleToggleLike = async () => {
@@ -1511,12 +1592,14 @@ watch(
       // 컴포넌트 재활용 시 데이터 리로드
       fetchEtfDetail()
       fetchAiSummary(newId)
+      connectWebSocket() // ID 바뀌면 소켓도 다시 연결
     }
   }
 )
 
 onMounted(async () => {
   await fetchEtfDetail()
+  connectWebSocket() // 페이지 켜지면 소켓 연결
   
   // AI 요약 정보 로드
   if (route.params.etfId) {
@@ -1535,6 +1618,22 @@ onMounted(async () => {
   // 초기 로드 시 한줄평 탭이 활성화되어 있으면 댓글 로드
   if (activeTab.value === 'comments') {
     fetchComments()
+  }
+})
+
+onUnmounted(async () => {
+  if (stompClient) {
+    stompClient.deactivate()
+    console.log('🔌 소켓 연결 해제')
+  }
+  if (throttleInterval) clearInterval(throttleInterval)
+
+  // 백엔드한테 한투 데이터 구독 중단 요청 보내기
+  try {
+    axios.get('http://localhost:8080/api/realtime/disconnect')
+    console.log('🛑 백엔드 구독 중단 요청 보냄')
+  } catch (err) {
+    console.error(err)
   }
 })
 </script>

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.etfinder.mvc.etf.load.EtfHoldingsLoadService;
 import com.etfinder.mvc.etf.load.EtfLoadService;
 
 @ComponentScan(basePackages = "com.etfinder.mvc")
@@ -20,6 +21,9 @@ public class EtFinderApplication implements CommandLineRunner {
 
     @Autowired
     private EtfLoadService etfLoadService; 
+    
+    @Autowired
+    private EtfHoldingsLoadService etfHoldingsLoadService;
 
     public static void main(String[] args) {
         SpringApplication.run(EtFinderApplication.class, args);
@@ -27,10 +31,14 @@ public class EtFinderApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 서버 켜질 때 이 부분이 자동으로 실행됨!
+        // 1. 기본 ETF 정보 적재
 //        System.out.println("🚀 데이터 적재 시작...");
 //        etfLoadService.load(); 
 //        System.out.println("✅ 데이터 적재 완료!");
+    	// 2. 구성종목(Holdings) 엑셀 파일 적재
+//        System.out.println("🚀 [Holdings] ETF 구성종목 엑셀 적재 시작...");
+//        etfHoldingsLoadService.loadHoldings(); 
+//        System.out.println("✅ [Holdings] ETF 구성종목 적재 완료!");
     }
     
     

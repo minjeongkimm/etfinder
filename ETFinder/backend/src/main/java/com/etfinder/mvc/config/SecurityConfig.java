@@ -54,7 +54,7 @@ public class SecurityConfig {
 
 				// 4. URL별 권한 관리
 				.authorizeHttpRequests(auth -> auth
-						//댓글 조회는 모든 유저가 가
+						//댓글 조회는 모든 유저가 가능
 						.requestMatchers(HttpMethod.GET, "/api/etfs/*/comments/**").permitAll()
 						//댓글 등록, 수정, 삭제는 로그인 유저만 가능 
 						.requestMatchers("/api/etfs/*/comments/**").authenticated()
@@ -65,6 +65,7 @@ public class SecurityConfig {
 						// etf 조회는 누구나 가능
 						.requestMatchers(HttpMethod.GET, "/api/etfs/**").permitAll()
 						// 누구나 접속 가능
+						.requestMatchers("/api/realtime/**", "/ws-etfinder/**").permitAll() // 웹소켓 연결용
 						.requestMatchers("/", "/index.html", "/api/auth/**", // 로그인 관련은 누구나 접속 가능
 								"/api/ranking/**", // 랭킹도 로그인 없이 조회 가능
 								"/swagger-ui/**", "/v3/api-docs/**" // 스웨거 화면 접속용
