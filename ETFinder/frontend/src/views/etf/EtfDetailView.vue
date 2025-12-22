@@ -22,20 +22,9 @@
         <div v-else-if="etf">
           <!-- 헤더 -->
           <header class="mb-6">
-            <!-- Back to list 버튼 (추천 목록에서 온 경우에만 표시) -->
+            <!-- 목록으로 돌아가기 버튼 -->
             <button
-              v-if="route.query.from === 'recommended'"
-              @click="handleBackToList"
-              class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-semibold mb-4 transition-all duration-200"
-            >
-              <span>←</span>
-              <span>Back to list</span>
-            </button>
-            
-            <!-- 일반 목록으로 돌아가기 버튼 (다른 경로에서 온 경우) -->
-            <button
-              v-else
-              @click="$router.push('/etfs')"
+              @click="goBackToList"
               class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-all duration-200"
             >
               <span>←</span>
@@ -1249,25 +1238,21 @@ const handleDelete = async () => {
     alert('삭제되었습니다.')
     router.push('/etfs')
   } catch (err) {
-    console.error('삭제 실패:', err)
-    alert('삭제에 실패했습니다.')
   }
 }
 
-// Back to list 처리
-const handleBackToList = () => {
-  // 1순위: returnTo가 있으면 해당 경로로 이동
-  if (route.query.returnTo) {
-    router.push(route.query.returnTo)
-  }
-  // 2순위: history에서 뒤로가기 (추천 페이지가 있을 가능성)
-  else if (window.history.length > 1) {
-    router.back()
-  }
-  // 3순위: 추천 페이지로 직접 이동
-  else {
-    router.push({ name: 'recommend' })
-  }
+// 목록으로 돌아가기 (페이지 상태 보존)
+const goBackToList = () => {
+  // Extract page and other query params from current route
+  const { page, ...restQuery } = route.query
+  
+  router.push({
+    name: 'etfSearch',
+    query: {
+      ...restQuery,
+      page: page || '1'  // Use preserved page or default to 1
+    }
+  })
 }
 
 // ==============================

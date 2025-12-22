@@ -402,9 +402,10 @@
 import { deleteEtf, getEtfs, searchEtfs } from '@/api/etf'
 import { useAuthStore } from '@/stores/auth'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 // 테마 옵션 상수
@@ -504,9 +505,29 @@ const visiblePages = computed(() => {
   return pages.filter(p => p !== '...' || pages.indexOf(p) === pages.lastIndexOf(p))
 })
 
-// etfList가 변경되면 첫 페이지로 이동
+// Initialize page from route query
+const initPageFromRoute = () => {
+  const pageParam = route.query.page
+  const parsed = pageParam ? parseInt(pageParam, 10) : 1
+  currentPage.value = Number.isNaN(parsed) || parsed < 1 ? 1 : parsed
+}
+
+// Watch route.query.page changes (browser back/forward, direct URL change)
+watch(
+  () => route.query.page,
+  () => {
+    initPageFromRoute()
+    // Data will be fetched via the etfList.length watch or can be triggered here if needed
+  },
+  { immediate: false }
+)
+
+// etfList가 변경되면 첫 페이지로 이동 (검색/필터 변경 시)
 watch(() => etfList.value.length, () => {
-  currentPage.value = 1
+  // Only reset to page 1 if not already on a specific page from URL
+  if (!route.query.page) {
+    currentPage.value = 1
+  }
 })
 
 const formatPrice = (price) => {
@@ -578,7 +599,11 @@ const resetFilters = () => {
 }
 
 const goToDetail = (etfId) => {
-  router.push(`/etfs/${etfId}`)
+  router.push({
+    name: 'etfDetail',
+    params: { etfId },
+    query: route.query  // Preserve current query state
+  })
 }
 
 const goToCreatePage = () => {
@@ -602,20 +627,47 @@ const handleDelete = async (etfCode) => {
   }
 }
 
-// 페이지 이동
+// 페이지 이동 - route query를 업데이트하면 watch가 currentPage를 동기화
 const goToPage = (page) => {
   if (page < 1 || page > totalPages.value) return
-  currentPage.value = page
+  if (page === currentPage.value) return  // 같은 페이지면 무시
+  
+  // Update URL query - watch will sync currentPage
+  router.replace({
+    name: 'etfSearch',
+    query: {
+      ...route.query,
+      page: page.toString()
+    }
+  })
+  
   // 페이지 최상단으로 스크롤
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// 페이지 사이즈 변경
+// 페이지 사이즈 변경 - 항상 1페이지로 리셋
 const handlePageSizeChange = () => {
-  currentPage.value = 1
+  router.replace({
+    name: 'etfSearch',
+    query: {
+      ...route.query,
+      page: '1'
+    }
+  })
 }
 
 onMounted(async () => {
+  // Initialize page from route query
+  initPageFromRoute()
+  
+  // Normalize URL: add page=1 if missing
+  if (!route.query.page) {
+    router.replace({
+      name: 'etfSearch',
+      query: { ...route.query, page: '1' }
+    })
+  }
+  
   // 관리자 권한 확인을 위해 로그인 상태이면 사용자 정보 로드
   if (authStore.isAuthenticated && !authStore.user) {
     try {
