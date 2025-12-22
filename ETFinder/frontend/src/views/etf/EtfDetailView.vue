@@ -215,11 +215,17 @@
                         <Bot :size="20" stroke-width="2.5" />
                       </div>
                       <h4 class="font-bold text-lg text-indigo-950">AI 인사이트</h4>
-                      <div v-if="aiSummaryLoading" class="ml-auto">
-                        <span class="flex h-3 w-3 relative">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                      <div class="ml-auto flex items-center gap-2">
+                        <!-- 기준일 표시 -->
+                        <span v-if="etf?.createdAt" class="text-xs text-indigo-900/50 font-medium">
+                          {{ formatDetailDate(etf.createdAt) }} 기준
                         </span>
+                        <div v-if="aiSummaryLoading">
+                          <span class="flex h-3 w-3 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -403,9 +409,6 @@
                       </svg>
                       <h4 class="text-lg font-bold text-foreground">AI 댓글 분석</h4>
                     </div>
-                    <button class="px-4 py-1.5 text-xs font-semibold rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors">
-                      최신 분석
-                    </button>
                   </div>
 
                   <!-- 데이터 부족 상태 -->
@@ -569,6 +572,9 @@
                           :class="['text-xs mt-2', variantConfig.textColor, 'opacity-60']"
                         >
                           표본 {{ aiAnalysis.totalCnt }}개 기준
+                          <span v-if="latestCommentDate" class="ml-1">
+                            ({{ formatDetailDate(latestCommentDate) }} 업데이트)
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1597,6 +1603,27 @@ const handleDeleteComment = async (commentId) => {
     }
   }
 }
+
+// 기준일 표시용 포맷팅 (YYYY.MM.DD)
+const formatDetailDate = (dateStr) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
+}
+
+// 가장 최근 댓글 날짜 계산 (화면 표시용, 정렬 아님)
+const latestCommentDate = computed(() => {
+  if (!comments.value || comments.value.length === 0) return null
+  
+  // 단순히 날짜만 비교해서 최신값을 찾음 (원본 배열 순서 영향 없음)
+  const maxDate = comments.value.reduce((latest, current) => {
+    const currentDate = new Date(current.updatedAt || current.createdAt)
+    const latestDate = new Date(latest)
+    return currentDate > latestDate ? (current.updatedAt || current.createdAt) : latest
+  }, comments.value[0].updatedAt || comments.value[0].createdAt)
+  
+  return maxDate
+})
 
 // 시간 포맷팅 (edited인 경우 updatedAt, 아니면 createdAt)
 const formatCommentDate = (comment) => {
