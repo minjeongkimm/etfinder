@@ -6,10 +6,10 @@
     <!-- 매수/매도 탭 -->
     <div class="bg-slate-100 p-1 rounded-lg flex mb-6">
       <button 
-        @click="tradeType = 'BUY'"
+        @click="activeTab = 'BUY'"
         :class="[
           'flex-1 py-2.5 text-sm font-bold rounded-md transition-all',
-          tradeType === 'BUY' 
+          activeTab === 'BUY' 
             ? 'bg-emerald-500 text-white shadow-sm' 
             : 'text-slate-600 hover:text-slate-900'
         ]"
@@ -17,10 +17,10 @@
         매수
       </button>
       <button 
-        @click="tradeType = 'SELL'"
+        @click="activeTab = 'SELL'"
         :class="[
           'flex-1 py-2.5 text-sm font-bold rounded-md transition-all',
-          tradeType === 'SELL' 
+          activeTab === 'SELL' 
             ? 'bg-rose-500 text-white shadow-sm' 
             : 'text-slate-600 hover:text-slate-900'
         ]"
@@ -29,114 +29,248 @@
       </button>
     </div>
 
-    <!-- 종목 검색 -->
-    <div class="mb-6">
-      <label class="block text-sm font-medium text-foreground mb-2">종목 검색</label>
-      <div class="relative">
-        <input 
-          v-model="searchKeyword"
-          type="text" 
-          placeholder="종목명 또는 티커 입력"
-          class="w-full pl-4 pr-12 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-          @keyup.enter="handleSearch"
-        />
-        <button 
-          @click="handleSearch"
-          class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-muted-foreground hover:text-primary transition-colors"
-        >
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
-      </div>
+    <!-- 매수 탭 UI -->
+    <template v-if="activeTab === 'BUY'">
+      <!-- 종목 검색 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-foreground mb-2">종목 검색</label>
+        <div class="relative">
+          <input 
+            v-model="searchKeyword"
+            type="text" 
+            placeholder="종목명 또는 티커 입력"
+            class="w-full pl-4 pr-12 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            @keyup.enter="handleSearch"
+          />
+          <button 
+            @click="handleSearch"
+            class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-muted-foreground hover:text-primary transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
 
-      <!-- 검색 결과 드롭다운 (간단 구현) -->
-      <div v-if="searchResults.length > 0" class="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-         <div 
-           v-for="etf in searchResults" 
-           :key="etf.etfId"
-           @click="selectEtf(etf)"
-           class="p-3 hover:bg-muted cursor-pointer flex justify-between items-center"
-         >
-           <div>
-             <div class="text-sm font-bold text-foreground">{{ etf.etfName }}</div>
-             <div class="text-xs text-muted-foreground">{{ etf.etfCode }}</div>
+        <!-- 검색 결과 드롭다운 -->
+        <div v-if="searchResults.length > 0" class="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+           <div 
+             v-for="etf in searchResults" 
+             :key="etf.etfId"
+             @click="selectEtf(etf)"
+             class="p-3 hover:bg-muted cursor-pointer flex justify-between items-center"
+           >
+             <div>
+               <div class="text-sm font-bold text-foreground">{{ etf.etfName }}</div>
+               <div class="text-xs text-muted-foreground">{{ etf.etfCode }}</div>
+             </div>
+             <div class="text-sm font-medium">{{ etf.currentPrice?.toLocaleString() }}원</div>
            </div>
-           <div class="text-sm font-medium">{{ etf.currentPrice?.toLocaleString() }}원</div>
-         </div>
+        </div>
       </div>
-    </div>
 
-    <!-- 선택된 ETF 정보 -->
-    <div v-if="selectedEtf" class="bg-muted/50 rounded-lg p-4 mb-6">
-      <div class="flex justify-between items-center mb-2">
-        <span class="text-sm font-bold text-foreground">{{ selectedEtf.etfName }}</span>
-        <span class="text-xs text-muted-foreground">{{ selectedEtf.etfCode }}</span>
+      <!-- 선택된 ETF 정보 -->
+      <div v-if="selectedEtf" class="bg-muted/50 rounded-lg p-4 mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-bold text-foreground">{{ selectedEtf.etfName }}</span>
+          <span class="text-xs text-muted-foreground">{{ selectedEtf.etfCode }}</span>
+        </div>
+        <div class="flex justify-between text-sm mb-1">
+          <span class="text-muted-foreground">현재가</span>
+          <span class="font-bold text-foreground">{{ selectedEtf.currentPrice?.toLocaleString() ?? 0 }}원</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-muted-foreground">매수 가능</span>
+          <span class="font-medium text-foreground">
+            {{ formatNumber(availBalance) }}
+          </span>
+        </div>
       </div>
-      <div class="flex justify-between text-sm mb-1">
-        <span class="text-muted-foreground">현재가</span>
-        <span class="font-bold text-foreground">{{ selectedEtf.currentPrice?.toLocaleString() ?? 0 }}원</span>
+      
+      <!-- ETF 미선택 시 안내 -->
+      <div v-else class="bg-muted/30 rounded-lg p-4 mb-6 text-center text-sm text-muted-foreground">
+        종목을 검색하여 선택해주세요.
       </div>
-      <div class="flex justify-between text-sm">
-        <span class="text-muted-foreground">{{ tradeType === 'BUY' ? '매수 가능' : '매도 가능' }}</span>
-        <span class="font-medium text-foreground">
-          {{ tradeType === 'BUY' ? formatNumber(availBalance) : formatNumber(availQuantity) + '주' }}
+
+      <!-- 수량 입력 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-foreground mb-2">수량</label>
+        <div class="flex gap-2">
+          <input 
+            v-model.number="quantity"
+            type="number"
+            min="1"
+            placeholder="수량을 입력하세요"
+            class="flex-1 px-4 py-3 border border-border rounded-lg bg-background text-foreground text-right font-mono focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-400 placeholder:text-sm placeholder:font-normal"
+          />
+          <button 
+            @click="setMaxQuantity"
+            class="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+          >
+            최대
+          </button>
+        </div>
+      </div>
+
+      <!-- 총 주문 금액 -->
+      <div class="flex justify-between items-center mb-6 pt-4 border-t border-border">
+        <span class="text-sm font-bold text-foreground">총 주문 금액</span>
+        <span class="text-xl font-bold text-foreground">
+          {{ formatNumber(totalOrderAmount) }}원
         </span>
       </div>
-    </div>
-    
-    <!-- ETF 미선택 시 안내 -->
-    <div v-else class="bg-muted/30 rounded-lg p-4 mb-6 text-center text-sm text-muted-foreground">
-      종목을 검색하여 선택해주세요.
-    </div>
 
-    <!-- 수량 입력 -->
-    <div class="mb-6">
-      <label class="block text-sm font-medium text-foreground mb-2">수량</label>
-      <div class="flex gap-2">
-        <input 
-          v-model.number="quantity"
-          type="number"
-          min="0"
-          placeholder="0"
-          class="flex-1 px-4 py-3 border border-border rounded-lg bg-background text-foreground text-right font-mono focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <button 
-          @click="setMaxQuantity"
-          class="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
-        >
-          최대
-        </button>
+      <!-- 매수 주문 버튼 -->
+      <button 
+        @click="onSubmit"
+        :disabled="!canSubmit || isSubmitting"
+        :class="[
+          'w-full py-4 rounded-lg font-bold text-white text-base transition-all shadow-sm',
+          !canSubmit || isSubmitting 
+            ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+            : 'bg-emerald-500 hover:bg-emerald-600'
+        ]"
+      >
+        {{ isSubmitting ? '처리 중...' : '매수 주문' }}
+      </button>
+    </template>
+
+    <!-- 매도 탭 UI -->
+    <template v-else>
+      <!-- 보유 종목 선택 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-foreground mb-2">보유 종목 선택</label>
+        
+        <!-- 보유 종목이 없을 때 -->
+        <div v-if="!props.holdings || props.holdings.length === 0" class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-500">
+          현재 보유 중인 종목이 없습니다. 먼저 매수 후 매도 기능을 이용할 수 있어요.
+        </div>
+
+        <!-- 보유 종목 리스트 -->
+        <div v-else>
+          <div class="space-y-2 max-h-64 overflow-y-auto mb-2">
+            <div 
+              v-for="holding in props.holdings" 
+              :key="holding.etfId"
+              @click="onSelectSellHolding(holding)"
+              :class="[
+                'flex items-center justify-between rounded-xl border p-4 cursor-pointer transition-all',
+                selectedSellEtfId === holding.etfId 
+                  ? 'border-rose-500 bg-rose-50/60 shadow-sm' 
+                  : 'border-slate-200 bg-white hover:border-rose-400'
+              ]"
+            >
+              <!-- 왼쪽: 종목 정보 -->
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-bold text-foreground truncate">{{ holding.etfName }}</div>
+                <div class="text-xs text-muted-foreground">{{ holding.etfCode }}</div>
+                <div class="text-xs text-muted-foreground mt-1">
+                  보유 {{ holding.quantity }}주
+                </div>
+              </div>
+              
+              <!-- 가운데: 현재가, 수익률 -->
+              <div class="text-right mr-3">
+                <div class="text-sm font-bold text-foreground">
+                  {{ formatNumber(holding.currentPrice) }}원
+                </div>
+                <div 
+                  :class="[
+                    'text-xs font-medium',
+                    holding.profitRate >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                  ]"
+                >
+                  {{ holding.profitRate >= 0 ? '+' : '' }}{{ holding.profitRate.toFixed(2) }}%
+                </div>
+              </div>
+
+              <!-- 오른쪽: 선택 표시 -->
+              <div class="flex-shrink-0">
+                <div 
+                  :class="[
+                    'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all',
+                    selectedSellEtfId === holding.etfId
+                      ? 'border-rose-500 bg-rose-500'
+                      : 'border-slate-300'
+                  ]"
+                >
+                  <svg 
+                    v-if="selectedSellEtfId === holding.etfId"
+                    class="w-3 h-3 text-white" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 안내 문구 -->
+          <p class="mt-2 text-sm text-gray-400 font-normal">
+            한 번에 한 종목만 매도할 수 있어요. 매도할 종목을 선택한 뒤 아래에서 수량을 입력해주세요.
+          </p>
+        </div>
       </div>
-    </div>
 
-    <!-- 총 주문 금액 -->
-    <div class="flex justify-between items-center mb-6 pt-4 border-t border-border">
-      <span class="text-sm font-bold text-foreground">총 주문 금액</span>
-      <span class="text-xl font-bold text-foreground">
-        {{ formatNumber(totalAmount) }}원
-      </span>
-    </div>
+      <!-- 수량 입력 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-foreground mb-2">수량</label>
+        <div class="flex gap-2">
+          <input 
+            v-model.number="quantity"
+            type="number"
+            :min="1"
+            :max="selectedHolding ? selectedHolding.quantity : undefined"
+            :disabled="!selectedHolding"
+            :placeholder="selectedHolding ? '수량을 입력하세요' : '먼저 매도할 종목을 선택해주세요'"
+            class="flex-1 px-4 py-3 border border-border rounded-lg bg-background text-foreground text-right font-mono focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:bg-slate-100 disabled:cursor-not-allowed placeholder:text-gray-400 placeholder:text-sm placeholder:font-normal"
+            @input="validateSellQuantity"
+          />
+          <button 
+            @click="setMaxSellQuantity"
+            :disabled="!selectedHolding"
+            class="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            최대
+          </button>
+        </div>
+        <!-- 수량 초과 경고 -->
+        <p v-if="selectedHolding && quantity && quantity > selectedHolding.quantity" class="mt-1 text-xs text-rose-600">
+          보유 수량({{ selectedHolding.quantity }}주)을 초과할 수 없습니다.
+        </p>
+      </div>
 
-    <!-- 주문 버튼 -->
-    <button 
-      @click="submitOrder"
-      :disabled="!isValidOrder || isSubmitting"
-      :class="[
-        'w-full py-4 rounded-lg font-bold text-white text-base transition-all shadow-sm',
-        !isValidOrder || isSubmitting 
-          ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-          : tradeType === 'BUY' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-rose-500 hover:bg-rose-600'
-      ]"
-    >
-      {{ isSubmitting ? '처리 중...' : (tradeType === 'BUY' ? '매수 주문' : '매도 주문') }}
-    </button>
+      <!-- 총 주문 금액 -->
+      <div class="flex justify-between items-center mb-6 pt-4 border-t border-border">
+        <span class="text-sm font-bold text-foreground">총 주문 금액</span>
+        <span class="text-xl font-bold text-rose-600">
+          {{ formatNumber(totalOrderAmount) }}원
+        </span>
+      </div>
+
+      <!-- 매도 주문 버튼 -->
+      <button 
+        @click="onSubmit"
+        :disabled="!canSubmit || isSubmitting"
+        :class="[
+          'w-full py-4 rounded-lg font-bold text-white text-base transition-all shadow-sm',
+          !canSubmit || isSubmitting 
+            ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+            : 'bg-rose-500 hover:bg-rose-600'
+        ]"
+      >
+        {{ isSubmitting ? '처리 중...' : '매도 주문' }}
+      </button>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { searchEtfs } from '@/api/etf'
+import { executeTrade } from '@/api/mock'
 import type { TradeRequest, MockHoldingResponse } from '@/types/mock'
 
 const props = defineProps<{
@@ -146,24 +280,72 @@ const props = defineProps<{
 
 const emit = defineEmits(['order-success'])
 
-const tradeType = ref<'BUY' | 'SELL'>('BUY')
+// 공통 상태
+const activeTab = ref<'BUY' | 'SELL'>('BUY')
+const quantity = ref<number | null>(null)
+const isSubmitting = ref(false)
+
+// 매수 전용 상태
 const searchKeyword = ref('')
 const searchResults = ref<any[]>([])
 const selectedEtf = ref<any>(null)
-const quantity = ref<number>(0)
-const isSubmitting = ref(false)
+
+// 매도 전용 상태
+const selectedSellEtfId = ref<number | null>(null)
+
+// 탭 전환 시 상태 초기화
+watch(activeTab, () => {
+  quantity.value = null
+  selectedSellEtfId.value = null
+  selectedEtf.value = null
+  searchKeyword.value = ''
+  searchResults.value = []
+})
+
+// === 매도 관련 로직 ===
+
+// 선택된 보유 종목
+const selectedHolding = computed(() => {
+  if (!selectedSellEtfId.value) return null
+  return props.holdings.find(h => h.etfId === selectedSellEtfId.value) || null
+})
+
+// 보유 종목 선택 핸들러
+const onSelectSellHolding = (holding: MockHoldingResponse) => {
+  if (selectedSellEtfId.value === holding.etfId) {
+    // 다시 클릭하면 선택 해제
+    selectedSellEtfId.value = null
+    quantity.value = null
+  } else {
+    // 새 종목 선택
+    selectedSellEtfId.value = holding.etfId
+    quantity.value = null
+  }
+}
+
+// 매도 수량 검증
+const validateSellQuantity = () => {
+  if (!selectedHolding.value || !quantity.value) return
+  if (quantity.value > selectedHolding.value.quantity) {
+    quantity.value = selectedHolding.value.quantity
+  }
+}
+
+// 매도 최대 수량 설정
+const setMaxSellQuantity = () => {
+  if (!selectedHolding.value) return
+  quantity.value = selectedHolding.value.quantity
+}
+
+// === 매수 관련 로직 ===
 
 // 검색 핸들러
 const handleSearch = async () => {
   if (!searchKeyword.value.trim()) return
   try {
-    // 기존 api/etf.js의 searchEtfs 활용
-    // params: { keyword: ... }
     const res = await searchEtfs({ keyword: searchKeyword.value })
-    // 백엔드가 PageImpl 등을 줄 수 있으므로 확인 필요
-    // 보통 content 배열에 있음
-    const data = res.data.content || res.data // 구조 확인 필요, 일단 content 가정
-    searchResults.value = data.slice(0, 5) // 상위 5개만
+    const data = res.data.content || res.data
+    searchResults.value = data.slice(0, 5)
   } catch (e) {
     console.error(e)
     searchResults.value = []
@@ -174,75 +356,95 @@ const selectEtf = (etf: any) => {
   selectedEtf.value = etf
   searchResults.value = []
   searchKeyword.value = ''
-  quantity.value = 0
+  quantity.value = null
 }
 
-// 매수 가능 금액 (잔액)
+// 매수 가능 금액
 const availBalance = computed(() => props.balance)
 
-// 매도 가능 수량 (보유량)
-const availQuantity = computed(() => {
-  if (!selectedEtf.value) return 0
-  const holding = props.holdings.find(h => h.etfId === selectedEtf.value.etfId)
-  return holding ? holding.quantity : 0
-})
-
-const totalAmount = computed(() => {
-  const price = selectedEtf.value?.currentPrice ?? 0
-  return price * (quantity.value || 0)
-})
-
-const isValidOrder = computed(() => {
-  if (!selectedEtf.value || !quantity.value || quantity.value <= 0) return false
-  if (tradeType.value === 'BUY') {
-    return totalAmount.value <= availBalance.value
-  } else {
-    return quantity.value <= availQuantity.value
-  }
-})
-
+// 매수 최대 수량 설정
 const setMaxQuantity = () => {
   if (!selectedEtf.value) return
   const price = selectedEtf.value.currentPrice
-  if (tradeType.value === 'BUY') {
-    quantity.value = Math.floor(availBalance.value / price)
-  } else {
-    quantity.value = availQuantity.value
-  }
+  quantity.value = Math.floor(availBalance.value / price)
 }
 
-const submitOrder = async () => {
-  if (!isValidOrder.value) return
+// === 공통 로직 ===
+
+// 총 주문 금액
+const totalOrderAmount = computed(() => {
+  if (!quantity.value || quantity.value <= 0) return 0
+
+  if (activeTab.value === 'BUY') {
+    const price = selectedEtf.value?.currentPrice ?? 0
+    return price * quantity.value
+  } else {
+    if (!selectedHolding.value) return 0
+    return selectedHolding.value.currentPrice * quantity.value
+  }
+})
+
+// 주문 가능 여부
+const canSubmit = computed(() => {
+  if (!quantity.value || quantity.value <= 0) return false
+
+  if (activeTab.value === 'BUY') {
+    if (!selectedEtf.value) return false
+    return totalOrderAmount.value <= availBalance.value
+  } else {
+    if (!selectedHolding.value) return false
+    if (quantity.value > selectedHolding.value.quantity) return false
+    return true
+  }
+})
+
+// 주문 실행
+const onSubmit = async () => {
+  if (!canSubmit.value) return
   
   isSubmitting.value = true
   try {
-    // 부모 컴포넌트에게 주문 실행 위임
-    const orderData: TradeRequest = {
-      etfId: selectedEtf.value.etfId,
-      tradeType: tradeType.value,
-      quantity: quantity.value
+    if (activeTab.value === 'SELL') {
+      if (!selectedHolding.value) {
+        alert('매도할 종목을 선택해주세요.')
+        return
+      }
+
+      await executeTrade({
+        etfId: selectedHolding.value.etfId,
+        tradeType: 'SELL',
+        quantity: quantity.value!
+      })
+      
+      alert('매도 주문이 체결되었습니다.')
+    } else {
+      // 매수
+      if (!selectedEtf.value) {
+        alert('매수할 종목을 선택해주세요.')
+        return
+      }
+
+      await executeTrade({
+        etfId: selectedEtf.value.etfId,
+        tradeType: 'BUY',
+        quantity: quantity.value!
+      })
+      
+      alert('매수 주문이 체결되었습니다.')
     }
     
-    // 이 컴포넌트는 API를 직접 부르지 않고 이벤트만 발생시키거나,
-    // 여기서 직접 부를 수도 있음. 계획상 직접 부르는게 좋을듯하나 
-    // View에서 Refresh가 필요하므로 View가 처리하는게 깔끔함.
-    // 하지만 "Component가 API를 부르고 성공하면 emit" 하는 패턴으로 구현
+    emit('order-success')
     
-    const { executeTrade } = await import('@/api/mock')
-    await executeTrade(orderData)
-    
-    alert('주문이 체결되었습니다.')
-    emit('order-success') // 부모에게 데이터 갱신 요청
-    
-    // 초기화
-    quantity.value = 0
-    if (tradeType.value === 'SELL') { 
-      // 매도 후에도 종목 선택 유지할지 여부 -> 유지하되 보유량 갱신되어야 함
-      // 일단 유지
+    // 상태 초기화
+    quantity.value = null
+    if (activeTab.value === 'SELL') {
+      selectedSellEtfId.value = null
+    } else {
+      selectedEtf.value = null
     }
   } catch (err: any) {
     const msg = err.response?.data || err.message
-    alert('주문 실패: ' + msg)
+    alert(`${activeTab.value === 'BUY' ? '매수' : '매도'} 주문 실패: ${msg}`)
   } finally {
     isSubmitting.value = false
   }
