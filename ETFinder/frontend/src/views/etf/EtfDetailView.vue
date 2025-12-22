@@ -749,7 +749,7 @@ const etf = ref(null)
 const historyList = ref([])
 const loading = ref(true)
 const error = ref(null)
-const activeTab = ref('chart')
+const activeTab = ref(route.query.tab || 'chart')
 const likeLoading = ref(false)
 const bookmarkLoading = ref(false)
 
@@ -1191,6 +1191,13 @@ watch(realTimePrice, (newVal) => {
     duration: 0.5,         // 0.5초 동안 굴러감
     number: Number(newVal), 
     ease: 'power2.out'
+  })
+})
+
+// 탭 변경 감지 (URL 업데이트)
+watch(activeTab, (newTab) => {
+  router.replace({ 
+    query: { ...route.query, tab: newTab } 
   })
 })
 
