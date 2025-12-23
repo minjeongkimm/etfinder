@@ -141,9 +141,14 @@
             이제 모든 기회를 당신의 것으로 만드세요.<br>
             ETFinder와 함께라면 투자가 더 쉬워집니다.
           </p>
-          <router-link :to="{ name: 'portfolio' }" class="inline-flex h-14 items-center justify-center rounded-full bg-slate-900 px-8 text-lg font-bold text-white shadow-lg transition-all hover:bg-slate-800 hover:scale-105">
-            지금 시작하기
-          </router-link>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+             <router-link :to="{ name: 'etfSearch' }" class="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-bold text-lg hover:bg-slate-50 transition-all hover:scale-105 shadow-lg">
+               ETF 둘러보기
+             </router-link>
+             <router-link :to="{ name: 'login' }" class="px-8 py-4 bg-slate-900 text-white rounded-full font-bold text-lg hover:bg-slate-800 transition-all hover:scale-105 shadow-xl">
+               내 자산 분석하기
+             </router-link>
+          </div>
        </ScrollReveal>
     </section>
   </div>

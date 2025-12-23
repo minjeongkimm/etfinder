@@ -46,6 +46,12 @@ const router = createRouter({
       component: EtfSearchView,
     },
     {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('@/views/DashboardView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/etfs/new',
       name: 'etfCreate',
       component: EtfCreateView,

@@ -37,6 +37,9 @@
               <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs border border-indigo-200">
                  {{ authStore.user.nickname?.substring(0, 1) }}
               </div>
+              <button @click="handleLogout" class="text-xs font-medium text-slate-400 hover:text-red-500 transition-colors text-nowrap">
+                 로그아웃
+              </button>
            </div>
         </template>
         <template v-else>
@@ -58,18 +61,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
-const navItems = [
-  { name: 'ETF 검색', route: 'etfSearch' },
-  { name: '맞춤형 추천', route: 'propensityTest' }, // 성향분석
-  { name: '포트폴리오', route: 'portfolio' },
-  { name: '관심 종목', route: 'like' },
-  { name: '모의투자', route: 'mockInvestment' }
-]
+const navItems = computed(() => {
+  if (authStore.user) {
+    // Logged In: Dashboard & User features
+    return [
+      { name: '대시보드', route: 'dashboard' },
+      { name: 'ETF 검색', route: 'etfSearch' },
+      { name: '포트폴리오', route: 'portfolio' },
+      { name: '관심 종목', route: 'like' },
+      { name: '마이페이지', route: 'myPage' }
+    ]
+  } else {
+    // Guest: Landing features
+    return [
+      { name: 'ETF 검색', route: 'etfSearch' },
+      // { name: '로그인', route: 'login' } // Handled separately in template
+    ]
+  }
+})
 
 const isScrolled = ref(false)
 let ticking = false
@@ -82,6 +97,14 @@ const handleScroll = () => {
     })
     ticking = true
   }
+}
+
+const router = useRouter()
+
+const handleLogout = async () => {
+  await authStore.logout()
+  // 로그아웃 후 랜딩 페이지로 이동
+  router.push('/')
 }
 
 onMounted(() => {

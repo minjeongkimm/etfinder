@@ -298,6 +298,10 @@ const connectWebSocket = async () => {
 
   stompClient.value = new Client({
     brokerURL: 'ws://localhost:8080/ws-etfinder',
+    reconnectDelay: 5000,
+    connectHeaders: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    },
     onConnect: async () => {
       console.log('✅ STOMP 연결 성공!')
 

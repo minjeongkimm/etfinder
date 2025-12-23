@@ -50,8 +50,8 @@ onMounted(() => {
           state: { nickname: data.nickname } 
         })
       } else {
-        // 기존 회원이면 메인으로 이동
-        router.replace('/')
+        // 기존 회원이면 대시보드로 이동
+        router.replace({ name: 'dashboard' })
       }
     })
   } else {
