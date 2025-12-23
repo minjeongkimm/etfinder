@@ -50,22 +50,22 @@ const calculateYAxisRange = (dataPoints: {x: number, y: number}[]) => {
   const minValue = Math.min(...values)
   const maxValue = Math.max(...values)
   
-  // 변동이 없거나 매우 작은 경우 (±10% 범위)
-  if (maxValue - minValue < 100000) {
+  // 변동이 작을 때 (20만원 미만) -> 위아래 10만원 고정 범위 사용
+  if (maxValue - minValue < 200000) {
     const avg = (minValue + maxValue) / 2
-    const padding = avg * 0.1 // ±10%
+    const fixedPadding = 100000 // 10만원
     return {
-      min: Math.floor((avg - padding) / 100000) * 100000, // 10만원 단위로 반올림
-      max: Math.ceil((avg + padding) / 100000) * 100000
+      min: Math.floor((avg - fixedPadding) / 10000) * 10000, // 1만원 단위
+      max: Math.ceil((avg + fixedPadding) / 10000) * 10000
     }
   }
   
-  // 변동이 있는 경우
+  // 변동이 클 때 -> 변동폭의 10% 패딩
   const range = maxValue - minValue
-  const padding = range * 0.1 // ±10% 패딩
+  const padding = range * 0.1 
   return {
-    min: Math.floor((minValue - padding) / 100000) * 100000,
-    max: Math.ceil((maxValue + padding) / 100000) * 100000
+    min: Math.floor((minValue - padding) / 10000) * 10000,
+    max: Math.ceil((maxValue + padding) / 10000) * 10000
   }
 }
 
