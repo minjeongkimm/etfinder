@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/vue": "^2.2.0",
     "@stomp/stompjs": "^7.2.1",
     "apexcharts": "^5.3.6",
     "axios": "^1.13.2",
