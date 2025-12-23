@@ -103,7 +103,7 @@ const chartOptions = ref({
     palette: 'palette1', 
     monochrome: {
       enabled: true,
-      color: '#2563eb', // primary color (blue-600)
+      color: '#4f46e5', // primary color (Indigo-600)
       shadeTo: 'light',
       shadeIntensity: 0.65
     },

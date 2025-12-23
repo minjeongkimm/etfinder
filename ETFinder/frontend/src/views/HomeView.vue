@@ -1,399 +1,158 @@
 <template>
-  <div class="min-h-screen bg-background">
-    <!-- 메인 콘텐츠 영역 (Two-column layout) -->
-    <main class="flex-1 overflow-y-auto">
-      <div class="container py-6">
-        <!-- Grid: Main Content (Left ~77%) + Sidebar (Right ~23%) -->
-        <div class="grid grid-cols-1 lg:grid-cols-[3.3fr_1fr] gap-6">
+  <div class="flex flex-col">
+    <!-- Section 1: Hero (Main Title) -->
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 py-20 relative overflow-hidden">
+       <!-- Gradient Background for Hero -->
+       <div class="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-50/30 to-white/0 pointer-events-none"></div>
+
+       <ScrollReveal>
+         <div class="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white/50 backdrop-blur-sm text-sm font-semibold text-slate-600 shadow-sm">
+           <span class="flex h-2 w-2 relative">
+             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+             <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+           </span>
+           ETFinder 2.0
+         </div>
+         <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 mb-8 leading-tight">
+           Investing,<br>
+           <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Reimagined.</span>
+         </h1>
+         <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed mb-12">
+           복잡한 차트와 숫자는 이제 그만.<br>
+           AI가 분석하는 가장 직관적인 ETF 투자 플랫폼.
+         </p>
+         
+         <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <router-link :to="{ name: 'propensityTest' }" class="px-8 py-4 bg-slate-900 text-white rounded-full font-bold text-lg hover:bg-slate-800 transition-all hover:scale-105 shadow-xl">
+              내 성향 분석하기
+            </router-link>
+            <router-link :to="{ name: 'etfSearch' }" class="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-bold text-lg hover:bg-slate-50 transition-all hover:scale-105 shadow-lg">
+              둘러보기
+            </router-link>
+         </div>
+       </ScrollReveal>
+
+       <!-- Moving Down Indicator -->
+       <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M7 13 12 18 17 13"/><path d="M7 6 12 11 17 6"/></svg>
+       </div>
+    </section>
+
+    <!-- Section 2: Smart Search feature -->
+    <section class="min-h-screen flex items-center justify-center px-6 py-24 relative">
+       <div class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <!-- Text Content -->
+          <ScrollReveal>
+             <h2 class="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-6 leading-tight">
+               Find it.<br>
+               Instantly.
+             </h2>
+             <p class="text-xl text-slate-500 leading-relaxed mb-8 max-w-md">
+               원하는 조건만 선택하세요.<br>
+               수천 개의 ETF 중에서 당신에게 딱 맞는 상품을<br>
+               0.1초 만에 찾아냅니다.
+             </p>
+             <router-link :to="{ name: 'etfSearch' }" class="text-indigo-600 font-bold text-lg hover:underline underline-offset-4 inline-flex items-center gap-2">
+               스마트 검색 경험하기
+               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+             </router-link>
+          </ScrollReveal>
           
-          <!-- ========== LEFT: Main Content ========== -->
-          <div class="space-y-6">
-            
-            <!-- Hero Section (Full Width, Bold Impact) -->
-            <section class="bg-gradient-to-br from-background via-background to-primary/[0.02] border border-border rounded-xl px-10 lg:px-16 py-8 lg:py-10">
-              <!-- 배지 -->
-              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary text-xs font-medium rounded-full mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M12 2v2"/><path d="M12 22v-2"/><path d="m17 20.66-1-1.73"/><path d="M11 10.27 7 3.34"/><path d="m20.66 17-1.73-1"/><path d="m3.34 7 1.73 1"/><path d="M14 12h8"/><path d="M2 12h2"/><path d="m20.66 7-1.73 1"/><path d="m3.34 17 1.73-1"/><path d="m17 3.34-1 1.73"/><path d="m11 13.73-4 6.93"/></svg>
-                AI 기반 맞춤형 ETF 추천
-              </div>
+          <!-- Visual Content (Abstract UI Representation) -->
+          <ScrollReveal :delay="200" class="relative">
+             <div class="aspect-square rounded-[3rem] p-12 flex items-center justify-center relative overflow-hidden group hover:scale-[1.02] transition-transform duration-700 border border-white/50 bg-white/30 shadow-2xl">
+                <!-- Icons/Graphics -->
+                <div class="relative z-10 text-center">
+                   <div class="w-32 h-32 bg-white rounded-3xl shadow-2xl flex items-center justify-center text-6xl mb-6 mx-auto text-orange-500 rotate-3 group-hover:rotate-6 transition-transform duration-500">
+                      ⚡️
+                   </div>
+                   <div class="px-6 py-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg text-lg font-bold text-slate-800 transform -rotate-2 group-hover:-rotate-3 transition-transform duration-500">
+                      #고배당 #기술주
+                   </div>
+                </div>
+             </div>
+          </ScrollReveal>
+       </div>
+    </section>
 
-              <!-- 헤드라인 -->
-              <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground mb-4 leading-tight tracking-tight">
-                당신의 투자 성향에 딱 맞는<br>
-                <span class="text-primary">최적의 ETF</span>를 찾아보세요.
-              </h1>
-
-              <!-- 서브텍스트 -->
-              <p class="text-base text-muted-foreground mb-6 leading-relaxed max-w-3xl">
-                복잡한 금융 데이터는 저희가 분석해드립니다. 투자 성향 분석부터 모의투자까지, 안전하고 스마트하게 시작하세요.
-              </p>
-
-              <!-- CTA 버튼 -->
-              <div class="flex flex-wrap gap-3">
-                <router-link
-                  :to="{ name: 'propensityTest' }"
-                  class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg text-sm"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-                  투자 성향 분석하기
-                </router-link>
+    <!-- Section 3: AI Analysis -->
+    <section class="min-h-screen flex items-center justify-center px-6 py-24 relative overflow-hidden">
+       <div class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <!-- Visual Content (Left on Desktop) -->
+          <ScrollReveal :delay="200" class="order-2 md:order-1 relative">
+             <div class="aspect-square rounded-[3rem] p-12 flex items-center justify-center relative overflow-hidden group hover:scale-[1.02] transition-transform duration-700 border border-white/50 bg-white/30 shadow-2xl">
                 
-                <router-link
-                  :to="{ name: 'etfSearch' }"
-                  class="inline-flex items-center gap-2 px-6 py-3 bg-card text-foreground border border-border rounded-lg font-semibold hover:bg-accent hover:border-primary/30 transition-all duration-200 text-sm"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                  ETF 전체 둘러보기
-                </router-link>
-              </div>
-            </section>
+                <div class="relative z-10 w-full max-w-sm bg-white rounded-2xl shadow-xl p-6 transform transition-transform duration-500 group-hover:-translate-y-2">
+                   <!-- Fake Chat UI -->
+                   <div class="space-y-4">
+                      <div class="flex items-start gap-3">
+                         <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">AI</div>
+                         <div class="bg-slate-100 rounded-2xl rounded-tl-none p-3 text-sm text-slate-600">
+                            최근 시장 변동성을 고려할 때,<br>
+                            <span class="font-bold text-indigo-600">방어적인 포트폴리오</span>가 유리합니다.
+                         </div>
+                      </div>
+                      <div class="flex items-start gap-3 justify-end">
+                         <div class="bg-indigo-600 rounded-2xl rounded-tr-none p-3 text-sm text-white">
+                            추천 종목은 뭐야?
+                         </div>
+                      </div>
+                      <div class="flex items-start gap-3">
+                         <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">AI</div>
+                         <div class="bg-slate-100 rounded-2xl rounded-tl-none p-3 text-sm text-slate-600">
+                            미국 배당성장 ETF와<br>금 현물 ETF를 조합해보세요.
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </ScrollReveal>
 
-            <!-- Core Features Section (2x2 Grid - Expanded) -->
-            <section>
-              <div class="mb-5">
-                <h2 class="text-2xl font-bold text-foreground mb-2">ETFinder의 핵심 기능</h2>
-                <p class="text-sm text-muted-foreground">복잡한 투자 분석을 쉽고 빠르게</p>
-              </div>
+          <!-- Text Content -->
+          <ScrollReveal class="order-1 md:order-2 text-right md:text-left">
+             <h2 class="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-6 leading-tight">
+               Data-driven.<br>
+               Insightful.
+             </h2>
+             <p class="text-xl text-slate-500 leading-relaxed mb-8 max-w-md ml-auto md:ml-0">
+               단순한 데이터 나열이 아닙니다.<br>
+               AI가 시장의 맥락을 읽고,<br>
+               당신에게 꼭 필요한 인사이트를 제공합니다.
+             </p>
+             <router-link :to="{ name: 'propensityTest' }" class="text-indigo-600 font-bold text-lg hover:underline underline-offset-4 inline-flex items-center gap-2 justify-end md:justify-start">
+               AI 진단 받아보기
+               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+             </router-link>
+          </ScrollReveal>
+       </div>
+    </section>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <!-- 스마트 검색 -->
-                <router-link
-                  :to="{ name: 'etfSearch' }"
-                  class="group rounded-xl border border-border bg-card p-6 hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-                >
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-200">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">스마트 검색</h3>
-                      <p class="text-sm text-muted-foreground leading-relaxed">
-                        섹터, 수수료, 자산 규모 등 다양한 필터로 원하는 ETF를 찾으세요.
-                      </p>
-                    </div>
-                  </div>
-                </router-link>
-
-                <!-- 모의투자 -->
-                <router-link
-                  to="/mock-investment"
-                  class="group rounded-xl border border-border bg-card p-6 hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-                >
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-200">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M10 7v10"/><path d="M17 7v10"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">모의투자</h3>
-                      <p class="text-sm text-muted-foreground leading-relaxed">
-                        가상 자산으로 투자 전략과 수익률을 시뮬레이션해보세요.
-                      </p>
-                    </div>
-                  </div>
-                </router-link>
-
-                <!-- 포트폴리오 -->
-                <router-link
-                  :to="{ name: 'portfolio' }"
-                  class="group rounded-xl border border-border bg-card p-6 hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-                >
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-200">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">포트폴리오</h3>
-                      <p class="text-sm text-muted-foreground leading-relaxed">
-                        관심 있는 ETF를 담고 나만의 최적 포트폴리오를 구성하세요.
-                      </p>
-                    </div>
-                  </div>
-                </router-link>
-
-
-              </div>
-            </section>
-
+    <!-- Section 4: Portfolio (Call to Action) -->
+    <section class="min-h-screen flex items-center justify-center px-6 py-24 relative">
+       <ScrollReveal class="text-center max-w-3xl mx-auto">
+          <div class="mb-8 mx-auto w-20 h-20 bg-slate-900 text-white rounded-3xl flex items-center justify-center text-4xl shadow-2xl rotate-3 hover:rotate-12 transition-transform duration-500">
+             💼
           </div>
-
-          <!-- ========== RIGHT: Sidebar (Real-time Rankings - Lightweight) ========== -->
-          <aside class="space-y-3">
-            
-            <!-- Period Selector (Shared) -->
-            <div class="bg-card border border-border rounded-lg p-3">
-              <!-- Header: Title & Date -->
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">실시간 트렌드</h3>
-                <!-- Date with Clock Icon -->
-                <div class="flex items-center gap-1 text-[11px] text-muted-foreground font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  {{ criteriaDateLabel }}
-                </div>
-              </div>
-
-              <!-- Segmented Control for Periods -->
-              <div class="flex bg-muted/50 rounded-lg p-1">
-                <button
-                  v-for="period in periods"
-                  :key="period.value"
-                  @click="selectedPeriod = period.value"
-                  :class="[
-                    'flex-1 py-1 text-xs font-semibold rounded-md transition-all duration-200',
-                    selectedPeriod === period.value
-                      ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  ]"
-                >
-                  {{ period.label }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Trending Search Keywords -->
-            <div class="bg-muted/20 border border-border/50 rounded-lg p-3">
-              <div class="flex items-center gap-1.5 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <h3 class="text-xs font-semibold text-foreground">트렌드 검색어</h3>
-              </div>
-
-              <!-- Loading State -->
-              <div v-if="loadingSearchRanking" class="flex justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              </div>
-
-              <!-- Search Keyword List -->
-              <div v-else-if="searchRankings.length > 0" class="space-y-0.5">
-                <div
-                  v-for="(item, index) in searchRankings.slice(0, 10)"
-                  :key="index"
-                  @click="goToSearch(item.keyword)"
-                  class="group flex items-center gap-1.5 px-2 py-1 rounded hover:bg-accent/50 transition-colors cursor-pointer"
-                >
-                  <span
-                    :class="[
-                      'flex-shrink-0 w-4 h-4 flex items-center justify-center text-[10px] font-semibold',
-                      index < 3 ? 'text-primary' : 'text-muted-foreground'
-                    ]"
-                  >
-                    {{ index + 1 }}
-                  </span>
-                  <span class="flex-1 text-xs text-foreground truncate">{{ item.keyword }}</span>
-                  
-                  <!-- 순위 변동 표시 -->
-                  <div class="flex-shrink-0 min-w-[30px] flex justify-end">
-                    <!-- New -->
-                    <span v-if="item.rankChange === null" class="text-[9px] font-bold text-red-500">NEW</span>
-                    <!-- 변동 없음 -->
-                    <span v-else-if="item.rankChange === 0" class="text-[10px] text-muted-foreground">-</span>
-                    <!-- 상승 -->
-                    <div v-else-if="item.rankChange > 0" class="flex items-center text-red-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3-8 12h16z"/></svg>
-                      <span class="text-[9px] font-semibold ml-0.5">{{ item.rankChange }}</span>
-                    </div>
-                    <!-- 하락 -->
-                    <div v-else class="flex items-center text-blue-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 21 8-12H4z"/></svg>
-                      <span class="text-[9px] font-semibold ml-0.5">{{ Math.abs(item.rankChange) }}</span>
-                    </div>
-                  </div>
-
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"><path d="m9 18 6-6-6-6"/></svg>
-                </div>
-              </div>
-
-              <!-- Empty State -->
-              <div v-else class="py-4 text-center">
-                <p class="text-[10px] text-muted-foreground">검색어 데이터가 없습니다.</p>
-              </div>
-            </div>
-
-            <!-- Trending ETFs -->
-            <div class="bg-muted/20 border border-border/50 rounded-lg p-3">
-              <div class="flex items-center gap-1.5 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                <h3 class="text-xs font-semibold text-foreground">인기 ETF</h3>
-              </div>
-
-              <!-- Loading State -->
-              <div v-if="loadingEtfRanking" class="flex justify-center py-6">
-                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-              </div>
-
-              <!-- ETF List -->
-              <div v-else-if="rankings.length > 0" class="space-y-0.5">
-                <div
-                  v-for="(item, index) in rankings.slice(0, 10)"
-                  :key="item.etfId"
-                  @click="goToEtfDetail(item.etfId)"
-                  class="group flex items-center gap-1.5 px-2 py-1 rounded hover:bg-accent/50 transition-colors cursor-pointer"
-                >
-                  <span
-                    :class="[
-                      'flex-shrink-0 w-4 h-4 flex items-center justify-center text-[10px] font-semibold',
-                      index < 3 ? 'text-primary' : 'text-muted-foreground'
-                    ]"
-                  >
-                    {{ index + 1 }}
-                  </span>
-                  <span class="flex-1 text-xs text-foreground truncate">{{ item.etfName }}</span>
-                  <span v-if="index < 3" class="px-1 py-0.5 bg-red-50 text-red-600 text-[9px] font-bold rounded">HOT</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"><path d="m9 18 6-6-6-6"/></svg>
-                </div>
-              </div>
-
-              <!-- Empty State -->
-              <div v-else class="py-4 text-center">
-                <p class="text-[10px] text-muted-foreground">ETF 데이터가 없습니다.</p>
-              </div>
-            </div>
-
-          </aside>
-
-        </div>
-      </div>
-    </main>
+          <h2 class="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 mb-8 leading-tight">
+            Your Wealth,<br>
+            Managed.
+          </h2>
+          <p class="text-xl text-slate-500 mb-10 font-medium">
+            이제 모든 기회를 당신의 것으로 만드세요.<br>
+            ETFinder와 함께라면 투자가 더 쉬워집니다.
+          </p>
+          <router-link :to="{ name: 'portfolio' }" class="inline-flex h-14 items-center justify-center rounded-full bg-slate-900 px-8 text-lg font-bold text-white shadow-lg transition-all hover:bg-slate-800 hover:scale-105">
+            지금 시작하기
+          </router-link>
+       </ScrollReveal>
+    </section>
   </div>
 </template>
 
 <script setup>
-import {
-    getDailySearchRanking,
-    getDailyViewRanking,
-    getHourlySearchRanking,
-    getHourlyViewRanking,
-    getMonthlySearchRanking,
-    getMonthlyViewRanking
-} from '@/api/ranking'
-import { onMounted, ref, watch, computed } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-// 기간 선택
-const periods = [
-  { value: 'hourly', label: '1h' },
-  { value: 'daily', label: '1d' },
-  { value: 'monthly', label: '1m' }
-]
-
-const selectedPeriod = ref('hourly')
-
-const criteriaDateLabel = computed(() => {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-
-  if (selectedPeriod.value === 'hourly') {
-    return `${year}-${month}-${day} ${hours}:${minutes}`
-  } else if (selectedPeriod.value === 'daily') {
-    return `${year}-${month}-${day}`
-  } else {
-    return `${year}-${month}`
-  }
-})
-const rankings = ref([])
-const searchRankings = ref([])
-const loadingEtfRanking = ref(false)
-const loadingSearchRanking = ref(false)
-
-// ETF 랭킹 데이터 가져오기
-const fetchEtfRankings = async () => {
-  loadingEtfRanking.value = true
-  try {
-    let response
-    
-    if (selectedPeriod.value === 'hourly') {
-      response = await getHourlyViewRanking()
-    } else if (selectedPeriod.value === 'daily') {
-      response = await getDailyViewRanking()
-    } else {
-      response = await getMonthlyViewRanking()
-    }
-
-    if (response.status === 200 || response.status === 204) {
-      rankings.value = response.data || []
-    } else {
-      rankings.value = []
-    }
-  } catch (error) {
-    console.error('ETF 랭킹 데이터 로드 실패:', error)
-    rankings.value = []
-  } finally {
-    loadingEtfRanking.value = false
-  }
-}
-
-// 검색어 랭킹 데이터 가져오기
-const fetchSearchRankings = async () => {
-  loadingSearchRanking.value = true
-  try {
-    let response
-    
-    if (selectedPeriod.value === 'hourly') {
-      response = await getHourlySearchRanking()
-    } else if (selectedPeriod.value === 'daily') {
-      response = await getDailySearchRanking()
-    } else {
-      response = await getMonthlySearchRanking()
-    }
-
-    if (response.status === 200 || response.status === 204) {
-      searchRankings.value = response.data || []
-    } else {
-      searchRankings.value = []
-    }
-  } catch (error) {
-    console.error('검색어 랭킹 데이터 로드 실패:', error)
-    searchRankings.value = []
-  } finally {
-    loadingSearchRanking.value = false
-  }
-}
-
-// 모든 랭킹 데이터 로드
-const fetchAllRankings = () => {
-  fetchEtfRankings()
-  fetchSearchRankings()
-}
-
-// ETF 상세 페이지로 이동
-const goToEtfDetail = (etfId) => {
-  router.push({ name: 'etfDetail', params: { etfId } })
-}
-
-// 검색 페이지로 이동 (랭킹 키워드 클릭 시)
-const goToSearch = (keyword) => {
-  router.push({ 
-    name: 'etfSearch', 
-    query: { keyword } 
-  })
-}
-
-// 기간 변경 시 데이터 다시 로드
-watch(selectedPeriod, () => {
-  fetchAllRankings()
-})
-
-let pollingInterval = null
-
-// 초기 로드 및 폴링 설정
-onMounted(() => {
-  fetchAllRankings()
-  // 30초마다 데이터 갱신
-  pollingInterval = setInterval(fetchAllRankings, 30000)
-})
-
-import { onUnmounted } from 'vue'
-
-// 컴포넌트 해제 시 폴링 중단
-onUnmounted(() => {
-  if (pollingInterval) clearInterval(pollingInterval)
-})
+import ScrollReveal from '@/components/common/ScrollReveal.vue'
 </script>
 
 <style scoped>
-/* Tailwind로 처리 */
+/* 필요한 경우 추가 스타일 작성 */
 </style>

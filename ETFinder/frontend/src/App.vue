@@ -1,23 +1,36 @@
 <template>
-  <div class="flex min-h-screen">
-    <!-- 전체 화면 페이지(로그인, 온보딩 등)가 아닐 때만 사이드바 표시 -->
-    <TheSideBar v-if="!isFullScreenPage" />
-    <div class="flex-1">
-      <router-view></router-view>
+  <div class="relative min-h-screen font-sans bg-background text-foreground selection:bg-indigo-500/30">
+     <!-- Global Background Decoration -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-white">
+      <!-- Mesh Gradients: Static, no blur filter -->
+      <div class="absolute top-[-10%] right-[-5%] w-[70%] h-[70%] rounded-full opacity-40 mix-blend-multiply filter blur-3xl animate-none"
+           style="background: radial-gradient(circle, rgba(129, 140, 248, 0.8) 0%, rgba(129, 140, 248, 0) 70%);"></div>
+      <div class="absolute bottom-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full opacity-40 mix-blend-multiply filter blur-3xl animate-none"
+           style="background: radial-gradient(circle, rgba(167, 139, 250, 0.8) 0%, rgba(167, 139, 250, 0) 70%);"></div>
+      <div class="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full opacity-30 mix-blend-multiply filter blur-3xl animate-none"
+           style="background: radial-gradient(circle, rgba(251, 113, 133, 0.8) 0%, rgba(251, 113, 133, 0) 70%);"></div>
     </div>
+
+    <!-- Header (Sticky) -->
+    <TheHeader v-if="!isFullScreenPage" />
+
+    <!-- Main Content -->
+    <main class="relative z-10">
+      <router-view></router-view>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import TheSideBar from './components/common/TheSideBar.vue'
+import TheHeader from './components/common/TheHeader.vue'
 import { useAuthStore } from './stores/auth'
 
 const route = useRoute()
 const authStore = useAuthStore()
 
-// 사이드바를 숨길 페이지 목록
+// 헤더와 푸터를 숨길 페이지 목록
 const isFullScreenPage = computed(() => {
   return ['login', 'kakao-callback', 'onboarding'].includes(route.name)
 })
