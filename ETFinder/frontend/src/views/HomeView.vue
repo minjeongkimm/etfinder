@@ -169,6 +169,25 @@
                     {{ index + 1 }}
                   </span>
                   <span class="flex-1 text-xs text-foreground truncate">{{ item.keyword }}</span>
+                  
+                  <!-- 순위 변동 표시 -->
+                  <div class="flex-shrink-0 min-w-[30px] flex justify-end">
+                    <!-- New -->
+                    <span v-if="item.rankChange === null" class="text-[9px] font-bold text-red-500">NEW</span>
+                    <!-- 변동 없음 -->
+                    <span v-else-if="item.rankChange === 0" class="text-[10px] text-muted-foreground">-</span>
+                    <!-- 상승 -->
+                    <div v-else-if="item.rankChange > 0" class="flex items-center text-red-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3-8 12h16z"/></svg>
+                      <span class="text-[9px] font-semibold ml-0.5">{{ item.rankChange }}</span>
+                    </div>
+                    <!-- 하락 -->
+                    <div v-else class="flex items-center text-blue-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 21 8-12H4z"/></svg>
+                      <span class="text-[9px] font-semibold ml-0.5">{{ Math.abs(item.rankChange) }}</span>
+                    </div>
+                  </div>
+
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"><path d="m9 18 6-6-6-6"/></svg>
                 </div>
               </div>
@@ -324,9 +343,20 @@ watch(selectedPeriod, () => {
   fetchAllRankings()
 })
 
-// 초기 로드
+let pollingInterval = null
+
+// 초기 로드 및 폴링 설정
 onMounted(() => {
   fetchAllRankings()
+  // 30초마다 데이터 갱신
+  pollingInterval = setInterval(fetchAllRankings, 30000)
+})
+
+import { onUnmounted } from 'vue'
+
+// 컴포넌트 해제 시 폴링 중단
+onUnmounted(() => {
+  if (pollingInterval) clearInterval(pollingInterval)
 })
 </script>
 
