@@ -3,23 +3,26 @@
     <main class="flex-1 p-6 lg:p-8">
       <div class="container mx-auto max-w-7xl">
         <!-- 헤더 -->
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h1 class="text-2xl font-bold text-foreground flex items-center gap-2">
-              🏆 모의투자 대시보드
-            </h1>
-            <p class="text-sm text-muted-foreground mt-1">
-              가상 자금으로 실전 투자 경험을 쌓아보세요.
-            </p>
+        <header class="mb-8">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                <svg class="w-6 h-6 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h1 class="text-3xl font-bold tracking-tight text-foreground">모의투자</h1>
+            </div>
+            <button 
+              @click="handleReset"
+              :disabled="isResetting"
+              class="px-4 py-2 border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ isResetting ? '초기화 중...' : '🔄 계좌 초기화' }}
+            </button>
           </div>
-          <button 
-            @click="handleReset"
-            :disabled="isResetting"
-            class="px-4 py-2 border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ isResetting ? '초기화 중...' : '🔄 계좌 초기화' }}
-          </button>
-        </div>
+          <p class="text-sm text-muted-foreground">가상 자금으로 실전 투자 경험을 쌓아보세요.</p>
+        </header>
 
         <!-- 로딩 상태 -->
         <div v-if="isLoading" class="space-y-6">
@@ -298,6 +301,10 @@ const connectWebSocket = async () => {
 
   stompClient.value = new Client({
     brokerURL: 'ws://localhost:8080/ws-etfinder',
+    reconnectDelay: 5000,
+    connectHeaders: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    },
     onConnect: async () => {
       console.log('✅ STOMP 연결 성공!')
 

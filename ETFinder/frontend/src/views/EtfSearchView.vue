@@ -4,11 +4,19 @@
     <main class="flex-1 p-6 lg:p-8">
       <div class="container">
         <!-- 헤더 섹션 -->
+        <!-- 헤더 섹션 -->
         <header class="mb-8">
           <div class="flex items-center justify-between mb-3">
-            <h1 class="text-3xl font-bold tracking-tight text-foreground">
-              ETF 탐색
-            </h1>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                <svg class="w-6 h-6 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h1 class="text-3xl font-bold tracking-tight text-foreground">
+                ETF 탐색
+              </h1>
+            </div>
             <div class="flex items-center gap-2">
               <button
                 :class="[
@@ -102,7 +110,7 @@
 
             <!-- 고급 필터 (접힌 상태) -->
             <div v-if="showAdvancedFilters" class="pt-4 border-t border-border space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <!-- 위험등급 -->
                 <div>
                   <label class="block text-sm font-medium text-foreground mb-2">위험등급</label>

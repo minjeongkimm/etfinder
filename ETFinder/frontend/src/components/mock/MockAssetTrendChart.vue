@@ -1,9 +1,9 @@
 <template>
-  <div class="rounded-xl border border-border bg-card shadow-sm p-6">
+  <div class="rounded-xl border border-border bg-card shadow-sm p-6 h-full flex flex-col">
     <h3 class="text-lg font-semibold text-foreground mb-1">자산 추이</h3>
     <p class="text-sm text-muted-foreground mb-4">최근 30일간의 자산 변동 내역입니다.</p>
     
-    <div class="w-full h-full min-h-[350px]">
+    <div class="w-full min-h-[350px] flex-1 flex flex-col justify-center">
       <div v-if="!trendData || trendData.length === 0" class="flex flex-col justify-center items-center h-[350px] bg-muted/30 rounded-lg">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground/50 mb-4">
           <path d="M3 3v18h18"/>
@@ -50,22 +50,22 @@ const calculateYAxisRange = (dataPoints: {x: number, y: number}[]) => {
   const minValue = Math.min(...values)
   const maxValue = Math.max(...values)
   
-  // 변동이 없거나 매우 작은 경우 (±10% 범위)
-  if (maxValue - minValue < 100000) {
+  // 변동이 작을 때 (20만원 미만) -> 위아래 10만원 고정 범위 사용
+  if (maxValue - minValue < 200000) {
     const avg = (minValue + maxValue) / 2
-    const padding = avg * 0.1 // ±10%
+    const fixedPadding = 100000 // 10만원
     return {
-      min: Math.floor((avg - padding) / 100000) * 100000, // 10만원 단위로 반올림
-      max: Math.ceil((avg + padding) / 100000) * 100000
+      min: Math.floor((avg - fixedPadding) / 10000) * 10000, // 1만원 단위
+      max: Math.ceil((avg + fixedPadding) / 10000) * 10000
     }
   }
   
-  // 변동이 있는 경우
+  // 변동이 클 때 -> 변동폭의 10% 패딩
   const range = maxValue - minValue
-  const padding = range * 0.1 // ±10% 패딩
+  const padding = range * 0.1 
   return {
-    min: Math.floor((minValue - padding) / 100000) * 100000,
-    max: Math.ceil((maxValue + padding) / 100000) * 100000
+    min: Math.floor((minValue - padding) / 10000) * 10000,
+    max: Math.ceil((maxValue + padding) / 10000) * 10000
   }
 }
 
@@ -79,16 +79,7 @@ const chartOptions = ref({
       autoScaleYaxis: true  // Y축 자동 스케일링 활성화
     },
     toolbar: { 
-      show: true,  // 툴바 표시 (줌, 리셋 버튼)
-      tools: {
-        download: true,
-        selection: true,
-        zoom: true,
-        zoomin: true,
-        zoomout: true,
-        pan: true,
-        reset: true
-      }
+      show: false
     },
     fontFamily: 'Inter, sans-serif',
     animations: {

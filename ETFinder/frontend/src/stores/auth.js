@@ -34,6 +34,9 @@ export const useAuthStore = defineStore('auth', () => {
       role.value = getRoleFromToken(accessToken)
       console.log('로그인 성공:', message, '/ Role:', role.value)
 
+      // [FIX] 토큰 설정 직후 내 정보(user) 가져오기 -> UI 즉시 갱신
+      await getMyInfo()
+
       // 5. 결과 반환 (컴포넌트에서 라우팅 처리)
       return { isNewMember: response.data.isNewMember, nickname: response.data.nickname }
 
