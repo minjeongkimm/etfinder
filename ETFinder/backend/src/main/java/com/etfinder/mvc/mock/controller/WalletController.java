@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.etfinder.mvc.mock.dto.DashboardResponse;
+import com.etfinder.mvc.mock.dto.MinuteAssetPoint;
 import com.etfinder.mvc.mock.dto.MockHoldingResponse;
 import com.etfinder.mvc.mock.dto.MockRankingResponse;
 import com.etfinder.mvc.mock.dto.WalletResponse;
@@ -81,7 +82,7 @@ public class WalletController {
 
 		// 3) 총자산 갱신
 		walletService.refreshTotalAsset(user.getUserId());
-		
+
 		// 4) 지갑 조회 (총자산 갱신 후)
 		WalletResponse wallet = walletService.getWalletSummary(user.getUserId());
 
@@ -165,7 +166,7 @@ public class WalletController {
 
 		// 3) 총자산 갱신
 		walletService.refreshTotalAsset(user.getUserId());
-		
+
 		// 4) 대시보드 정보 조회
 		DashboardResponse dashboard = walletService.getDashboard(user.getUserId());
 
@@ -195,5 +196,36 @@ public class WalletController {
 
 		return new ResponseEntity<>(ranking, HttpStatus.OK);
 	}
-}
 
+	/**
+	 * 7. 분 단위 자산 추이 조회 (차트용)
+	 * GET /api/wallet/asset-trend/minute?minutes=60
+	 * 
+	 * @param minutes 조회 범위 (기본 60분)
+	 */
+	@GetMapping("/asset-trend/minute")
+	public ResponseEntity<?> getMinuteTrend(
+			@AuthenticationPrincipal String providerId,
+			@org.springframework.web.bind.annotation.RequestParam(defaultValue = "60") int minutes) {
+
+		// 1) 로그인 여부 확인
+		if (providerId == null) {
+			return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED);
+		}
+
+		// 2) providerId → userId 조회
+		User user = userService.getUserByProviderId(providerId);
+		if (user == null) {
+			return new ResponseEntity<>("유저 정보를 찾을 수 없습니다.", HttpStatus.UNAUTHORIZED);
+		}
+
+		// 3) 분 단위 추이 조회
+		List<MinuteAssetPoint> points = walletService.getMinuteTrend(user.getUserId(), minutes);
+
+		// 4) 응답 구성
+		java.util.Map<String, Object> response = new java.util.HashMap<>();
+		response.put("points", points);
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+}
