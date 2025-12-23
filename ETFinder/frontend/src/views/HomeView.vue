@@ -158,6 +158,7 @@
                 <div
                   v-for="(item, index) in searchRankings.slice(0, 10)"
                   :key="index"
+                  @click="goToSearch(item.keyword)"
                   class="group flex items-center gap-1.5 px-2 py-1 rounded hover:bg-accent/50 transition-colors cursor-pointer"
                 >
                   <span
@@ -336,6 +337,14 @@ const fetchAllRankings = () => {
 // ETF 상세 페이지로 이동
 const goToEtfDetail = (etfId) => {
   router.push({ name: 'etfDetail', params: { etfId } })
+}
+
+// 검색 페이지로 이동 (랭킹 키워드 클릭 시)
+const goToSearch = (keyword) => {
+  router.push({ 
+    name: 'etfSearch', 
+    query: { keyword } 
+  })
 }
 
 // 기간 변경 시 데이터 다시 로드
