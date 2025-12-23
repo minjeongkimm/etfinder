@@ -43,9 +43,6 @@
            </div>
         </template>
         <template v-else>
-           <router-link :to="{ name: 'login' }" class="text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors">
-             로그인
-           </router-link>
            <router-link :to="{ name: 'login' }" class="hidden md:inline-flex items-center justify-center px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-full hover:bg-slate-800 transition-all hover:scale-105 shadow-lg">
              시작하기
            </router-link>
