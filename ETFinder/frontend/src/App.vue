@@ -18,6 +18,9 @@
     <main class="relative z-10" :class="{ 'pt-16': !isFullScreenPage && !isLandingPage }">
       <router-view></router-view>
     </main>
+
+    <!-- Footer -->
+    <TheFooter v-if="!isFullScreenPage" />
   </div>
 </template>
 
@@ -25,6 +28,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import TheHeader from './components/common/TheHeader.vue'
+import TheFooter from './components/common/TheFooter.vue'
 import { useAuthStore } from './stores/auth'
 
 const route = useRoute()

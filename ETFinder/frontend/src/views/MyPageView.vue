@@ -429,99 +429,110 @@
     </main>
 
     <!-- 회원 탈퇴 확인 모달 -->
-    <div
-      v-if="showWithdrawalModal"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      @click.self="closeWithdrawalModal"
-    >
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5">
-        <!-- 모달 헤더 -->
-        <div class="flex items-start gap-4">
-          <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="showWithdrawalModal"
+          class="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4"
+          @click.self="closeWithdrawalModal"
+        >
+          <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 scale-100 transition-transform">
+            <!-- 모달 헤더 -->
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h2 class="text-xl font-bold text-gray-900">정말 탈퇴하시겠어요?</h2>
+                <p class="text-sm text-gray-600 mt-1">
+                  탈퇴하시면 아래의 모든 데이터가 영구적으로 삭제됩니다.
+                </p>
+              </div>
+            </div>
+
+            <!-- 경고 내용 -->
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+              <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                  <span>저장된 모든 포트폴리오</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                  <span>관심 ETF 북마크</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                  <span>투자 성향 및 추천 기록</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                  <span>작성한 댓글 및 활동 기록</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 확인 체크박스 -->
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                v-model="withdrawalConfirmed"
+                type="checkbox"
+                class="mt-1 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2 cursor-pointer"
+              />
+              <span class="text-sm text-gray-700 select-none">
+                위 내용을 확인했으며, 모든 데이터가 삭제되는 것에 동의합니다.
+              </span>
+            </label>
+
+            <!-- 버튼 영역 -->
+            <div class="flex gap-3 pt-2">
+              <button
+                @click="closeWithdrawalModal"
+                :disabled="isWithdrawing"
+                class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                취소
+              </button>
+              <button
+                @click="handleWithdrawal"
+                :disabled="!withdrawalConfirmed || isWithdrawing"
+                class="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <div v-if="isWithdrawing" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>{{ isWithdrawing ? '처리 중...' : '탈퇴하기' }}</span>
+              </button>
+            </div>
           </div>
-          <div class="flex-1">
-            <h2 class="text-xl font-bold text-gray-900">정말 탈퇴하시겠어요?</h2>
-            <p class="text-sm text-gray-600 mt-1">
-              탈퇴하시면 아래의 모든 데이터가 영구적으로 삭제됩니다.
-            </p>
-          </div>
         </div>
-
-        <!-- 경고 내용 -->
-        <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-          <ul class="space-y-2 text-sm text-gray-700">
-            <li class="flex items-start gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              <span>저장된 모든 포트폴리오</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              <span>관심 ETF 북마크</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              <span>투자 성향 및 추천 기록</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 flex-shrink-0 mt-0.5">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              <span>작성한 댓글 및 활동 기록</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- 확인 체크박스 -->
-        <label class="flex items-start gap-3 cursor-pointer">
-          <input
-            v-model="withdrawalConfirmed"
-            type="checkbox"
-            class="mt-1 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2 cursor-pointer"
-          />
-          <span class="text-sm text-gray-700 select-none">
-            위 내용을 확인했으며, 모든 데이터가 삭제되는 것에 동의합니다.
-          </span>
-        </label>
-
-        <!-- 버튼 영역 -->
-        <div class="flex gap-3 pt-2">
-          <button
-            @click="closeWithdrawalModal"
-            :disabled="isWithdrawing"
-            class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            취소
-          </button>
-          <button
-            @click="handleWithdrawal"
-            :disabled="!withdrawalConfirmed || isWithdrawing"
-            class="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            <div v-if="isWithdrawing" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            <span>{{ isWithdrawing ? '처리 중...' : '탈퇴하기' }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -704,8 +715,19 @@ const closeWithdrawalModal = () => {
   if (!isWithdrawing.value) {
     showWithdrawalModal.value = false
     withdrawalConfirmed.value = false
+    document.body.style.overflow = '' // Restore scroll
   }
 }
+
+// 회원 탈퇴 모달 열기 (template @click을 이걸로 교체해야 하지만, template 수정이 이미 큼. Watcher로 처리하는게 안전)
+import { watch } from 'vue'
+watch(showWithdrawalModal, (newVal) => {
+  if (newVal) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
 
 // 추천 ETF 조회
 // 추천 ETF 조회
