@@ -15,7 +15,7 @@
     <TheHeader v-if="!isFullScreenPage" />
 
     <!-- Main Content -->
-    <main class="relative z-10">
+    <main class="relative z-10" :class="{ 'pt-16': !isFullScreenPage && !isLandingPage }">
       <router-view></router-view>
     </main>
   </div>
@@ -33,6 +33,11 @@ const authStore = useAuthStore()
 // 헤더와 푸터를 숨길 페이지 목록
 const isFullScreenPage = computed(() => {
   return ['login', 'kakao-callback', 'onboarding'].includes(route.name)
+})
+
+// 랜딩 페이지인지 확인 (헤더와 겹쳐야 함)
+const isLandingPage = computed(() => {
+  return route.name === 'home'
 })
 
 onMounted(async () => {
