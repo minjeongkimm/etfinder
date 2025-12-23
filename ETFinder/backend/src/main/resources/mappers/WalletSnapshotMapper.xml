@@ -10,16 +10,74 @@
         <result property="totalAsset" column="total_asset"/>
         <result property="realizedProfit" column="realized_profit"/>
     </resultMap>
+    
+    <resultMap id="MinuteAssetPointMap" type="com.etfinder.mvc.mock.dto.MinuteAssetPoint">
+        <result property="baseDatetime" column="base_datetime"/>
+        <result property="totalAsset" column="total_asset"/>
+    </resultMap>
 
+    <!-- 기존: 시간별 스냅샷 조회 (내부용) -->
     <select id="selectSnapshots" resultMap="DailyAssetPointMap">
         SELECT
-            base_date,
+            DATE(base_datetime) as base_date,
             total_asset,
             realized_profit
         FROM wallet_daily_snapshot
         WHERE user_id = #{userId}
-          AND base_date BETWEEN #{from} AND #{to}
+          AND DATE(base_datetime) BETWEEN #{from} AND #{to}
+        ORDER BY base_datetime
+    </select>
+
+    <!-- 신규: 시간별 스냅샷 Upsert -->
+    <insert id="upsertHourlySnapshot">
+        INSERT INTO wallet_daily_snapshot (
+            user_id,
+            base_datetime,
+            total_asset,
+            realized_profit
+        ) VALUES (
+            #{userId},
+            #{baseDatetime},
+            #{totalAsset},
+            #{realizedProfit}
+        )
+        ON DUPLICATE KEY UPDATE
+            total_asset = VALUES(total_asset),
+            realized_profit = VALUES(realized_profit)
+    </insert>
+
+    <!-- 신규: 일별 집계 스냅샷 조회 (대시보드용) -->
+    <!-- 각 날짜의 마지막 시간 스냅샷만 선택 -->
+    <select id="selectDailyAggregated" resultMap="DailyAssetPointMap">
+        SELECT 
+            DATE(s.base_datetime) as base_date,
+            s.total_asset,
+            s.realized_profit
+        FROM wallet_daily_snapshot s
+        INNER JOIN (
+            SELECT 
+                user_id,
+                DATE(base_datetime) as snapshot_date,
+                MAX(base_datetime) as last_datetime
+            FROM wallet_daily_snapshot
+            WHERE user_id = #{userId}
+              AND DATE(base_datetime) BETWEEN #{from} AND #{to}
+            GROUP BY user_id, DATE(base_datetime)
+        ) latest
+        ON s.user_id = latest.user_id 
+        AND s.base_datetime = latest.last_datetime
         ORDER BY base_date
+    </select>
+    
+    <!-- 신규: 분 단위 자산 추이 조회 (차트용) -->
+    <select id="selectMinuteTrend" resultMap="MinuteAssetPointMap">
+        SELECT 
+            base_datetime,
+            total_asset
+        FROM wallet_daily_snapshot
+        WHERE user_id = #{userId}
+          AND base_datetime >= DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+        ORDER BY base_datetime ASC
     </select>
 
 </mapper>
