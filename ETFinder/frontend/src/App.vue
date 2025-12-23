@@ -1,7 +1,7 @@
 <template>
   <div class="relative min-h-screen font-sans bg-background text-foreground selection:bg-indigo-500/30">
-     <!-- Global Background Decoration -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-white">
+    <!-- Global Background Decoration -->
+    <div v-if="isDecorativeBackgroundPage" class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-white">
       <!-- Mesh Gradients: Static, no blur filter -->
       <div class="absolute top-[-10%] right-[-5%] w-[70%] h-[70%] rounded-full opacity-40 mix-blend-multiply filter blur-3xl animate-none"
            style="background: radial-gradient(circle, rgba(129, 140, 248, 0.8) 0%, rgba(129, 140, 248, 0) 70%);"></div>
@@ -42,6 +42,11 @@ const isFullScreenPage = computed(() => {
 // 랜딩 페이지인지 확인 (헤더와 겹쳐야 함)
 const isLandingPage = computed(() => {
   return route.name === 'home'
+})
+
+// 배경 데코레이션(Mesh Gradient)이 필요한 페이지인지 확인
+const isDecorativeBackgroundPage = computed(() => {
+  return ['home', 'dashboard'].includes(route.name)
 })
 
 onMounted(async () => {

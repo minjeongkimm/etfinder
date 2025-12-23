@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" :class="[isScrolled ? 'bg-white/90 border-b border-slate-100 shadow-sm' : 'bg-transparent']">
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" :class="[(isScrolled || !isTransparentHeaderPage) ? 'bg-white/90 border-b border-slate-100 shadow-sm' : 'bg-transparent']">
     <div class="container mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
       <!-- Logo -->
       <router-link to="/" class="flex items-center gap-2 group">
@@ -62,10 +62,16 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
+const route = useRoute()
 const authStore = useAuthStore()
+
+// 배경이 투명해야 하는 페이지들 (Hero 섹션이 있는 페이지)
+const isTransparentHeaderPage = computed(() => {
+  return ['home', 'dashboard'].includes(route.name)
+})
 
 const navItems = computed(() => {
   if (authStore.user) {
