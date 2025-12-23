@@ -121,23 +121,31 @@
             
             <!-- Period Selector (Shared) -->
             <div class="bg-card border border-border rounded-lg p-3">
-              <div class="flex items-center justify-between mb-2">
+              <!-- Header: Title & Date -->
+              <div class="flex items-center justify-between mb-3">
                 <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">실시간 트렌드</h3>
-                <div class="flex gap-0.5">
-                  <button
-                    v-for="period in periods"
-                    :key="period.value"
-                    @click="selectedPeriod = period.value"
-                    :class="[
-                      'px-2 py-0.5 text-xs font-medium rounded transition-colors',
-                      selectedPeriod === period.value
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                    ]"
-                  >
-                    {{ period.label }}
-                  </button>
+                <!-- Date with Clock Icon -->
+                <div class="flex items-center gap-1 text-[11px] text-muted-foreground font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {{ criteriaDateLabel }}
                 </div>
+              </div>
+
+              <!-- Segmented Control for Periods -->
+              <div class="flex bg-muted/50 rounded-lg p-1">
+                <button
+                  v-for="period in periods"
+                  :key="period.value"
+                  @click="selectedPeriod = period.value"
+                  :class="[
+                    'flex-1 py-1 text-xs font-semibold rounded-md transition-all duration-200',
+                    selectedPeriod === period.value
+                      ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  ]"
+                >
+                  {{ period.label }}
+                </button>
               </div>
             </div>
 
@@ -256,7 +264,7 @@ import {
     getMonthlySearchRanking,
     getMonthlyViewRanking
 } from '@/api/ranking'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -269,6 +277,23 @@ const periods = [
 ]
 
 const selectedPeriod = ref('hourly')
+
+const criteriaDateLabel = computed(() => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+
+  if (selectedPeriod.value === 'hourly') {
+    return `${year}-${month}-${day} ${hours}:${minutes}`
+  } else if (selectedPeriod.value === 'daily') {
+    return `${year}-${month}-${day}`
+  } else {
+    return `${year}-${month}`
+  }
+})
 const rankings = ref([])
 const searchRankings = ref([])
 const loadingEtfRanking = ref(false)
