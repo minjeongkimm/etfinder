@@ -14,11 +14,11 @@
 		LIMIT 10
 	</select>
 	
-	<!-- 2. 일간 검색어 랭킹 조회  -->
+	<!-- 2. 일간 검색어 랭킹 조회 (최근 24시간) -->
 	<select id="getDailySearchRanking" resultType="SearchRanking">
 		SELECT keyword, COUNT(*) AS searchCount
 		FROM search_log
-		WHERE created_at >= CURDATE()
+		WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
 		GROUP BY keyword
 		ORDER BY searchCount DESC
 		LIMIT 10
@@ -29,6 +29,39 @@
 		SELECT keyword, COUNT(*) AS searchCount
 		FROM search_log
 		WHERE created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+		GROUP BY keyword
+		ORDER BY searchCount DESC
+		LIMIT 10
+	</select>
+	
+	<!-- 4. 지난 1시간 전 검색어 랭킹 조회 (순위 비교용) -->
+	<select id="getPastHourlySearchRanking" resultType="SearchRanking">
+		SELECT keyword, COUNT(*) AS searchCount
+		FROM search_log
+		WHERE created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR) 
+		  AND created_at &lt; DATE_SUB(NOW(), INTERVAL 1 HOUR)
+		GROUP BY keyword
+		ORDER BY searchCount DESC
+		LIMIT 10
+	</select>
+
+	<!-- 5. 지난 24시간 전 검색어 랭킹 조회 (순위 비교용) -->
+	<select id="getPastDailySearchRanking" resultType="SearchRanking">
+		SELECT keyword, COUNT(*) AS searchCount
+		FROM search_log
+		WHERE created_at >= DATE_SUB(NOW(), INTERVAL 48 HOUR)
+		  AND created_at &lt; DATE_SUB(NOW(), INTERVAL 24 HOUR)
+		GROUP BY keyword
+		ORDER BY searchCount DESC
+		LIMIT 10
+	</select>
+
+	<!-- 6. 지난 달 검색어 랭킹 조회 (순위 비교용) -->
+	<select id="getPastMonthlySearchRanking" resultType="SearchRanking">
+		SELECT keyword, COUNT(*) AS searchCount
+		FROM search_log
+		WHERE created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+		  AND created_at &lt; DATE_FORMAT(NOW(), '%Y-%m-01')
 		GROUP BY keyword
 		ORDER BY searchCount DESC
 		LIMIT 10

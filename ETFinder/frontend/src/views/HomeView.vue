@@ -121,23 +121,31 @@
             
             <!-- Period Selector (Shared) -->
             <div class="bg-card border border-border rounded-lg p-3">
-              <div class="flex items-center justify-between mb-2">
+              <!-- Header: Title & Date -->
+              <div class="flex items-center justify-between mb-3">
                 <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">실시간 트렌드</h3>
-                <div class="flex gap-0.5">
-                  <button
-                    v-for="period in periods"
-                    :key="period.value"
-                    @click="selectedPeriod = period.value"
-                    :class="[
-                      'px-2 py-0.5 text-xs font-medium rounded transition-colors',
-                      selectedPeriod === period.value
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                    ]"
-                  >
-                    {{ period.label }}
-                  </button>
+                <!-- Date with Clock Icon -->
+                <div class="flex items-center gap-1 text-[11px] text-muted-foreground font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {{ criteriaDateLabel }}
                 </div>
+              </div>
+
+              <!-- Segmented Control for Periods -->
+              <div class="flex bg-muted/50 rounded-lg p-1">
+                <button
+                  v-for="period in periods"
+                  :key="period.value"
+                  @click="selectedPeriod = period.value"
+                  :class="[
+                    'flex-1 py-1 text-xs font-semibold rounded-md transition-all duration-200',
+                    selectedPeriod === period.value
+                      ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  ]"
+                >
+                  {{ period.label }}
+                </button>
               </div>
             </div>
 
@@ -158,6 +166,7 @@
                 <div
                   v-for="(item, index) in searchRankings.slice(0, 10)"
                   :key="index"
+                  @click="goToSearch(item.keyword)"
                   class="group flex items-center gap-1.5 px-2 py-1 rounded hover:bg-accent/50 transition-colors cursor-pointer"
                 >
                   <span
@@ -169,6 +178,25 @@
                     {{ index + 1 }}
                   </span>
                   <span class="flex-1 text-xs text-foreground truncate">{{ item.keyword }}</span>
+                  
+                  <!-- 순위 변동 표시 -->
+                  <div class="flex-shrink-0 min-w-[30px] flex justify-end">
+                    <!-- New -->
+                    <span v-if="item.rankChange === null" class="text-[9px] font-bold text-red-500">NEW</span>
+                    <!-- 변동 없음 -->
+                    <span v-else-if="item.rankChange === 0" class="text-[10px] text-muted-foreground">-</span>
+                    <!-- 상승 -->
+                    <div v-else-if="item.rankChange > 0" class="flex items-center text-red-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3-8 12h16z"/></svg>
+                      <span class="text-[9px] font-semibold ml-0.5">{{ item.rankChange }}</span>
+                    </div>
+                    <!-- 하락 -->
+                    <div v-else class="flex items-center text-blue-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 21 8-12H4z"/></svg>
+                      <span class="text-[9px] font-semibold ml-0.5">{{ Math.abs(item.rankChange) }}</span>
+                    </div>
+                  </div>
+
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"><path d="m9 18 6-6-6-6"/></svg>
                 </div>
               </div>
@@ -236,7 +264,7 @@ import {
     getMonthlySearchRanking,
     getMonthlyViewRanking
 } from '@/api/ranking'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -249,6 +277,23 @@ const periods = [
 ]
 
 const selectedPeriod = ref('hourly')
+
+const criteriaDateLabel = computed(() => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+
+  if (selectedPeriod.value === 'hourly') {
+    return `${year}-${month}-${day} ${hours}:${minutes}`
+  } else if (selectedPeriod.value === 'daily') {
+    return `${year}-${month}-${day}`
+  } else {
+    return `${year}-${month}`
+  }
+})
 const rankings = ref([])
 const searchRankings = ref([])
 const loadingEtfRanking = ref(false)
@@ -319,14 +364,33 @@ const goToEtfDetail = (etfId) => {
   router.push({ name: 'etfDetail', params: { etfId } })
 }
 
+// 검색 페이지로 이동 (랭킹 키워드 클릭 시)
+const goToSearch = (keyword) => {
+  router.push({ 
+    name: 'etfSearch', 
+    query: { keyword } 
+  })
+}
+
 // 기간 변경 시 데이터 다시 로드
 watch(selectedPeriod, () => {
   fetchAllRankings()
 })
 
-// 초기 로드
+let pollingInterval = null
+
+// 초기 로드 및 폴링 설정
 onMounted(() => {
   fetchAllRankings()
+  // 30초마다 데이터 갱신
+  pollingInterval = setInterval(fetchAllRankings, 30000)
+})
+
+import { onUnmounted } from 'vue'
+
+// 컴포넌트 해제 시 폴링 중단
+onUnmounted(() => {
+  if (pollingInterval) clearInterval(pollingInterval)
 })
 </script>
 
