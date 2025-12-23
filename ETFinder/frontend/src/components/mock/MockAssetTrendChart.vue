@@ -73,8 +73,23 @@ const chartOptions = ref({
   chart: {
     type: 'area' as const,
     height: 350,
-    zoom: { enabled: true, type: 'x' as const, autoScaleYaxis: false }, // autoScale 비활성화
-    toolbar: { show: false },
+    zoom: { 
+      enabled: true, 
+      type: 'x' as const, 
+      autoScaleYaxis: true  // Y축 자동 스케일링 활성화
+    },
+    toolbar: { 
+      show: true,  // 툴바 표시 (줌, 리셋 버튼)
+      tools: {
+        download: true,
+        selection: true,
+        zoom: true,
+        zoomin: true,
+        zoomout: true,
+        pan: true,
+        reset: true
+      }
+    },
     fontFamily: 'Inter, sans-serif',
     animations: {
       enabled: true,
@@ -109,7 +124,26 @@ const chartOptions = ref({
     type: 'datetime' as const,
     tooltip: { enabled: true },
     labels: {
-      style: { colors: '#64748b', fontSize: '12px' }
+      style: { colors: '#64748b', fontSize: '12px' },
+      formatter: (value: any, timestamp?: number) => {
+        // timestamp가 있으면 사용, 없으면 value 사용
+        const date = timestamp ? new Date(timestamp) : new Date(value)
+        
+        // 원본 데이터가 ISO datetime (T 포함) 형식인지 확인
+        // props.trendData 첫 요소의 baseDate를 체크
+        const isMinuteMode = props.trendData && props.trendData.length > 0 && 
+                             props.trendData[0].baseDate.includes('T')
+        
+        if (isMinuteMode) {
+          // 분 단위 모드: HH:mm 형식
+          const hours = date.getHours().toString().padStart(2, '0')
+          const minutes = date.getMinutes().toString().padStart(2, '0')
+          return `${hours}:${minutes}`
+        } else {
+          // 일별 모드: MM/dd 형식
+          return `${date.getMonth() + 1}/${date.getDate()}`
+        }
+      }
     }
   },
   yaxis: {
@@ -134,7 +168,25 @@ const chartOptions = ref({
     strokeDashArray: 4,
   },
   tooltip: {
-    x: { format: 'yyyy년 MM월 dd일' },
+    x: { 
+      formatter: (value: number) => {
+        const date = new Date(value)
+        
+        // 원본 데이터가 ISO datetime 형식인지 확인
+        const isMinuteMode = props.trendData && props.trendData.length > 0 && 
+                             props.trendData[0].baseDate.includes('T')
+        
+        if (isMinuteMode) {
+          // 분 단위 모드: "HH:mm" 형식
+          const hours = date.getHours().toString().padStart(2, '0')
+          const minutes = date.getMinutes().toString().padStart(2, '0')
+          return `${hours}:${minutes}`
+        } else {
+          // 일별 모드: "yyyy년 MM월 dd일" 형식
+          return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
+        }
+      }
+    },
     y: {
       formatter: (value: number) => value.toLocaleString() + '원'
     }
