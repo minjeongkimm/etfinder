@@ -3,9 +3,11 @@
     <div class="text-center">
       <!-- 로고 -->
       <div class="inline-flex items-center gap-2 mb-8">
-        <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-        </div>
+        <img 
+          src="@/assets/images/icon_img.png" 
+          alt="ETFinder Logo" 
+          class="w-16 h-16 object-contain"
+        />
         <span class="text-2xl font-bold text-foreground">ETFinder</span>
       </div>
 

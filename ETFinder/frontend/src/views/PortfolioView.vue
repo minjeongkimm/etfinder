@@ -4,14 +4,17 @@
       <div class="container">
         <!-- 헤더 -->
         <header class="mb-8">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <svg class="w-6 h-6 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                  <svg class="w-6 h-6 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  </svg>
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight text-foreground">나의 포트폴리오</h1>
               </div>
-              <h1 class="text-3xl font-bold tracking-tight text-foreground">나의 포트폴리오</h1>
+              <p class="text-sm text-muted-foreground">보유 종목의 비중을 관리하고 자산 배분 전략을 수립하세요.</p>
             </div>
             <button 
               @click="handleSimulation"
@@ -25,7 +28,6 @@
               </span>
             </button>
           </div>
-          <p class="text-sm text-muted-foreground">보유 종목의 비중을 관리하고 자산 배분 전략을 수립하세요.</p>
         </header>
 
         <!-- 로딩 상태 -->

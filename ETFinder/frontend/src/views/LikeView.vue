@@ -2,7 +2,7 @@
   <div class="flex min-h-screen bg-background">
     <main class="flex-1 p-6 lg:p-8">
       <!-- 중앙 정렬 컨테이너 -->
-      <div class="max-w-7xl mx-auto">
+      <div class="container mx-auto">
         <!-- 헤더 -->
         <header class="mb-8">
           <div class="flex items-center justify-between mb-4">
@@ -13,7 +13,7 @@
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                   </svg>
                 </div>
-                <h1 class="text-3xl font-bold tracking-tight text-foreground">찜한 ETF</h1>
+                <h1 class="text-3xl font-bold tracking-tight text-foreground">관심 종목</h1>
               </div>
               <p class="text-sm text-muted-foreground">관심 있게 지켜보는 ETF 목록입니다.</p>
             </div>
@@ -28,8 +28,8 @@
 
         <!-- 로딩 상태 (스켈레톤) -->
         <div v-if="likeStore.loading">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="i in 6" :key="i" class="rounded-xl border border-border bg-card shadow-sm p-6 h-80 animate-pulse">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div v-for="i in 8" :key="i" class="rounded-xl border border-border bg-card shadow-sm p-6 h-72 animate-pulse">
               <div class="flex justify-between items-start mb-4">
                 <div class="flex-1">
                   <div class="h-6 bg-muted rounded w-3/4 mb-2"></div>
@@ -80,57 +80,61 @@
 
         <!-- ETF 카드 그리드 -->
         <div v-else>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- ETF 카드 -->
             <div 
               v-for="etf in likeStore.likedEtfs" 
               :key="etf.etfId"
-              class="group rounded-xl border border-border bg-card shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col h-full overflow-hidden"
+              class="group rounded-xl border border-border bg-card shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col h-full overflow-hidden w-full"
             >
-              <!-- 카드 헤더 -->
+              <!-- 카드 헤더 & 본문 -->
               <div class="p-6 flex-1 flex flex-col">
-                <!-- 상단: 뱃지와 여백 -->
-                <div class="flex justify-end mb-3">
-                  <span class="px-3 py-1 bg-muted rounded-full text-xs font-semibold text-muted-foreground">
+                <!-- 상단: 뱃지 -->
+                <div class="mb-2">
+                  <span class="px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">
                     {{ etf.market || '해외주식' }}
                   </span>
                 </div>
 
                 <!-- ETF 정보 -->
-                <div class="mb-4 flex-1">
-                  <!-- 제목 (2줄 제한) -->
-                  <h3 class="text-lg font-bold text-foreground mb-2 line-clamp-2 leading-snug min-h-[3.5rem]">
+                <div class="mb-4">
+                  <h3 class="text-lg font-bold text-foreground mb-1 line-clamp-2 leading-snug">
                     {{ etf.etfName }}
                   </h3>
-                  <!-- 티커 -->
                   <p class="text-sm font-mono text-muted-foreground">{{ etf.etfCode }}</p>
                 </div>
 
-                <!-- 가격 및 수익률 -->
-                <div class="mb-6">
-                  <div class="text-2xl font-bold text-foreground font-mono mb-1">
-                    {{ formatPrice(etf.currentPrice) }}<span class="text-base text-muted-foreground ml-1">원</span>
+                <!-- 하단: 수익률 및 현재가 -->
+                <div class="mt-auto flex justify-between items-end pt-4">
+                  <!-- 왼쪽: 현재가 -->
+                  <div class="flex flex-col">
+                    <span class="text-xs text-muted-foreground mb-1">현재가</span>
+                    <div class="text-xl font-bold text-foreground font-mono">
+                      {{ formatPrice(etf.currentPrice) }}<span class="text-sm font-normal text-muted-foreground ml-0.5">원</span>
+                    </div>
                   </div>
-                  <div 
-                    v-if="etf.return1mo !== null && etf.return1mo !== undefined"
-                    :class="[
-                      'inline-flex items-center gap-1 text-sm font-semibold font-mono px-2 py-0.5 rounded',
-                      etf.return1mo >= 0 
-                        ? 'text-chart-1 bg-chart-1/10' 
-                        : 'text-destructive bg-destructive/10'
-                    ]"
-                  >
-                    <span>{{ etf.return1mo >= 0 ? '↑' : '↓' }}</span>
-                    <span>{{ Math.abs(etf.return1mo).toFixed(1) }}%</span>
+
+                  <!-- 오른쪽: 1개월 수익률 -->
+                  <div class="flex flex-col items-end">
+                    <span class="text-xs text-muted-foreground mb-1">1개월</span>
+                    <div 
+                      v-if="etf.return1mo !== null && etf.return1mo !== undefined"
+                      :class="[
+                        'font-mono text-base font-semibold',
+                        etf.return1mo > 0 ? 'text-chart-1' : etf.return1mo < 0 ? 'text-destructive' : 'text-chart-2'
+                      ]"
+                    >
+                      {{ etf.return1mo > 0 ? '+' : '' }}{{ etf.return1mo }}%
+                    </div>
+                    <span v-else class="text-sm text-muted-foreground">-</span>
                   </div>
-                  <span v-else class="text-sm text-muted-foreground">수익률 정보 없음</span>
                 </div>
               </div>
 
-              <!-- 카드 하단: 고정된 액션 버튼 영역 -->
-              <div class="p-6 pt-0 mt-auto">
+              <!-- 카드 액션 버튼 -->
+              <div class="p-6 pt-0">
                 <div class="flex gap-2">
-                  <!-- 상세보기 버튼 (전체 너비) -->
+                  <!-- 상세보기 버튼 -->
                   <router-link 
                     :to="`/etfs/${etf.etfId}`"
                     class="flex-1 py-2.5 px-4 bg-primary text-primary-foreground text-center rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 text-sm group-hover:shadow-md"

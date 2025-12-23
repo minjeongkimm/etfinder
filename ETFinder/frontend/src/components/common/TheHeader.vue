@@ -3,9 +3,11 @@
     <div class="container mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
       <!-- Logo -->
       <router-link to="/" class="flex items-center gap-2 group">
-        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg group-hover:scale-105 transition-transform">
-          E
-        </div>
+        <img 
+          src="@/assets/images/icon_img.png" 
+          alt="ETFinder Logo" 
+          class="w-12 h-12 group-hover:scale-105 transition-transform object-contain"
+        />
         <span class="text-xl font-extrabold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
           ETFinder
         </span>
@@ -75,7 +77,7 @@ const navItems = computed(() => {
     // Logged In: Dashboard & User features
     return [
       { name: '대시보드', route: 'dashboard' },
-      { name: 'ETF 검색', route: 'etfSearch' },
+      { name: 'ETF 탐색', route: 'etfSearch' },
       { name: '포트폴리오', route: 'portfolio' },
       { name: '관심 종목', route: 'like' },
       { name: '모의투자', route: 'mockInvestment' },

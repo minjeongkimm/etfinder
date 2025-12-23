@@ -1,9 +1,9 @@
 <template>
-  <div class="rounded-xl border border-border bg-card shadow-sm p-6">
+  <div class="rounded-xl border border-border bg-card shadow-sm p-6 h-full flex flex-col">
     <h3 class="text-lg font-semibold text-foreground mb-1">자산 추이</h3>
     <p class="text-sm text-muted-foreground mb-4">최근 30일간의 자산 변동 내역입니다.</p>
     
-    <div class="w-full h-full min-h-[350px]">
+    <div class="w-full min-h-[350px] flex-1 flex flex-col justify-center">
       <div v-if="!trendData || trendData.length === 0" class="flex flex-col justify-center items-center h-[350px] bg-muted/30 rounded-lg">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground/50 mb-4">
           <path d="M3 3v18h18"/>
@@ -79,16 +79,7 @@ const chartOptions = ref({
       autoScaleYaxis: true  // Y축 자동 스케일링 활성화
     },
     toolbar: { 
-      show: true,  // 툴바 표시 (줌, 리셋 버튼)
-      tools: {
-        download: true,
-        selection: true,
-        zoom: true,
-        zoomin: true,
-        zoomout: true,
-        pan: true,
-        reset: true
-      }
+      show: false
     },
     fontFamily: 'Inter, sans-serif',
     animations: {
