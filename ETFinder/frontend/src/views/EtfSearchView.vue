@@ -557,6 +557,38 @@ const handleSearch = async () => {
   try {
     loading.value = true
     
+    // 1. 현재 검색 조건을 URL 쿼리에 반영 (새로고침 시 유지 목적)
+    const query = { ...route.query }
+    
+    // 검색어가 있으면 추가, 없으면 제거
+    if (searchParams.value.keyword) query.keyword = searchParams.value.keyword
+    else delete query.keyword
+
+    if (searchParams.value.market) query.market = searchParams.value.market
+    else delete query.market
+    
+    if (searchParams.value.theme) query.theme = searchParams.value.theme
+    else delete query.theme
+    
+    if (searchParams.value.riskRating) query.riskRating = searchParams.value.riskRating
+    else delete query.riskRating
+
+    if (searchParams.value.minFee) query.minFee = searchParams.value.minFee
+    else delete query.minFee
+    
+    if (searchParams.value.maxFee) query.maxFee = searchParams.value.maxFee
+    else delete query.maxFee
+    
+    if (searchParams.value.orderBy) query.orderBy = searchParams.value.orderBy
+    else delete query.orderBy
+    
+    if (searchParams.value.orderDir) query.orderDir = searchParams.value.orderDir
+    else delete query.orderDir
+
+    // URL 업데이트 (페이지 이동 없음, 검색 파라미터만 동기화)
+    // await를 사용하여 URL 변경이 완료된 후 검색 API 호출
+    await router.replace({ query })
+    
     const params = {}
     Object.keys(searchParams.value).forEach(key => {
       const value = searchParams.value[key]
@@ -657,6 +689,17 @@ const handlePageSizeChange = () => {
 }
 
 onMounted(async () => {
+  // URL 쿼리 파라미터로부터 검색 조건 초기화
+  const query = route.query
+  if (query.keyword) searchParams.value.keyword = query.keyword
+  if (query.market) searchParams.value.market = query.market
+  if (query.theme) searchParams.value.theme = query.theme
+  if (query.riskRating) searchParams.value.riskRating = Number(query.riskRating)
+  if (query.minFee) searchParams.value.minFee = Number(query.minFee)
+  if (query.maxFee) searchParams.value.maxFee = Number(query.maxFee)
+  if (query.orderBy) searchParams.value.orderBy = query.orderBy
+  if (query.orderDir) searchParams.value.orderDir = query.orderDir
+
   // Initialize page from route query
   initPageFromRoute()
   
