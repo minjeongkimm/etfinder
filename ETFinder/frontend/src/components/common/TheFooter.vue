@@ -1,5 +1,8 @@
 <template>
-  <footer class="bg-slate-50 border-t border-slate-100 py-10 mt-auto relative z-10">
+  <footer :class="[
+    'py-10 mt-auto relative z-10 transition-colors duration-300',
+    isTransparent ? 'bg-transparent border-t-0' : 'bg-slate-50 border-t border-slate-100'
+  ]">
     <div class="container mx-auto max-w-7xl px-6">
       
       <!-- Disclaimer (Centered & Larger) -->
@@ -66,6 +69,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const isTransparent = computed(() => ['home', 'dashboard'].includes(route.name))
 
 const modalOpen = ref(false)
 const currentModalType = ref('')
