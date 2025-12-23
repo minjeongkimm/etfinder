@@ -134,7 +134,7 @@
                 </div>
 
                 <!-- 시가총액 -->
-                <div>
+                <div class="flex flex-col justify-center">
                   <div class="text-sm text-muted-foreground mb-1">시가총액</div>
                   <div class="text-xl font-mono font-semibold text-foreground">
                     {{ formatAumDetail(etf.aum) }}
@@ -142,7 +142,7 @@
                 </div>
 
                 <!-- 총보수 -->
-                <div>
+                <div class="flex flex-col justify-center">
                   <div class="text-sm text-muted-foreground mb-1">총보수</div>
                   <div class="text-xl font-mono font-semibold text-foreground">
                     {{ etf.fee }}%
@@ -150,7 +150,7 @@
                 </div>
 
                 <!-- 위험등급 -->
-                <div>
+                <div class="flex flex-col justify-center">
                   <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
                     위험등급
                     <div class="group relative">
