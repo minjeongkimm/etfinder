@@ -102,7 +102,7 @@
 
             <!-- 고급 필터 (접힌 상태) -->
             <div v-if="showAdvancedFilters" class="pt-4 border-t border-border space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <!-- 위험등급 -->
                 <div>
                   <label class="block text-sm font-medium text-foreground mb-2">위험등급</label>
