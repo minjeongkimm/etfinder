@@ -34,10 +34,21 @@
 		WHERE user_id = #{userId}
 	</update>
 
-	<!-- 5. 지갑 삭제 (리셋 용) -->
-	<delete id="deleteByUserId" parameterType="Long">
+	<!-- 6. 지갑 삭제 -->
+	<delete id="deleteByUserId">
 		DELETE FROM wallet
 		WHERE user_id = #{userId}
 	</delete>
+	
+	<!-- 7. 전체 지갑 조회 (Scheduler용) -->
+	<select id="selectAllWallets" resultType="com.etfinder.mvc.mock.dto.Wallet">
+		SELECT
+			user_id,
+			balance,
+			total_asset,
+			updated_at
+		FROM wallet
+		ORDER BY user_id
+	</select>
 
 </mapper>
