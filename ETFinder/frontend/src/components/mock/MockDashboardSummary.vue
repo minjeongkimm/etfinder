@@ -4,7 +4,7 @@
     <div class="rounded-xl border border-blue-200 bg-blue-50/50 shadow-sm p-6">
       <div class="text-sm text-slate-600 font-medium mb-2">총 자산 평가액</div>
       <div class="text-3xl font-bold text-slate-900 mb-2">
-        {{ formatNumber(wallet.totalAsset) }}원
+        {{ formatNumber(displayTotalAsset) }}원
       </div>
       <div 
         :class="[
@@ -64,7 +64,13 @@ import { computed } from 'vue';
 const props = defineProps<{
   wallet: WalletResponse
   ranking: MockRankingResponse
+  realtimeTotalAsset?: number
 }>()
+
+// 실시간 총 자산 또는 기본값 사용
+const displayTotalAsset = computed(() => {
+  return props.realtimeTotalAsset || props.wallet.totalAsset
+})
 
 // 초기 자본금 (가정: 10,000,000원 - 백엔드 로직에 따라 다를 수 있음. 
 // 보통은 totalAsset - (totalAsset - profit) 이런 식이겠지만, 
@@ -76,7 +82,7 @@ const props = defineProps<{
 const INITIAL_BALANCE = 10000000
 
 const profitAmount = computed(() => {
-  return props.wallet.totalAsset - INITIAL_BALANCE
+  return displayTotalAsset.value - INITIAL_BALANCE
 })
 
 const profitRate = computed(() => {

@@ -34,16 +34,16 @@
           <div 
             :class="[
               'font-bold text-lg',
-              item.profitRate >= 0 ? 'text-emerald-600' : 'text-rose-600'
+              getProfitRate(item) >= 0 ? 'text-emerald-600' : 'text-rose-600'
             ]"
           >
-            {{ item.profitRate >= 0 ? '+' : '' }}{{ item.profitRate.toFixed(1) }}% 
+            {{ getProfitRate(item) >= 0 ? '+' : '' }}{{ getProfitRate(item).toFixed(1) }}% 
             <span class="text-sm font-normal">
-              ({{ item.profitRate >= 0 ? '+' : '' }}{{ formatNumber(item.profitAmount) }}원)
+              ({{ getProfitRate(item) >= 0 ? '+' : '' }}{{ formatNumber(getProfitAmount(item)) }}원)
             </span>
           </div>
           <div class="text-sm font-semibold text-slate-900 mt-1">
-            {{ formatNumber(item.currentPrice) }}원
+            {{ formatNumber(getDisplayPrice(item)) }}원
           </div>
         </div>
       </div>
@@ -54,9 +54,31 @@
 <script setup lang="ts">
 import type { MockHoldingResponse } from '@/types/mock'
 
-defineProps<{
+const props = defineProps<{
   holdings: MockHoldingResponse[]
+  realtimePrices?: Record<string, number>
 }>()
+
+// 실시간 가격 가져오기
+const getDisplayPrice = (holding: MockHoldingResponse) => {
+  return props.realtimePrices?.[holding.etfCode] || holding.currentPrice
+}
+
+// 실시간 평가금액 계산
+const getEvaluationAmount = (holding: MockHoldingResponse) => {
+  return getDisplayPrice(holding) * holding.quantity
+}
+
+// 실시간 손익금액 계산
+const getProfitAmount = (holding: MockHoldingResponse) => {
+  return getEvaluationAmount(holding) - (holding.averagePrice * holding.quantity)
+}
+
+// 실시간 수익률 계산
+const getProfitRate = (holding: MockHoldingResponse) => {
+  const investedAmount = holding.averagePrice * holding.quantity
+  return (getProfitAmount(holding) / investedAmount) * 100
+}
 
 const formatNumber = (num: number) => {
   return num?.toLocaleString('ko-KR') ?? '0'

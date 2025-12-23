@@ -88,4 +88,20 @@
 		WHERE user_id = #{userId}
 	</delete>
 
+	<!-- 8. 보유 종목 조회 (종목코드 포함 - 실시간 가격 캐시용) -->
+	<select id="selectByUserId" resultType="com.etfinder.mvc.mock.dto.MockHolding">
+		SELECT
+			h.holding_id,
+			h.user_id,
+			h.etf_id,
+			h.quantity,
+			h.average_price,
+			e.etf_code AS stock_code,
+			h.created_at,
+			h.updated_at
+		FROM holdings h
+		INNER JOIN etf_product e ON h.etf_id = e.etf_id
+		WHERE h.user_id = #{userId}
+	</select>
+
 </mapper>
