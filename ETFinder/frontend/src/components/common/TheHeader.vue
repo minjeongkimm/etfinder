@@ -78,6 +78,7 @@ const navItems = computed(() => {
       { name: 'ETF 검색', route: 'etfSearch' },
       { name: '포트폴리오', route: 'portfolio' },
       { name: '관심 종목', route: 'like' },
+      { name: '모의투자', route: 'mockInvestment' },
       { name: '마이페이지', route: 'myPage' }
     ]
   } else {
