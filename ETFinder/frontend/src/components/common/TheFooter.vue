@@ -1,7 +1,7 @@
 <template>
   <footer :class="[
     'py-10 mt-auto relative z-10 transition-colors duration-300',
-    isTransparent ? 'bg-transparent border-t-0' : 'bg-slate-50 border-t border-slate-100'
+    isTransparent ? 'bg-transparent border-t border-slate-200/60' : 'bg-slate-50 border-t border-slate-100'
   ]">
     <div class="container mx-auto max-w-7xl px-6">
       
