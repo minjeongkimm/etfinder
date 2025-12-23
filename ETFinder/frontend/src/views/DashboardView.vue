@@ -16,7 +16,7 @@
         <!-- Quick Actions / Shortcuts -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <router-link :to="{ name: 'portfolio' }" class="group relative overflow-hidden rounded-3xl bg-white/40 border border-white/60 p-6 shadow-sm hover:shadow-md transition-all">
-             <div class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+             <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
              <div class="relative z-10">
                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm mb-4 group-hover:scale-110 transition-transform">
                  💼
@@ -27,7 +27,7 @@
           </router-link>
 
           <router-link :to="{ name: 'propensityTest' }" class="group relative overflow-hidden rounded-3xl bg-white/40 border border-white/60 p-6 shadow-sm hover:shadow-md transition-all">
-             <div class="absolute inset-0 bg-gradient-to-br from-violet-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+             <div class="absolute inset-0 bg-gradient-to-br from-sky-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
              <div class="relative z-10">
                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm mb-4 group-hover:scale-110 transition-transform">
                  🎯
@@ -53,7 +53,7 @@
         <div class="rounded-3xl bg-white/60 border border-white/60 p-8 shadow-sm">
            <div class="flex items-center justify-between mb-6">
              <h2 class="text-2xl font-bold text-slate-800">내 자산 요약</h2>
-             <router-link :to="{ name: 'portfolio' }" class="text-sm font-semibold text-indigo-600 hover:underline">자세히 보기</router-link>
+             <router-link :to="{ name: 'portfolio' }" class="text-sm font-semibold text-blue-600 hover:underline">자세히 보기</router-link>
            </div>
            <div class="flex flex-col md:flex-row gap-8 items-center justify-center h-48 text-slate-400">
              <div class="text-center">
@@ -80,8 +80,8 @@
            <div class="space-y-4">
               <div v-for="(item, index) in rankingItems" :key="index" class="flex items-center justify-between group p-2 rounded-xl hover:bg-white/50 transition-colors">
                  <div class="flex items-center gap-4">
-                    <span class="w-6 text-center font-bold text-lg" :class="index < 3 ? 'text-indigo-600' : 'text-slate-400'">{{ index + 1 }}</span>
-                    <span class="font-medium text-slate-700 group-hover:text-indigo-900 transition-colors cursor-pointer" @click="goSearch(item.keyword)">{{ item.keyword }}</span>
+                    <span class="w-6 text-center font-bold text-lg" :class="index < 3 ? 'text-blue-600' : 'text-slate-400'">{{ index + 1 }}</span>
+                    <span class="font-medium text-slate-700 group-hover:text-blue-900 transition-colors cursor-pointer" @click="goSearch(item.keyword)">{{ item.keyword }}</span>
                  </div>
                  <div class="text-xs font-medium">
                     <span v-if="item.rankChange > 0" class="text-rose-500 flex items-center gap-1">

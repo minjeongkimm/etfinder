@@ -14,47 +14,53 @@
     --background: 210 40% 98%;
     /* Foreground: Slate-900 */
     --foreground: 222.2 47.4% 11.2%;
-    
+
     /* Card: White with slight transparency possibility */
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
-    
+
     /* Popover */
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
-    
-    /* Primary: Indigo-600 */
-    --primary: 226 71% 55%;
+
+    /* Primary: Blue-600 (approx 221 83% 53%) */
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
-    
+
     /* Secondary: Slate-100 */
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    
+
     /* Muted: Slate-100 */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    
+
     /* Accent: Slate-100 */
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    
+
     /* Destructive: Rose-500 */
     --destructive: 346 87% 60%;
     --destructive-foreground: 210 40% 98%;
-    
+
     /* Border: Slate-200 */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 226 71% 55%;
-    
-    --radius: 0.75rem; /* 12px */
-    
-    --chart-1: 226 71% 55%; /* Indigo */
-    --chart-2: 262 83% 58%; /* Purple */
-    --chart-3: 199 89% 48%; /* Sky */
-    --chart-4: 161 94% 30%; /* Emerald */
-    --chart-5: 47 95% 57%;  /* Amber */
+    --ring: 221.2 83.2% 53.3%;
+
+    --radius: 0.75rem;
+    /* 12px */
+
+    --chart-1: 221.2 83.2% 53.3%;
+    /* Blue */
+    --chart-2: 199 89% 48%;
+    /* Sky */
+    --chart-3: 217.2 91.2% 59.8%;
+    /* Blue-500 */
+    --chart-4: 161 94% 30%;
+    /* Emerald */
+    --chart-5: 47 95% 57%;
+    /* Amber */
   }
 
   .dark {
@@ -89,6 +95,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -99,11 +106,11 @@
   .container {
     @apply mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8;
   }
-  
+
   .glass {
     @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-glass;
   }
-  
+
   .glass-card {
     @apply bg-card/80 backdrop-blur-sm border border-border/50 shadow-sm transition-all duration-300;
   }

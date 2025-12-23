@@ -3,19 +3,19 @@
     <!-- Section 1: Hero (Main Title) -->
     <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 py-20 relative overflow-hidden">
        <!-- Gradient Background for Hero -->
-       <div class="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-50/30 to-white/0 pointer-events-none"></div>
+       <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-white/0 pointer-events-none"></div>
 
        <ScrollReveal>
          <div class="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white/50 backdrop-blur-sm text-sm font-semibold text-slate-600 shadow-sm">
            <span class="flex h-2 w-2 relative">
-             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-             <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+             <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
            </span>
            ETFinder 2.0
          </div>
          <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 mb-8 leading-tight">
            Investing,<br>
-           <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Reimagined.</span>
+           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">Reimagined.</span>
          </h1>
          <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed mb-12">
            복잡한 차트와 숫자는 이제 그만.<br>
@@ -52,7 +52,7 @@
                수천 개의 ETF 중에서 당신에게 딱 맞는 상품을<br>
                0.1초 만에 찾아냅니다.
              </p>
-             <router-link :to="{ name: 'etfSearch' }" class="text-indigo-600 font-bold text-lg hover:underline underline-offset-4 inline-flex items-center gap-2">
+             <router-link :to="{ name: 'etfSearch' }" class="text-blue-600 font-bold text-lg hover:underline underline-offset-4 inline-flex items-center gap-2">
                스마트 검색 경험하기
                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
              </router-link>
@@ -86,19 +86,19 @@
                    <!-- Fake Chat UI -->
                    <div class="space-y-4">
                       <div class="flex items-start gap-3">
-                         <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">AI</div>
+                         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">AI</div>
                          <div class="bg-slate-100 rounded-2xl rounded-tl-none p-3 text-sm text-slate-600">
                             최근 시장 변동성을 고려할 때,<br>
-                            <span class="font-bold text-indigo-600">방어적인 포트폴리오</span>가 유리합니다.
+                            <span class="font-bold text-blue-600">방어적인 포트폴리오</span>가 유리합니다.
                          </div>
                       </div>
                       <div class="flex items-start gap-3 justify-end">
-                         <div class="bg-indigo-600 rounded-2xl rounded-tr-none p-3 text-sm text-white">
+                         <div class="bg-blue-600 rounded-2xl rounded-tr-none p-3 text-sm text-white">
                             추천 종목은 뭐야?
                          </div>
                       </div>
                       <div class="flex items-start gap-3">
-                         <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">AI</div>
+                         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">AI</div>
                          <div class="bg-slate-100 rounded-2xl rounded-tl-none p-3 text-sm text-slate-600">
                             미국 배당성장 ETF와<br>금 현물 ETF를 조합해보세요.
                          </div>
@@ -119,7 +119,7 @@
                AI가 시장의 맥락을 읽고,<br>
                당신에게 꼭 필요한 인사이트를 제공합니다.
              </p>
-             <router-link :to="{ name: 'propensityTest' }" class="text-indigo-600 font-bold text-lg hover:underline underline-offset-4 inline-flex items-center gap-2 justify-end md:justify-start">
+             <router-link :to="{ name: 'propensityTest' }" class="text-blue-600 font-bold text-lg hover:underline underline-offset-4 inline-flex items-center gap-2 justify-end md:justify-start">
                AI 진단 받아보기
                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
              </router-link>

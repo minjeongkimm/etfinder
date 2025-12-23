@@ -3,10 +3,10 @@
     <div class="container mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
       <!-- Logo -->
       <router-link to="/" class="flex items-center gap-2 group">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-105 transition-transform">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg group-hover:scale-105 transition-transform">
           E
         </div>
-        <span class="text-xl font-extrabold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
+        <span class="text-xl font-extrabold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
           ETFinder
         </span>
       </router-link>
@@ -17,11 +17,11 @@
           v-for="item in navItems" 
           :key="item.name" 
           :to="{ name: item.route }"
-          class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors relative group py-2"
-          active-class="text-indigo-600 font-bold"
+          class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors relative group py-2"
+          active-class="text-blue-600 font-bold"
         >
           {{ item.name }}
-          <span class="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-full"></span>
+          <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-full"></span>
         </router-link>
       </nav>
 
@@ -34,7 +34,7 @@
                  <div class="text-xs font-bold text-slate-900">{{ authStore.user.nickname }}님</div>
                  <div class="text-[10px] text-slate-500">{{ authStore.user.email }}</div>
               </div>
-              <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs border border-indigo-200">
+              <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-200">
                  {{ authStore.user.nickname?.substring(0, 1) }}
               </div>
               <button @click="handleLogout" class="text-xs font-medium text-slate-400 hover:text-red-500 transition-colors text-nowrap">
@@ -43,7 +43,7 @@
            </div>
         </template>
         <template v-else>
-           <router-link :to="{ name: 'login' }" class="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors">
+           <router-link :to="{ name: 'login' }" class="text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors">
              로그인
            </router-link>
            <router-link :to="{ name: 'login' }" class="hidden md:inline-flex items-center justify-center px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-full hover:bg-slate-800 transition-all hover:scale-105 shadow-lg">

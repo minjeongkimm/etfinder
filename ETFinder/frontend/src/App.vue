@@ -1,14 +1,14 @@
 <template>
-  <div class="relative min-h-screen font-sans bg-background text-foreground selection:bg-indigo-500/30">
+  <div class="relative min-h-screen font-sans bg-background text-foreground selection:bg-blue-500/30">
     <!-- Global Background Decoration -->
     <div v-if="isDecorativeBackgroundPage" class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-white">
-      <!-- Mesh Gradients: Static, no blur filter -->
+      <!-- Mesh Gradients: Blue & Sky tones -->
       <div class="absolute top-[-10%] right-[-5%] w-[70%] h-[70%] rounded-full opacity-40 mix-blend-multiply filter blur-3xl animate-none"
-           style="background: radial-gradient(circle, rgba(129, 140, 248, 0.8) 0%, rgba(129, 140, 248, 0) 70%);"></div>
+           style="background: radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(59, 130, 246, 0) 70%);"></div>
       <div class="absolute bottom-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full opacity-40 mix-blend-multiply filter blur-3xl animate-none"
-           style="background: radial-gradient(circle, rgba(167, 139, 250, 0.8) 0%, rgba(167, 139, 250, 0) 70%);"></div>
+           style="background: radial-gradient(circle, rgba(14, 165, 233, 0.8) 0%, rgba(14, 165, 233, 0) 70%);"></div>
       <div class="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full opacity-30 mix-blend-multiply filter blur-3xl animate-none"
-           style="background: radial-gradient(circle, rgba(251, 113, 133, 0.8) 0%, rgba(251, 113, 133, 0) 70%);"></div>
+           style="background: radial-gradient(circle, rgba(6, 182, 212, 0.8) 0%, rgba(6, 182, 212, 0) 70%);"></div>
     </div>
 
     <!-- Header (Sticky) -->

@@ -19,9 +19,9 @@
 
         <!-- Links -->
         <div class="flex gap-6 text-[11px] text-slate-500 font-medium cursor-pointer">
-          <span @click="openModal('terms')" class="hover:text-indigo-600 transition-colors">이용약관</span>
-          <span @click="openModal('privacy')" class="hover:text-indigo-600 transition-colors">개인정보처리방침</span>
-          <span @click="openModal('contact')" class="hover:text-indigo-600 transition-colors">문의하기</span>
+          <span @click="openModal('terms')" class="hover:text-blue-600 transition-colors">이용약관</span>
+          <span @click="openModal('privacy')" class="hover:text-blue-600 transition-colors">개인정보처리방침</span>
+          <span @click="openModal('contact')" class="hover:text-blue-600 transition-colors">문의하기</span>
         </div>
       </div>
     </div>
@@ -151,9 +151,9 @@ const contents = {
     <p class="mb-4">ETFinder 서비스와 관련하여 문의사항, 오류 신고 또는 개선 제안이 있는 경우 아래 문의 채널을 통해 접수해 주시기 바랍니다.</p>
     <p class="mb-4">접수된 문의는 영업일 기준 1~2일 이내에 검토 후 안내드릴 예정입니다.</p>
     
-    <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 mt-4">
-      <p class="font-bold text-indigo-900 mb-1">📧 이메일 문의</p>
-      <a href="mailto:support@etfinder.com" class="text-indigo-600 hover:underline">support@etfinder.com</a>
+    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mt-4">
+      <p class="font-bold text-blue-900 mb-1">📧 이메일 문의</p>
+      <a href="mailto:support@etfinder.com" class="text-blue-600 hover:underline">support@etfinder.com</a>
     </div>
   `
 }

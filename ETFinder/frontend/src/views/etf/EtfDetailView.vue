@@ -204,26 +204,26 @@
                   </div>
 
                   <!-- AI 인사이트 (AI 견해) -->
-                  <div class="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-white p-5 shadow-sm relative overflow-hidden">
+                  <div class="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50/50 to-white p-5 shadow-sm relative overflow-hidden">
                     <!-- 배경 장식 -->
-                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-indigo-100/50 rounded-full blur-2xl"></div>
-                    <div class="absolute -left-6 -bottom-6 w-32 h-32 bg-purple-100/50 rounded-full blur-2xl"></div>
+                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-blue-100/50 rounded-full blur-2xl"></div>
+                    <div class="absolute -left-6 -bottom-6 w-32 h-32 bg-sky-100/50 rounded-full blur-2xl"></div>
 
                     <!-- 헤더 -->
                     <div class="flex items-center gap-2 mb-4 relative z-10">
-                      <div class="p-1.5 rounded-lg bg-indigo-100 text-indigo-600">
+                      <div class="p-1.5 rounded-lg bg-blue-100 text-blue-600">
                         <Bot :size="20" stroke-width="2.5" />
                       </div>
-                      <h4 class="font-bold text-lg text-indigo-950">AI 인사이트</h4>
+                      <h4 class="font-bold text-lg text-blue-950">AI 인사이트</h4>
                       <div class="ml-auto flex items-center gap-2">
                         <!-- 기준일 표시 -->
-                        <span v-if="etf?.createdAt" class="text-xs text-indigo-900/50 font-medium">
+                        <span v-if="etf?.createdAt" class="text-xs text-blue-900/50 font-medium">
                           {{ formatDetailDate(etf.createdAt) }} 기준
                         </span>
                         <div v-if="aiSummaryLoading">
                           <span class="flex h-3 w-3 relative">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                           </span>
                         </div>
                       </div>
@@ -232,12 +232,12 @@
                     <!-- 로딩 상태 (스피너 & 텍스트) -->
                     <div v-if="aiSummaryLoading" class="flex flex-col items-center justify-center py-12 relative z-10 space-y-4">
                       <div class="relative">
-                        <div class="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-25"></div>
-                        <Loader2 :size="40" class="text-indigo-600 animate-spin relative z-10" />
+                        <div class="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-25"></div>
+                        <Loader2 :size="40" class="text-blue-600 animate-spin relative z-10" />
                       </div>
                       <div class="text-center">
-                        <p class="text-lg font-bold text-indigo-950 mb-1">AI가 분석중입니다..</p>
-                        <p class="text-sm text-indigo-600/70">잠시만 기다려주세요</p>
+                        <p class="text-lg font-bold text-blue-950 mb-1">AI가 분석중입니다..</p>
+                        <p class="text-sm text-blue-600/70">잠시만 기다려주세요</p>
                       </div>
                     </div>
 
@@ -254,23 +254,23 @@
                     <div v-else class="relative z-10">
                       <!-- 요약 (Summary) -->
                       <div class="mb-4">
-                        <p class="text-lg font-bold text-indigo-900 leading-snug">
+                        <p class="text-lg font-bold text-blue-900 leading-snug">
                           "{{ aiSummary.summary }}"
                         </p>
                       </div>
 
                       <!-- 설명 (Description) -->
-                      <div class="text-sm text-slate-600 leading-relaxed mb-5 bg-white/60 p-3 rounded-lg border border-indigo-50/50">
+                      <div class="text-sm text-slate-600 leading-relaxed mb-5 bg-white/60 p-3 rounded-lg border border-blue-50/50">
                         {{ aiSummary.description }}
                       </div>
 
                       <!-- 지표 그리드 -->
                       <div class="grid grid-cols-2 gap-3 mb-5">
-                        <div class="bg-white/80 rounded-lg p-3 border border-indigo-50 shadow-sm">
+                        <div class="bg-white/80 rounded-lg p-3 border border-blue-50 shadow-sm">
                           <span class="text-xs text-slate-400 font-medium block mb-1">성장성</span>
                           <span class="text-sm font-bold text-slate-700">{{ aiSummary.growthLevel || '-' }}</span>
                         </div>
-                        <div class="bg-white/80 rounded-lg p-3 border border-indigo-50 shadow-sm">
+                        <div class="bg-white/80 rounded-lg p-3 border border-blue-50 shadow-sm">
                           <span class="text-xs text-slate-400 font-medium block mb-1">배당수익</span>
                           <span class="text-sm font-bold text-slate-700">{{ aiSummary.dividendLevel || '-' }}</span>
                         </div>
@@ -281,7 +281,7 @@
                          <span 
                            v-for="tag in aiSummary.recommendTag.split(',')" 
                            :key="tag"
-                           class="px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-600 text-xs font-semibold border border-indigo-100/50"
+                           class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 text-xs font-semibold border border-blue-100/50"
                          >
                            {{ tag.trim().startsWith('#') ? tag.trim() : '#' + tag.trim() }}
                          </span>
@@ -943,12 +943,12 @@ const variantConfig = computed(() => {
     balanced: {
       icon: Scale,
       headline: '의견 팽팽',
-      bgClass: 'bg-violet-50',
-      borderClass: 'border-violet-300',
-      iconColor: 'text-violet-600',
-      textColor: 'text-violet-900',
-      badgeBg: 'bg-violet-100',
-      badgeText: 'text-violet-700'
+      bgClass: 'bg-sky-50',
+      borderClass: 'border-sky-300',
+      iconColor: 'text-sky-600',
+      textColor: 'text-sky-900',
+      badgeBg: 'bg-sky-100',
+      badgeText: 'text-sky-700'
     },
     default: {
       icon: BarChart3,

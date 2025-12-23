@@ -180,15 +180,16 @@ const CHART_COLORS = [
   '#2563EB', // Primary Blue
   '#10B981', // Emerald Green
   '#F59E0B', // Amber
-  '#8B5CF6', // Violet
   '#0EA5E9', // Sky Blue
+  '#3B82F6', // Blue-500
   '#EC4899', // Pink
   '#14B8A6', // Teal
   '#F97316', // Orange
-  '#6366F1', // Indigo
+  '#6366F1', // Indigo (Keep as variety or change? Let's keep for variety but move down) -> Changed to Blue-700 for more blue shades? Or keep Indigo but main is Blue.
+  // actually user wants "blue image".
+  // Let's replace Violet/Indigo with Sky/Cyan variants.
+  '#60A5FA', // Blue-400
   '#22C55E', // Green
-  '#A855F7', // Purple
-  '#EAB308', // Yellow
   '#06B6D4', // Cyan
   '#F43F5E', // Rose
   '#84CC16', // Lime
