@@ -76,8 +76,31 @@
             total_asset
         FROM wallet_daily_snapshot
         WHERE user_id = #{userId}
-          AND base_datetime >= DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+          AND base_datetime >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
         ORDER BY base_datetime ASC
     </select>
+
+    <!-- 신규: 최신 누적 실현손익 조회 -->
+    <select id="selectLatestRealizedProfit" resultType="Long">
+        SELECT realized_profit
+        FROM wallet_daily_snapshot
+        WHERE user_id = #{userId}
+        ORDER BY base_datetime DESC
+        LIMIT 1
+    </select>
+
+    <!-- 신규: 누적 실현손익 업데이트 (가장 최근 스냅샷) -->
+    <update id="updateRealizedProfit">
+        UPDATE wallet_daily_snapshot
+        SET realized_profit = #{realizedProfit}
+        WHERE user_id = #{userId}
+          AND base_datetime = (
+              SELECT max_datetime FROM (
+                  SELECT MAX(base_datetime) as max_datetime
+                  FROM wallet_daily_snapshot
+                  WHERE user_id = #{userId}
+              ) as latest
+          )
+    </update>
 
 </mapper>

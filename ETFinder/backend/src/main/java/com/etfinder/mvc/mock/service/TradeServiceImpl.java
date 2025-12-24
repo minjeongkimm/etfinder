@@ -1,6 +1,7 @@
 package com.etfinder.mvc.mock.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,11 @@ import com.etfinder.mvc.mock.dto.Wallet;
 import com.etfinder.mvc.mock.mapper.MockHoldingMapper;
 import com.etfinder.mvc.mock.mapper.TradeHistoryMapper;
 import com.etfinder.mvc.mock.mapper.WalletMapper;
+import com.etfinder.mvc.realtime.cache.RealTimePriceCache;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @Transactional
 public class TradeServiceImpl implements TradeService {
@@ -25,18 +30,21 @@ public class TradeServiceImpl implements TradeService {
 	private final TradeHistoryMapper tradeHistoryMapper;
 	private final EtfMapper etfMapper;
 	private final WalletService walletService;
+	private final RealTimePriceCache priceCache;
 
 	public TradeServiceImpl(
 			WalletMapper walletMapper,
 			MockHoldingMapper holdingMapper,
 			TradeHistoryMapper tradeHistoryMapper,
 			EtfMapper etfMapper,
-			WalletService walletService) {
+			WalletService walletService,
+			RealTimePriceCache priceCache) {
 		this.walletMapper = walletMapper;
 		this.holdingMapper = holdingMapper;
 		this.tradeHistoryMapper = tradeHistoryMapper;
 		this.etfMapper = etfMapper;
 		this.walletService = walletService;
+		this.priceCache = priceCache;
 	}
 
 	@Override
@@ -47,47 +55,77 @@ public class TradeServiceImpl implements TradeService {
 			throw new IllegalArgumentException("수량은 1 이상이어야 합니다.");
 		}
 
-		// 2. ETF 현재가 조회
+		// 2. ETF 정보 조회 (종목코드 필요)
 		EtfProduct etf = etfMapper.selectOneEtf(request.getEtfId());
 		if (etf == null) {
 			throw new IllegalArgumentException("존재하지 않는 ETF입니다.");
 		}
 
-		Integer currentPrice = etf.getCurrentPrice();
-		if (currentPrice == null || currentPrice <= 0) {
-			throw new IllegalStateException("ETF 가격 정보가 없습니다.");
+		// 3. 실행 가격 결정: 실시간 캐시 우선, DB fallback
+		Integer executionPrice = null;
+		String priceSource = null;
+
+		// 3-1. 실시간 캐시에서 가격 조회 시도
+		String etfCode = etf.getEtfCode();
+		Optional<Integer> cachedPrice = priceCache.getPrice(etfCode);
+
+		if (cachedPrice.isPresent()) {
+			executionPrice = cachedPrice.get();
+			priceSource = "CACHE";
+			log.info("💸 [거래 실행] 종목: {}, 가격 소스: 실시간 캐시, 가격: {}원", etfCode, executionPrice);
+		} else {
+			// 3-2. 캐시 미스: DB current_price로 fallback
+			executionPrice = etf.getCurrentPrice();
+			priceSource = "DB_FALLBACK";
+			log.warn("⚠️ [거래 실행] 종목: {}, 가격 소스: DB (캐시 미스), 가격: {}원", etfCode, executionPrice);
 		}
 
-		// 3. 거래액 계산
-		long amount = (long) currentPrice * request.getQuantity();
+		// 3-3. 가격 유효성 검증
+		if (executionPrice == null || executionPrice <= 0) {
+			log.error("❌ [거래 실행 실패] 종목: {}, 가격 없음 (캐시: {}, DB: {})",
+					etfCode, cachedPrice.orElse(null), etf.getCurrentPrice());
+			throw new IllegalStateException("ETF 가격 정보가 없습니다. 종목코드: " + etfCode);
+		}
 
-		// 4. 거래 타입에 따라 처리
+		// 4. 거래액 계산
+		long amount = (long) executionPrice * request.getQuantity();
+
+		// 5. 거래 타입에 따라 처리
 		String tradeType = request.getTradeType().toUpperCase();
+		long realizedPnL = 0L; // 매도 시 실현손익 저장
 
 		if ("BUY".equals(tradeType)) {
-			processBuy(userId, request.getEtfId(), currentPrice, request.getQuantity(), amount);
+			processBuy(userId, request.getEtfId(), executionPrice, request.getQuantity(), amount);
+			log.info("✅ [매수 완료] 사용자: {}, 종목: {}, 수량: {}, 단가: {}원 ({})",
+					userId, etfCode, request.getQuantity(), executionPrice, priceSource);
 		} else if ("SELL".equals(tradeType)) {
-			processSell(userId, request.getEtfId(), currentPrice, request.getQuantity(), amount);
+			realizedPnL = processSell(userId, request.getEtfId(), executionPrice, request.getQuantity(), amount);
+			log.info("✅ [매도 완료] 사용자: {}, 종목: {}, 수량: {}, 단가: {}원 ({}), 실현손익: {}원",
+					userId, etfCode, request.getQuantity(), executionPrice, priceSource, realizedPnL);
 		} else {
 			throw new IllegalArgumentException("거래 타입은 BUY 또는 SELL이어야 합니다.");
 		}
 
-		// 5. 거래 내역 저장
+		// 6. 거래 내역 저장
 		TradeHistory trade = new TradeHistory();
 		trade.setUserId(userId);
 		trade.setEtfId(request.getEtfId());
 		trade.setTradeType(tradeType);
-		trade.setPrice(currentPrice);
+		trade.setPrice(executionPrice);
 		trade.setQuantity(request.getQuantity());
 		trade.setAmount(amount);
 
 		tradeHistoryMapper.insert(trade);
 
-		// 6. 총 자산 갱신
+		// 7. 총 자산 갱신
 		walletService.refreshTotalAsset(userId);
 
-		// 7. 당시간 스냅샷 저장 (신규)
-		walletService.saveCurrentHourSnapshot(userId);
+		// 8. 당시간 스냅샷 저장 (매도 시 실현손익 포함)
+		if ("SELL".equals(tradeType)) {
+			walletService.saveCurrentHourSnapshotWithRealizedPnL(userId, realizedPnL);
+		} else {
+			walletService.saveCurrentHourSnapshot(userId);
+		}
 
 		return 1;
 	}
@@ -144,8 +182,10 @@ public class TradeServiceImpl implements TradeService {
 
 	/**
 	 * 매도 처리
+	 * 
+	 * @return 실현손익 (realized P&L)
 	 */
-	private void processSell(Long userId, Long etfId, Integer price, Integer quantity, Long amount) {
+	private long processSell(Long userId, Long etfId, Integer price, Integer quantity, Long amount) {
 
 		// 1. 보유 종목 조회 (Row Lock)
 		MockHolding holding = holdingMapper.selectForUpdate(userId, etfId);
@@ -158,6 +198,14 @@ public class TradeServiceImpl implements TradeService {
 		if (holding.getQuantity() < quantity) {
 			throw new IllegalStateException("보유 수량이 부족합니다.");
 		}
+
+		// ===== 실현손익 계산 로직 =====
+		int avgCost = holding.getAveragePrice();
+		int sellPrice = price;
+		int soldQty = quantity;
+
+		// 실현손익 = (매도가 - 평단가) * 수량
+		long realizedPnL = (long) (sellPrice - avgCost) * soldQty;
 
 		// 3. 보유 수량 감소 또는 삭제
 		int newQuantity = holding.getQuantity() - quantity;
@@ -175,6 +223,9 @@ public class TradeServiceImpl implements TradeService {
 		Wallet wallet = walletMapper.selectByUserId(userId);
 		long newBalance = wallet.getBalance() + amount;
 		walletMapper.updateBalance(userId, newBalance);
+
+		// 실현손익 반환 (스냅샷 저장 시 사용)
+		return realizedPnL;
 	}
 
 	@Override

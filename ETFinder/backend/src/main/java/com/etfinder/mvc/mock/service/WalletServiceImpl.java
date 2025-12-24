@@ -7,14 +7,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.etfinder.mvc.etf.dto.EtfProduct;
+import com.etfinder.mvc.etf.mapper.EtfMapper;
 import com.etfinder.mvc.mock.dto.DailyAssetPoint;
 import com.etfinder.mvc.mock.dto.DashboardResponse;
 import com.etfinder.mvc.mock.dto.MinuteAssetPoint;
 import com.etfinder.mvc.mock.dto.MockHolding;
 import com.etfinder.mvc.mock.dto.Wallet;
 import com.etfinder.mvc.mock.dto.WalletResponse;
-import com.etfinder.mvc.etf.dto.EtfProduct;
-import com.etfinder.mvc.etf.mapper.EtfMapper;
 import com.etfinder.mvc.mock.mapper.MockHoldingMapper;
 import com.etfinder.mvc.mock.mapper.TradeHistoryMapper;
 import com.etfinder.mvc.mock.mapper.WalletMapper;
@@ -78,10 +78,16 @@ public class WalletServiceImpl implements WalletService {
             stockRatio = 100 - cashRatio;
         }
 
+        // 실현손익 조회 (최신 스냅샷에서)
+        Long realizedProfit = snapshotMapper.selectLatestRealizedProfit(userId);
+        if (realizedProfit == null) {
+            realizedProfit = 0L;
+        }
+
         WalletResponse response = new WalletResponse();
         response.setBalance(balance);
         response.setTotalAsset(totalAsset);
-        response.setRealizedProfit(0L); // TODO: 실현 손익 계산 기능 구현 예정
+        response.setRealizedProfit(realizedProfit);
         response.setCashRatio(cashRatio);
         response.setStockRatio(stockRatio);
 
@@ -257,9 +263,41 @@ public class WalletServiceImpl implements WalletService {
         // 실시간 가격 기반 총 자산 계산
         Long totalAsset = computeTotalAssetRealtime(userId);
 
+        // 현재 누적 실현손익 조회
+        Long realizedProfit = snapshotMapper.selectLatestRealizedProfit(userId);
+        if (realizedProfit == null) {
+            realizedProfit = 0L;
+        }
+
         // 스냅샷 upsert (UNIQUE KEY: user_id, base_datetime)
         // 같은 분에 여러 번 호출되어도 UPDATE만 수행됨
-        snapshotMapper.upsertHourlySnapshot(userId, now, totalAsset, 0L);
+        snapshotMapper.upsertHourlySnapshot(userId, now, totalAsset, realizedProfit);
+    }
+
+    /**
+     * 8-1. 현재 시각의 분 단위 스냅샷 저장 (실현손익 누적)
+     */
+    @Override
+    @Transactional
+    public void saveCurrentHourSnapshotWithRealizedPnL(Long userId, long realizedPnLDelta) {
+        // 분 단위 정밀도 (초/나노초만 0으로)
+        LocalDateTime now = LocalDateTime.now()
+                .withSecond(0)
+                .withNano(0);
+
+        // 실시간 가격 기반 총 자산 계산
+        Long totalAsset = computeTotalAssetRealtime(userId);
+
+        // 현재 누적 실현손익 조회 및 증분 추가
+        Long currentRealized = snapshotMapper.selectLatestRealizedProfit(userId);
+        if (currentRealized == null) {
+            currentRealized = 0L;
+        }
+        Long newRealizedProfit = currentRealized + realizedPnLDelta;
+
+        // 스냅샷 upsert (UNIQUE KEY: user_id, base_datetime)
+        // 같은 분에 여러 번 호출되어도 UPDATE만 수행됨
+        snapshotMapper.upsertHourlySnapshot(userId, now, totalAsset, newRealizedProfit);
     }
 
     /**
