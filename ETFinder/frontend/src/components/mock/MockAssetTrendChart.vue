@@ -73,13 +73,63 @@ const chartOptions = ref({
   chart: {
     type: 'area' as const,
     height: 350,
+    // ===== 줌/팬 기능 활성화 =====
     zoom: { 
-      enabled: true, 
-      type: 'x' as const, 
-      autoScaleYaxis: true  // Y축 자동 스케일링 활성화
+      enabled: true,
+      type: 'x' as const,  // X축(시간축)만 줌
+      autoScaleYaxis: true,  // Y축 자동 스케일링
+      zoomedArea: {
+        fill: {
+          color: '#2563eb',
+          opacity: 0.1
+        },
+        stroke: {
+          color: '#2563eb',
+          opacity: 0.4,
+          width: 1
+        }
+      }
     },
+    // ===== 툴바 표시 (줌인/줌아웃/팬/리셋 버튼) =====
     toolbar: { 
-      show: false
+      show: true,
+      offsetX: 0,
+      offsetY: 0,
+      tools: {
+        download: false,  // 다운로드 버튼 숨김
+        selection: true,  // 영역 선택 줌
+        zoom: true,       // 줌인 버튼
+        zoomin: true,     // 줌인 버튼
+        zoomout: true,    // 줌아웃 버튼
+        pan: true,        // 팬 버튼
+        reset: true       // 리셋 버튼 (전체 범위로 복귀)
+      },
+      autoSelected: 'zoom' as const  // 기본 선택: 줌 모드
+    },
+    // ===== 팬 기능 활성화 =====
+    pan: {
+      enabled: true,
+      type: 'x' as const,  // X축만 팬
+      // 마우스 휠로 팬 (Ctrl+휠 = 줌, 일반 휠 = 팬)
+    },
+    // ===== 선택 영역 줌 설정 =====
+    selection: {
+      enabled: true,
+      type: 'x' as const,
+      fill: {
+        color: '#2563eb',
+        opacity: 0.1
+      },
+      stroke: {
+        width: 1,
+        color: '#2563eb',
+        opacity: 0.4,
+        dashArray: 3
+      },
+      xaxis: {
+        min: undefined,
+        max: undefined
+      }
     },
     fontFamily: 'Inter, sans-serif',
     animations: {
@@ -93,6 +143,19 @@ const chartOptions = ref({
       dynamicAnimation: {
         enabled: true,
         speed: 350
+      }
+    },
+    // ===== 이벤트 핸들러 =====
+    events: {
+      // 줌 시작/종료 시 로그 (디버깅용, 필요시 제거)
+      beforeZoom: (chartContext: any, { xaxis }: any) => {
+        // 줌 범위 제한 (최소 2개 데이터 포인트)
+        return {
+          xaxis: {
+            min: xaxis.min,
+            max: xaxis.max
+          }
+        }
       }
     }
   },
@@ -159,6 +222,9 @@ const chartOptions = ref({
     strokeDashArray: 4,
   },
   tooltip: {
+    enabled: true,  // 툴팁 활성화 (줌/팬 중에도 작동)
+    shared: true,
+    intersect: false,
     x: { 
       formatter: (value: number) => {
         const date = new Date(value)
@@ -180,6 +246,24 @@ const chartOptions = ref({
     },
     y: {
       formatter: (value: number) => value.toLocaleString() + '원'
+    }
+  },
+  // ===== 크로스헤어 (마우스 위치 표시선) =====
+  crosshairs: {
+    show: true,
+    position: 'back' as const,
+    stroke: {
+      color: '#64748b',
+      width: 1,
+      dashArray: 3
+    }
+  },
+  // ===== 마커 (데이터 포인트) =====
+  markers: {
+    size: 0,  // 기본적으로 숨김
+    hover: {
+      size: 5,  // 호버 시 표시
+      sizeOffset: 3
     }
   }
 })

@@ -17,7 +17,7 @@ public class EtfPriceScheduler {
     }
 
     // 매일 19:00 KST
-    @Scheduled(cron = "0 0 19 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 43 10 * * *", zone = "Asia/Seoul")
 //    @Scheduled(cron = "0 21 17 * * *", zone = "Asia/Seoul")
     public void runDailyUpdate() {
         log.info("Running daily ETF price update job...");

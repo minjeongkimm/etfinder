@@ -43,6 +43,15 @@ public interface WalletService {
     void saveCurrentHourSnapshot(Long userId);
 
     /**
+     * 8-1. 현재 시각의 정각 스냅샷 저장 (실현손익 포함)
+     * - 매도 시 호출되어 실현손익을 누적하여 저장
+     * 
+     * @param userId           사용자 ID
+     * @param realizedPnLDelta 이번 거래의 실현손익 (누적에 더해질 값)
+     */
+    void saveCurrentHourSnapshotWithRealizedPnL(Long userId, long realizedPnLDelta);
+
+    /**
      * 9. 분 단위 자산 추이 조회 (차트용)
      * - 최근 N분간의 스냅샷 반환
      * 

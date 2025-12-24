@@ -50,4 +50,19 @@ public interface WalletSnapshotMapper {
         List<MinuteAssetPoint> selectMinuteTrend(
                         @Param("userId") Long userId,
                         @Param("minutes") int minutes);
+
+        /**
+         * 최신 누적 실현손익 조회
+         * - 가장 최근 스냅샷의 realized_profit 반환
+         */
+        Long selectLatestRealizedProfit(@Param("userId") Long userId);
+
+        /**
+         * 누적 실현손익 업데이트
+         * - 가장 최근 스냅샷의 realized_profit 업데이트
+         * - 스냅샷이 없으면 0 반환 (업데이트 실패)
+         */
+        int updateRealizedProfit(
+                        @Param("userId") Long userId,
+                        @Param("realizedProfit") Long realizedProfit);
 }
