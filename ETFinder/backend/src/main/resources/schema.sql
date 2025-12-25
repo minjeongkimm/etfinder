@@ -71,12 +71,14 @@ CREATE TABLE comments (
     etf_id       BIGINT NOT NULL,
     content      VARCHAR(200) NOT NULL COMMENT '내용 200자 제한',
     sentiment    VARCHAR(10) COMMENT 'AI 감성분석 결과 (POSITIVE/NEGATIVE)',
-    created_at   DATETIME DEFAULT NOW(),
-    updated_at DATETIME DEFAULT NOW() ON UPDATE NOW(),
+    
+    created_at   DATETIME DEFAULT NOW() COMMENT '최초 작성 시간',
+    updated_at   DATETIME DEFAULT NOW() COMMENT '사용자 수정 시간',
     
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE
 );
+
 
 -- ==========================================
 -- 5. 좋아요 (Likes)
@@ -163,3 +165,69 @@ CREATE TABLE etf_statistics (
     -- ETF 하나당 통계 row는 하나만!
     UNIQUE KEY uk_etf_stats (etf_id)
 );
+
+-- ==========================================
+-- 11. ETF 구성종목 (Holdings / PDF)
+-- ==========================================
+CREATE TABLE etf_holdings (
+    holding_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    etf_id         BIGINT NOT NULL COMMENT 'etf_product 테이블 참조',
+    stock_code     VARCHAR(100) NOT NULL COMMENT '종목코드 (예: 005930)',
+    stock_name     VARCHAR(100) NOT NULL COMMENT '종목명 (예: 삼성전자)',
+    weight         DECIMAL(5, 2) NOT NULL COMMENT '구성비중 % (예: 25.45)',
+    stock_price    INT COMMENT '기준가/전일종가 (단순 참고용)',
+    updated_at     DATETIME DEFAULT NOW() COMMENT '배치 돌 때마다 갱신됨',
+
+    FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE,
+    
+    -- 한 ETF 안에서 같은 종목이 두 번 들어갈 순 없음
+    UNIQUE KEY uk_etf_stock (etf_id, stock_code)
+);
+
+-- ==========================================
+-- 12. ETF 과거 시세 (Daily Price History)
+-- 차트 그리기에 필요한 일별 데이터 저장소
+-- ==========================================
+CREATE TABLE etf_daily_history (
+    history_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    etf_id       BIGINT NOT NULL COMMENT 'etf_product 테이블 참조',
+    base_date    DATE NOT NULL COMMENT '기준 날짜 (YYYY-MM-DD)',
+    
+    -- 차트 데이터 (OHLCV)
+    close_price  BIGINT NOT NULL COMMENT '종가 (라인 차트의 기준)',
+    open_price   BIGINT COMMENT '시가 (캔들 차트용)',
+    high_price   BIGINT COMMENT '고가 (캔들 차트용)',
+    low_price    BIGINT COMMENT '저가 (캔들 차트용)',
+    volume       BIGINT COMMENT '거래량 (보조 지표용)',
+    
+    created_at   DATETIME DEFAULT NOW() COMMENT '데이터 수집 시점',
+    
+    FOREIGN KEY (etf_id) REFERENCES etf_product(etf_id) ON DELETE CASCADE,
+    
+    -- [중요] 한 ETF에 같은 날짜 데이터가 중복으로 쌓이는 것 방지
+    -- 조회 성능 향상 (Index 역할 겸용)
+    UNIQUE KEY uk_etf_history (etf_id, base_date)
+);
+
+-- ==========================================
+-- 13. [모의투자] 자산 스냅샷 (Wallet Snapshot)
+--     - 시간별 스냅샷 저장 (매시간 자동 저장)
+--     - 대시보드는 일별 집계 데이터 반환
+-- ==========================================
+CREATE TABLE wallet_daily_snapshot (
+    snapshot_id     BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id         BIGINT NOT NULL COMMENT 'users.user_id 참조',
+    base_datetime   DATETIME NOT NULL COMMENT '스냅샷 시각 (시간별, HH:00:00)',
+    total_asset     BIGINT NOT NULL COMMENT '총 자산 (잔액 + 평가금, 실시간 가격 반영)',
+    realized_profit BIGINT NOT NULL DEFAULT 0 COMMENT '누적 실현 손익 (향후 구현 예정)',
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '스냅샷 생성 시각',
+    
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    
+    -- 유저별 시간별 스냅샷 1건만 (중복 방지)
+    UNIQUE KEY uk_wallet_snapshot (user_id, base_datetime),
+    
+    -- 조회 성능 향상을 위한 인덱스
+    INDEX idx_user_datetime (user_id, base_datetime)
+);
+

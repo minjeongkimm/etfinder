@@ -3,7 +3,7 @@
 <mapper namespace="com.etfinder.mvc.comment.mapper.CommentMapper">
 
 	<!-- 1. 한줄평 등록 -->
-	<insert id="addComment" parameterType="Comment">
+	<insert id="addComment" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId">
 		INSERT INTO
 		comments(user_id, etf_id, content)
 		VALUES(#{userId}, #{etfId},
@@ -30,11 +30,12 @@
 	<!-- 3. 한줄평 수정 -->
 	<update id="updateComment">
 		UPDATE comments
-		SET content =
-		#{content}
-		WHERE
-		comment_id = #{commentId} AND user_id = #{userId}
+		SET content = #{content},
+			updated_at = NOW()
+		WHERE comment_id = #{commentId} 
+			AND user_id = #{userId}
 	</update>
+
 
 	<!-- 4. 한줄평 삭제 -->
 	<delete id="deleteComment">
@@ -43,4 +44,24 @@
 		= #{commentId}
 		AND user_id = #{userId}
 	</delete>
+	
+	<!-- 5. 한줄평 ai 분석 결과 저장 -->
+	<update id="updateCommentSentiment">
+		UPDATE comments
+		SET sentiment = #{sentiment},
+			updated_at = updated_at
+		WHERE comment_id = #{commentId}
+	</update>
+	
+	
+	<!-- 6. 한줄평 ai 분석 통계 가져오기 -->
+	<select id="selectSentimentStat">
+		SELECT 
+			COUNT(CASE WHEN sentiment = 'POSITIVE' THEN 1 END) as positiveCount,
+	        COUNT(CASE WHEN sentiment = 'NEGATIVE' THEN 1 END) as negativeCount,
+	        COUNT(*) as totalCount
+	    FROM comments
+    	WHERE etf_id = #{etfId}
+    		AND user_id IS NOT NULL
+	</select>
 </mapper>

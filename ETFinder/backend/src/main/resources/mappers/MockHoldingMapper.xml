@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etfinder.mvc.mock.mapper.MockHoldingMapper">
+
+	<!-- 1. 거래 처리용 보유 종목 조회 (Row Lock) -->
+	<select id="selectForUpdate" resultType="com.etfinder.mvc.mock.dto.MockHolding">
+		SELECT
+			holding_id,
+			user_id,
+			etf_id,
+			quantity,
+			average_price,
+			created_at,
+			updated_at
+		FROM holdings
+		WHERE user_id = #{userId}
+		  AND etf_id = #{etfId}
+		FOR UPDATE
+	</select>
+
+	<!-- 2. 새로운 보유 종목 추가 -->
+	<insert id="insertHolding" parameterType="com.etfinder.mvc.mock.dto.MockHolding"
+			useGeneratedKeys="true" keyProperty="holdingId">
+		INSERT INTO holdings (user_id, etf_id, quantity, average_price)
+		VALUES (#{userId}, #{etfId}, #{quantity}, #{averagePrice})
+	</insert>
+
+	<!-- 3. 보유 종목 수량/평단가 수정 -->
+	<update id="updateHolding" parameterType="com.etfinder.mvc.mock.dto.MockHolding">
+		UPDATE holdings
+		SET
+			quantity = #{quantity},
+			average_price = #{averagePrice}
+		WHERE holding_id = #{holdingId}
+	</update>
+
+	<!-- 4. 보유 종목 삭제 -->
+	<delete id="deleteHolding">
+		DELETE FROM holdings
+		WHERE user_id = #{userId}
+		  AND etf_id = #{etfId}
+	</delete>
+
+	<!-- 5. 보유 종목 조회 (프론트 화면용 view) -->
+	<select id="selectHoldingView" parameterType="Long"
+			resultType="com.etfinder.mvc.mock.dto.MockHoldingResponse">
+		SELECT
+			h.etf_id,
+			e.etf_code,
+			e.etf_name,
+			h.quantity,
+			h.average_price,
+			e.current_price,
+			(e.current_price * h.quantity) AS eval_amount,
+			((e.current_price * h.quantity) - (h.average_price * h.quantity)) AS profit_amount,
+			(
+				CASE
+					WHEN h.average_price > 0 THEN
+						(((e.current_price * h.quantity) - (h.average_price * h.quantity)) * 100.0 / (h.average_price * h.quantity))
+					ELSE 0
+				END
+			) AS profit_rate
+		FROM holdings h
+		INNER JOIN etf_product e ON h.etf_id = e.etf_id
+		WHERE h.user_id = #{userId}
+		ORDER BY h.created_at DESC
+	</select>
+
+	<!-- 6. 보유 종목 조회 (존재 여부 확인용) -->
+	<select id="findByUserIdAndEtfId" resultType="com.etfinder.mvc.mock.dto.MockHolding">
+		SELECT
+			holding_id,
+			user_id,
+			etf_id,
+			quantity,
+			average_price,
+			created_at,
+			updated_at
+		FROM holdings
+		WHERE user_id = #{userId}
+		  AND etf_id = #{etfId}
+	</select>
+
+	<!-- 7. 유저의 보유 종목 전체 삭제 (계좌 리셋 용) -->
+	<delete id="deleteAllByUserId">
+		DELETE FROM holdings
+		WHERE user_id = #{userId}
+	</delete>
+
+	<!-- 8. 보유 종목 조회 (종목코드 포함 - 실시간 가격 캐시용) -->
+	<select id="selectByUserId" resultType="com.etfinder.mvc.mock.dto.MockHolding">
+		SELECT
+			h.holding_id,
+			h.user_id,
+			h.etf_id,
+			h.quantity,
+			h.average_price,
+			e.etf_code AS stock_code,
+			h.created_at,
+			h.updated_at
+		FROM holdings h
+		INNER JOIN etf_product e ON h.etf_id = e.etf_id
+		WHERE h.user_id = #{userId}
+	</select>
+
+</mapper>

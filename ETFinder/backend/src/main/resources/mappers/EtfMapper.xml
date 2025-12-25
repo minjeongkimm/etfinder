@@ -77,7 +77,8 @@
 		e.return_1yr,
 		e.return_3yr,
 		e.created_at,
-		e.like_count
+		e.like_count,
+		e.description
 
 		FROM
 		etf_product e
@@ -200,4 +201,59 @@
 		DELETE FROM etf_product
 		WHERE etf_code = #{etfCode}
 	</delete>
+	
+	<!-- 9. ETF Ai 요약 업데이트 -->
+	<update id="updateEtfDescription">
+		UPDATE etf_product 
+   		SET description = #{description} 
+	    WHERE etf_code = #{etfCode}
+	</update>
+	
+	<!-- 10. ETF 구성종목 등록 -->
+	<insert id="insertHolding" parameterType="EtfHolding">
+		INSERT INTO etf_holdings (etf_id, stock_code, stock_name, weight, stock_price)
+		VALUES (#{etfId}, #{stockCode}, #{stockName}, #{weight}, #{stockPrice})
+	</insert>
+	
+	<!-- 11. ETF 구성종목 삭제 -->
+	<delete id="deleteHoldingsByEtfId">
+		DELETE FROM etf_holdings
+		WHERE etf_id = #{etfId}
+	</delete>
+	
+	<!-- 12. ETF 구성종목 조회 -->
+	<select id="selectHoldingsByEtfId" resultType="EtfHolding">
+		SELECT 
+	        holding_id,   stock_code,
+	        stock_name,
+	        weight,
+	        stock_price,
+	        updated_at
+	        FROM etf_holdings 
+	    WHERE etf_id = #{etfId}
+	    ORDER BY weight DESC 
+	</select>
+	
+	<!-- 13. ETF 과거 시세 저장 -->
+	<insert id="insertDailyHistory" parameterType="EtfDailyHistory">
+		INSERT INTO etf_daily_history (etf_id, base_date, close_price, open_price, high_price, low_price, volume)
+		VALUES (#{etfId}, #{baseDate}, #{closePrice}, #{openPrice}, #{highPrice}, #{lowPrice}, #{volume})
+	</insert>
+	
+	<!-- 14. ETF 차트용 과거 시세 조회 -->
+	<select id="selectDailyHistory" resultType="EtfDailyHistory">
+		SELECT 
+			base_date, close_price, open_price, 
+			high_price, low_price, volume
+		FROM etf_daily_history
+		WHERE etf_id = #{etfId}
+		ORDER BY base_date ASC
+	</select>
+	
+	<!-- 15. 중복 데이터 방지용 조회 -->
+	<select id="countHistoryByDate" resultType="int">
+		SELECT COUNT(*)
+		FROM etf_daily_history
+		WHERE etf_id = #{etfId} AND base_date = #{baseDate}
+	</select>
 </mapper>

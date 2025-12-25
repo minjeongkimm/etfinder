@@ -14,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.etfinder.mvc.auth.dto.KakaoUser;
+import com.etfinder.mvc.auth.dto.LoginResponse;
 import com.etfinder.mvc.auth.security.JwtProvider;
 import com.etfinder.mvc.user.dto.User;
 import com.etfinder.mvc.user.mapper.UserMapper;
@@ -38,14 +39,31 @@ public class KakaoService {
 	
 	private final String ADMIN_PROVIDER_ID = "4604028154";
 	
-	public String kakaoLogin(String code) {
+	public LoginResponse kakaoLogin(String code) {
 		// 1. 인가 코드로 액세스 토큰 요청
 		String accessToken = getAccessToken(code);
 		// 2. 액세스 토큰으로 사용자 정보 요청
 		KakaoUser kakaoUserInfo = getUserInfo(accessToken);
 		// 3. db 조회 후 없으면 회원가입, 있으면 로그인 처리 
-		User user = registerOrLogin(kakaoUserInfo);
+		String providerId = String.valueOf(kakaoUserInfo.getId());
+        String nickname = kakaoUserInfo.getKakao_account().getProfile().getNickname();
+        
+        User user = userMapper.findByProviderId(providerId);
+        boolean isNewMember = false; // 기본값 false
+
+        // 유저가 없으면 회원가입 (INSERT)
+        if (user == null) {
+            user = new User();
+            user.setProviderId(providerId);
+            user.setNickname(nickname);
+            user.setProvider("kakao");
+            user.setCreatedAt(LocalDateTime.now());
+            
+            userMapper.insertUser(user); // DB 저장
+            isNewMember = true;          // ★ 신규 회원임을 표시
+        }
 		
+        // 4. 관리자 권한 설정
 		// 기본은 일반 유저
 		String role = "ROLE_USER"; 
         
@@ -54,8 +72,11 @@ public class KakaoService {
             role = "ROLE_ADMIN";
         }
 		
-		// 4. 우리 서비스 전용 JWT 토큰 발급 후 반환 
-		return jwtProvider.createToken(user, role);
+        // 5. JWT 토큰 생성
+     	String jwtToken = jwtProvider.createToken(user, role);
+     		
+     	// 6. DTO에 담아서 반환 (토큰, 신규여부, 닉네임)
+     	return new LoginResponse(jwtToken, isNewMember, nickname);
 	}
 	
 	// 액세스 토큰 받기
@@ -111,28 +132,5 @@ public class KakaoService {
 
         return response.getBody();
 	}
-	
-	// 로그인 또는 회원가입 처리
-	private User registerOrLogin(KakaoUser kakaoUserInfo) {
-		String providerId = String.valueOf(kakaoUserInfo.getId());
-        String nickname = kakaoUserInfo.getKakao_account().getProfile().getNickname();
-
-        User existingUser = userMapper.findByProviderId(providerId);
-        if (existingUser == null) {
-        	// 없으면 회원가입 처리 (최소 정보로 Insert)
-        	User newUser = new User();
-            newUser.setProviderId(providerId);
-            newUser.setNickname(nickname);
-            newUser.setProvider("kakao");
-            newUser.setCreatedAt(LocalDateTime.now());
-            userMapper.insertUser(newUser);
-            return newUser;
-        }
-
-        // 이미 있으면 해당 사용자 정보 반환 (로그인 처리)
-        return existingUser;
-	}
-	
-	
 	
 }

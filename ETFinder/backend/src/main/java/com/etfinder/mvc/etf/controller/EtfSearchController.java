@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.etfinder.mvc.etf.dto.EtfAiDescriptionResponse;
+import com.etfinder.mvc.etf.dto.EtfDailyHistory;
+import com.etfinder.mvc.etf.dto.EtfHolding;
 import com.etfinder.mvc.etf.dto.EtfProduct;
 import com.etfinder.mvc.etf.dto.SearchCondition;
 import com.etfinder.mvc.etf.service.EtfSearchService;
@@ -97,6 +100,28 @@ public class EtfSearchController {
 		}
 
 		return ResponseEntity.ok(list);
+	}
+	
+	// 4. ETF 상세 조회 페이지 내 ai 설명 불러오기
+	@GetMapping("/{etfId}/ai")
+	public ResponseEntity<EtfAiDescriptionResponse> aiSummary(@PathVariable("etfId") Long etfId){
+		EtfAiDescriptionResponse response = etfSearchService.updateEtfDescription(etfId);
+		return new ResponseEntity<EtfAiDescriptionResponse>(response, HttpStatus.OK);
+	}
+	
+	// 5. ETF 상세 조회 페이지 내 구성종목 조회 
+	@GetMapping("/{etfId}/holdings")
+	public ResponseEntity<?> etfHoldings(@PathVariable("etfId") Long etfId){
+		List<EtfHolding> etfHolding = etfSearchService.selectHoldingsByEtfId(etfId);
+		
+		return new ResponseEntity<List<EtfHolding>>(etfHolding, HttpStatus.OK);
+	}
+	
+	// 6. ETF 상세 조회 페이지 내 차트용 과거 시세 조회
+	@GetMapping("/{etfId}/history")
+	public ResponseEntity<?> etfPriceHistory(@PathVariable("etfId") Long etfId){
+		List<EtfDailyHistory> etfPrices = etfSearchService.selectDailyHistory(etfId);
+		return new ResponseEntity<List<EtfDailyHistory>>(etfPrices, HttpStatus.OK);
 	}
 
 }
