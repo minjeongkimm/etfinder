@@ -1,0 +1,63 @@
+package com.etfinder.mvc.etf.mapper;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.etfinder.mvc.etf.dto.EtfDailyHistory;
+import com.etfinder.mvc.etf.dto.EtfHolding;
+import com.etfinder.mvc.etf.dto.EtfProduct;
+import com.etfinder.mvc.etf.dto.SearchCondition;
+
+@Mapper
+public interface EtfMapper {
+
+	// 1. Etf 정보 등록
+	// XML의 <insert id="insertEtf"> 와 연결됨
+	int insertEtf(EtfProduct etf);
+
+	// 2. Etf 일일 종가 갱신
+	// etf_code로 찾아 current_price만 갱신
+	void updateCurrentPrice(@Param("etfCode") String etfCode, @Param("currentPrice") Integer currentPrice);
+
+	// 3. Etf 전체 조회
+	List<EtfProduct> selectAllEtf();
+
+	// 4. Etf 상세 조회
+	EtfProduct selectOneEtf(Long etfId);
+
+	// 5. Etf 검색, 정렬
+	List<EtfProduct> searchByCondition(SearchCondition con);
+	
+	// 6. Etf 추천 기준 항목 조회
+	List<EtfProduct> selectEtfsForRecommendation();
+	
+	// 7. Etf 정보 수정
+	int updateEtf(@Param("etfCode") String etfCode, @Param("etf") EtfProduct etf);
+	
+	// 8. Etf 삭제
+	int deleteEtf(String etfCode);
+	
+	// 9. Etf ai 요약 업데이트
+	int updateEtfDescription(@Param("etfCode") String etfCode, @Param("description") String description);
+
+	// 10. Etf 구성종목 등록
+	int insertHolding(EtfHolding holding);
+
+	// 11. Etf 구성종목 삭제
+	int deleteHoldingsByEtfId(Long etfId);
+	
+	// 12. Etf 구성종목 조회 
+	List<EtfHolding> selectHoldingsByEtfId(Long etfId);
+	
+	// 13. Etf 과거 시세 저장 
+	int insertDailyHistory(EtfDailyHistory history);
+	
+	// 14. Etf 차트용 과거 시세 조회
+	List<EtfDailyHistory> selectDailyHistory(Long etfId);
+	
+	// 15. 중복 데이터 방지용 조회 
+	int countHistoryByDate(@Param("etfId") Long etfId, @Param("baseDate") LocalDate baseDate);
+}

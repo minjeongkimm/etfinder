@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etfinder.mvc.etf.mapper.EtfMapper">
+
+	<!-- 1. ETF 등록 -->
+	<insert id="insertEtf" parameterType="EtfProduct">
+		INSERT INTO etf_product (
+		etf_code, etf_name, market, theme,
+		risk_rating, aum, fee,
+		current_price,
+		return_1mo, return_3mo, return_6mo,
+		return_1yr,
+		return_3yr
+		)
+		VALUES (
+		#{etfCode}, #{etfName}, #{market}, #{theme},
+		#{riskRating}, #{aum}, #{fee},
+		#{currentPrice},
+		#{return1mo},
+		#{return3mo}, #{return6mo},
+		#{return1yr}, #{return3yr}
+		)
+	</insert>
+
+	<!-- 2. ETF 종가 업데이트 -->
+	<update id="updateCurrentPrice" parameterType="map">
+		UPDATE etf_product
+		SET current_price = #{currentPrice}
+		WHERE etf_code = #{etfCode}
+	</update>
+
+	<!-- 3. ETF 전체 조회 -->
+	<select id="selectAllEtf" resultType="EtfProduct">
+		SELECT
+		e.etf_id,
+		e.etf_code,
+		e.etf_name,
+		e.market,
+		e.theme,
+		e.risk_rating,
+		e.aum,
+		e.fee,
+		e.current_price,
+		e.return_1mo,
+		e.return_3mo,
+		e.return_6mo,
+		e.return_1yr,
+		e.return_3yr,
+		e.created_at,
+		e.like_count
+
+		FROM etf_product e
+		ORDER BY
+		e.aum DESC
+	</select>
+
+
+
+	<!-- 4. ETF 상세 조회 -->
+	<select id="selectOneEtf" parameterType="Long"
+		resultType="EtfProduct">
+		SELECT
+		e.etf_id,
+		e.etf_code,
+		e.etf_name,
+		e.market,
+		e.theme,
+		e.risk_rating,
+		e.aum,
+		e.fee,
+		e.current_price,
+		e.return_1mo,
+		e.return_3mo,
+		e.return_6mo,
+		e.return_1yr,
+		e.return_3yr,
+		e.created_at,
+		e.like_count,
+		e.description
+
+		FROM
+		etf_product e
+		WHERE e.etf_id = #{etfId}
+	</select>
+
+
+	<!-- 5. 검색 + 필터 + 안전한 정렬 -->
+	<select id="searchByCondition" parameterType="SearchCondition"
+		resultType="EtfProduct">
+
+		SELECT
+		etf_id, etf_code, etf_name, market, theme,
+		risk_rating, aum, fee,
+		current_price,
+		return_1mo, return_3mo, return_6mo,
+		return_1yr,
+		return_3yr,
+		created_at
+		FROM etf_product
+		WHERE 1 = 1
+
+		<!-- keyword 검색 -->
+		<if test="keyword != null and keyword != ''">
+			AND (etf_name LIKE CONCAT('%', #{keyword}, '%')
+			OR etf_code
+			LIKE CONCAT('%', #{keyword}, '%'))
+		</if>
+
+		<!-- 시장 -->
+		<if test="market != null and market != ''">
+			AND market = #{market}
+		</if>
+
+		<!-- 테마 -->
+		<if test="theme != null and theme != ''">
+			AND theme = #{theme}
+		</if>
+
+		<!-- 수수료 필터 -->
+		<if test="minFee != null">
+			AND fee <![CDATA[ >= ]]>
+			#{minFee}
+		</if>
+		<if test="maxFee != null">
+			AND fee <![CDATA[ <= ]]>
+			#{maxFee}
+		</if>
+
+		<!-- AUM 필터 -->
+		<if test="minAum != null">
+			AND aum <![CDATA[ >= ]]>
+			#{minAum}
+		</if>
+		<if test="maxAum != null">
+			AND aum <![CDATA[ <= ]]>
+			#{maxAum}
+		</if>
+
+		<!-- risk rating -->
+		<if test="riskRating != null">
+			AND risk_rating = #{riskRating}
+		</if>
+
+		<!-- 안전한 ORDER BY -->
+		<choose>
+			<when test="orderBy != null and orderDir != null">
+				ORDER BY
+				<choose>
+					<when test="orderBy == 'fee'"> fee </when>
+					<when test="orderBy == 'return1yr'"> return_1yr </when>
+					<when test="orderBy == 'aum'"> aum </when>
+					<when test="orderBy == 'risk'"> risk_rating </when>
+					<otherwise> aum </otherwise>
+				</choose>
+
+				<choose>
+					<when test="orderDir == 'ASC'"> ASC </when>
+					<otherwise> DESC </otherwise>
+				</choose>
+			</when>
+
+			<!-- 기본 정렬 : AUM DESC -->
+			<otherwise>
+				ORDER BY aum DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 6. ETF 추천 기준 항목 조회 -->
+	<select id="selectEtfsForRecommendation" resultType="EtfProduct">
+		SELECT
+		etf_id, etf_code, etf_name, market, theme, fee, risk_rating, aum,
+		return_1yr
+		FROM etf_product
+		WHERE return_1yr IS NOT NULL
+	</select>
+	
+	<!-- 7. ETF 정보 수정 -->
+	<update id="updateEtf">
+		UPDATE etf_product
+	    <set>
+	    	<if test="etf.etfCode != null"> etf_code = #{etf.etfCode}, </if>
+	        <if test="etf.etfName != null"> etf_name = #{etf.etfName}, </if>
+	        <if test="etf.market != null"> market = #{etf.market}, </if>
+	        <if test="etf.theme != null"> theme = #{etf.theme}, </if>
+	        <if test="etf.fee != null"> fee = #{etf.fee}, </if>
+	        <if test="etf.riskRating != null"> risk_rating = #{etf.riskRating}, </if>
+	        <if test="etf.aum != null"> aum = #{etf.aum}, </if>
+	        <if test="etf.currentPrice != null"> current_price = #{etf.currentPrice}, </if>
+	        <if test="etf.description != null"> description = #{etf.description}, </if>
+	        <if test="etf.return1mo != null"> return_1mo = #{etf.return1mo}, </if>
+	        <if test="etf.return1yr != null"> return_1yr = #{etf.return1yr}, </if>
+	    </set>
+	    WHERE etf_code = #{etfCode}
+	</update>
+	
+	<!-- 8. ETF 삭제 -->
+	<delete id="deleteEtf">
+		DELETE FROM etf_product
+		WHERE etf_code = #{etfCode}
+	</delete>
+	
+	<!-- 9. ETF Ai 요약 업데이트 -->
+	<update id="updateEtfDescription">
+		UPDATE etf_product 
+   		SET description = #{description} 
+	    WHERE etf_code = #{etfCode}
+	</update>
+	
+	<!-- 10. ETF 구성종목 등록 -->
+	<insert id="insertHolding" parameterType="EtfHolding">
+		INSERT INTO etf_holdings (etf_id, stock_code, stock_name, weight, stock_price)
+		VALUES (#{etfId}, #{stockCode}, #{stockName}, #{weight}, #{stockPrice})
+	</insert>
+	
+	<!-- 11. ETF 구성종목 삭제 -->
+	<delete id="deleteHoldingsByEtfId">
+		DELETE FROM etf_holdings
+		WHERE etf_id = #{etfId}
+	</delete>
+	
+	<!-- 12. ETF 구성종목 조회 -->
+	<select id="selectHoldingsByEtfId" resultType="EtfHolding">
+		SELECT 
+	        holding_id,   stock_code,
+	        stock_name,
+	        weight,
+	        stock_price,
+	        updated_at
+	        FROM etf_holdings 
+	    WHERE etf_id = #{etfId}
+	    ORDER BY weight DESC 
+	</select>
+	
+	<!-- 13. ETF 과거 시세 저장 -->
+	<insert id="insertDailyHistory" parameterType="EtfDailyHistory">
+		INSERT INTO etf_daily_history (etf_id, base_date, close_price, open_price, high_price, low_price, volume)
+		VALUES (#{etfId}, #{baseDate}, #{closePrice}, #{openPrice}, #{highPrice}, #{lowPrice}, #{volume})
+	</insert>
+	
+	<!-- 14. ETF 차트용 과거 시세 조회 -->
+	<select id="selectDailyHistory" resultType="EtfDailyHistory">
+		SELECT 
+			base_date, close_price, open_price, 
+			high_price, low_price, volume
+		FROM etf_daily_history
+		WHERE etf_id = #{etfId}
+		ORDER BY base_date ASC
+	</select>
+	
+	<!-- 15. 중복 데이터 방지용 조회 -->
+	<select id="countHistoryByDate" resultType="int">
+		SELECT COUNT(*)
+		FROM etf_daily_history
+		WHERE etf_id = #{etfId} AND base_date = #{baseDate}
+	</select>
+</mapper>

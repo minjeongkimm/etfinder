@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.etfinder.mvc.ranking.mapper.ViewRankingMapper">
+
+	<!-- 1. 실시간 조회수 랭킹 -->
+	<select id="getHourlyViewRanking" resultType="ViewRanking">
+		SELECT
+			s.stat_id,
+			s.etf_id,
+			s.view_count,
+			s.updated_at,
+			p.etf_name        
+		FROM etf_statistics s
+		JOIN etf_product p ON p.etf_id = s.etf_id
+		WHERE s.updated_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+		ORDER BY s.view_count DESC
+		LIMIT 10
+	</select>
+
+	<!-- 2. 일간 조회수 랭킹 -->
+	<select id="getDailyViewRanking" resultType="ViewRanking">
+		SELECT
+			s.stat_id,
+			s.etf_id,
+			s.view_count,
+			s.updated_at,
+			p.etf_name        
+		FROM etf_statistics s
+		JOIN etf_product p ON p.etf_id = s.etf_id
+		WHERE s.updated_at >= CURDATE()
+		ORDER BY s.view_count DESC
+		LIMIT 10
+	</select>
+
+	<!-- 3. 월간 조회수 랭킹 -->
+	<select id="getMonthlyViewRanking" resultType="ViewRanking">
+		SELECT
+			s.stat_id,
+			s.etf_id,
+			s.view_count,
+			s.updated_at,
+			p.etf_name        
+		FROM etf_statistics s
+		JOIN etf_product p ON p.etf_id = s.etf_id
+		WHERE s.updated_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+		ORDER BY s.view_count DESC
+		LIMIT 10
+	
+	</select>
+
+	<!-- 4. 조회수 증가 -->
+	<update id="increaseViewCount" parameterType="Long">
+		UPDATE etf_statistics
+		SET view_count = view_count + 1, updated_at = NOW()
+		WHERE etf_id = #{etfId}
+	</update>
+	
+	<!-- 5. etf_statistics 테이블에 초기 row 삽입 -->
+	<insert id="insertInitial" parameterType="Long">
+		INSERT INTO etf_statistics(etf_id, view_count, updated_at)
+		VALUES (#{etfId}, 1, NOW())
+	</insert>
+	
+</mapper>
